@@ -7,12 +7,12 @@ using UnityEngine;
  * @Date: 2019-12-08 14:39:05 
  * @Description: 生成文件名到剪切板
  * @Last Modified by: l hy
- * @Last Modified time: 2019-12-08 15:53:12
+ * @Last Modified time: 2019-12-08 17:02:32
  */
 
 public class GenerateFileName {
 
-    [MenuItem ("AFramework/generateFileTime")]
+    [MenuItem ("AFramework/generateFileTime %e")]
     private static void spawnFileTime () {
 
         string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework_" + DateTime.Now.ToString ("yyyyMMdd") + ".unitypackage";
