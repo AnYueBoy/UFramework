@@ -12,9 +12,12 @@ using UnityEngine;
 
 public class GenerateFileName {
 
-    [MenuItem ("AFramework/generateFileTime %e")]
-    private static void spawnFileTime () {
+    [MenuItem ("AFramework/exportPackage %e")]
+    private static void callExportPackage () {
+        GenerateFileName.exportPackage();
+    }
 
+    public static void exportPackage(){
         string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework_" + DateTime.Now.ToString ("yyyyMMdd") + ".unitypackage";
         string floderPath = "D:/UnityWork/AFrameWork/";
 
@@ -27,5 +30,6 @@ public class GenerateFileName {
 
         // open package floder
         Application.OpenURL("file:///"+floderPath);
+
     }
 }
