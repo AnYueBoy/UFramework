@@ -4,6 +4,14 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/*
+ * @Author: l hy 
+ * @Date: 2019-12-16 23:05:55 
+ * @Description: 工具类
+ * @Last Modified by: l hy 
+ * @Last Modified time: 2019-12-16 23:05:55 
+ */
+
 public class Util {
 
     [MenuItem ("AFramework/isLandscape")]
