@@ -5,7 +5,7 @@ using UnityEngine;
 /*
  * @Author: l hy 
  * @Date: 2019-12-08 14:39:05 
- * @Description: 生成文件名到剪切板
+ * @Description: 导出unitypackage 包资源
  * @Last Modified by: l hy
  * @Last Modified time: 2019-12-08 17:02:32
  */
