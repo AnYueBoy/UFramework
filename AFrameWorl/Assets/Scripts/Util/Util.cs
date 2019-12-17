@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 /*
@@ -14,17 +16,9 @@ using UnityEngine;
 
 public class Util {
 
-    [MenuItem ("AFramework/isLandscape")]
-    public static void isLandscape () {
-        Util.clearConsole ();
+    public static float getAspect () {
         float aspect = (float) Screen.width / Screen.height;
-        if (aspect > 1) {
-            Debug.Log ("is landscape");
-        } else {
-            Debug.Log ("is not landscape");
-        }
-
-        Debug.Log ("aspece is : " + aspect);
+        return aspect;
     }
 
     public static void clearConsole () {
@@ -32,5 +26,31 @@ public class Util {
 
         var clearMethod = log.GetMethod ("Clear");
         clearMethod.Invoke (null, null);
+    }
+
+    public static bool isLandscape () {
+        float aspect = getAspect ();
+        if (aspect > 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static bool isPadResoluation () {
+        return targetValue (4 / 3.0f);
+    }
+
+    public static bool isPhone () {
+        return targetValue (16 / 9.0f);
+    }
+
+    public static bool targetValue (float value) {
+        float offset = 0.05f;
+        float aspect = getAspect ();
+        if (aspect > value - offset && aspect < value + offset) {
+            return true;
+        }
+        return false;
     }
 }
