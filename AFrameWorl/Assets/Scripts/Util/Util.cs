@@ -84,6 +84,7 @@ public class Util
 
     private void merge(List<double> array, int l, int mid, int r)
     {
+        // List<T> 避免ArrayList 频繁的装箱拆箱操作
         List<double> temp = new List<double>(r - l + 1);
         int leftPointer = l;
         int rightPointer = mid + 1;
