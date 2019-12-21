@@ -63,12 +63,12 @@ public class Util
         return false;
     }
 
-    public static void mergeSort(ArrayList targetArray)
+    public static void mergeSort(List<double> targetArray)
     {
         mergeSort(targetArray, 0, targetArray.Capacity - 1);
     }
 
-    private void mSort(ArrayList array, int l, int r)
+    private void mSort(List<double> array, int l, int r)
     {
         if (l == r)
         {
@@ -82,9 +82,9 @@ public class Util
         merge(array, l, mid, r);
     }
 
-    private void merge(ArrayList array, int l, int mid, int r)
+    private void merge(List<double> array, int l, int mid, int r)
     {
-        ArrayList temp = new ArrayList<int>(r - l + 1);
+        List<double> temp = new List<double>(r - l + 1);
         int leftPointer = l;
         int rightPointer = mid + 1;
         int index = 0;
