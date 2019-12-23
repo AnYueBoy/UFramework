@@ -127,6 +127,7 @@ public class Util
             array[j] = array[i];
         }
         array[i] = key;
+        // 需要注意的是：一趟快排之后左侧基准值已经达到正确位置，以一趟快排后的i为界，二分排序
         qSort(array, low, i - 1);
         qSort(array, i + 1, high);
     }
