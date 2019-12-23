@@ -65,7 +65,7 @@ public class Util
 
     public static void mergeSort(List<double> targetArray)
     {
-        mergeSort(targetArray, 0, targetArray.Capacity - 1);
+        mSort(targetArray, 0, targetArray.Capacity - 1);
     }
 
     private void mSort(List<double> array, int l, int r)
@@ -108,5 +108,31 @@ public class Util
         {
             array[l + i] = temp[i];
         }
+    }
+
+    private void qSort(List<double> array, int low, int high)
+    {
+        if (low >= high)
+        {
+            return;
+        }
+
+        int i = low, j = high, key = array[i];
+
+        while (i < j)
+        {
+            while (i < j && array[j] >= key) j--;
+            array[i] = array[j];
+            while (i < j && array[i] <= key) i++;
+            array[j] = array[i];
+        }
+        array[i] = key;
+        qSort(array, low, i - 1);
+        qSort(array, i + 1, high);
+    }
+
+    public static void qucikSort(List<double> array)
+    {
+        qSort(array, 0, array.Capacity - 1);
     }
 }
