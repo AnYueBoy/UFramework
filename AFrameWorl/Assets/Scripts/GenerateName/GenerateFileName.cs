@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 /*
@@ -18,7 +20,7 @@ public class GenerateFileName {
         exportPackage ();
     }
 
-    public static void exportPackage () {
+    private static void exportPackage () {
         string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework_" + DateTime.Now.ToString ("yyyyMMdd") + ".unitypackage";
         string floderPath = "D:/UnityWork/AFrameWork/";
 
