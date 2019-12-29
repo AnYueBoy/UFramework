@@ -16,11 +16,14 @@ using UnityEngine;
 
 public class Util {
 
-    public static float getAspect () {
+    private static float getAspect () {
         float aspect = (float) Screen.width / Screen.height;
         return aspect;
     }
 
+    /// <summary>
+    /// 清空控制台信息
+    /// </summary>
     public static void clearConsole () {
         Type log = typeof (EditorWindow).Assembly.GetType ("UnityEditor.LogEntries");
 
@@ -28,6 +31,10 @@ public class Util {
         clearMethod.Invoke (null, null);
     }
 
+    /// <summary>
+    /// 是否横屏
+    /// </summary>
+    /// <returns></returns>
     public static bool isLandscape () {
         float aspect = getAspect ();
         if (aspect > 1) {
@@ -37,15 +44,23 @@ public class Util {
         return false;
     }
 
+    /// <summary>
+    /// 是否是ipad分辨率
+    /// </summary>
+    /// <returns></returns>
     public static bool isPadResoluation () {
         return targetValue (4 / 3.0f);
     }
 
+    /// <summary>
+    /// 是否是iphone分辨率
+    /// </summary>
+    /// <returns></returns>
     public static bool isPhone () {
         return targetValue (16 / 9.0f);
     }
 
-    public static bool targetValue (float value) {
+    private static bool targetValue (float value) {
         float offset = 0.05f;
         float aspect = getAspect ();
         if (aspect > value - offset && aspect < value + offset) {
@@ -54,6 +69,10 @@ public class Util {
         return false;
     }
 
+    /// <summary>
+    /// 归并排序
+    /// </summary>
+    /// <param name="targetArray">目标数组</param>
     public static void mergeSort (List<double> targetArray) {
         mSort (targetArray, 0, targetArray.Count - 1);
     }
@@ -115,6 +134,10 @@ public class Util {
         qSort (array, i + 1, high);
     }
 
+    /// <summary>
+    /// 快速排序
+    /// </summary>
+    /// <param name="array">目标数组</param>
     public static void qucikSort (List<double> array) {
         qSort (array, 0, array.Count - 1);
     }
