@@ -20,6 +20,8 @@ public class GenerateFileName {
         exportPackage ();
     }
 
+    // you can use this tag mean this function is obsolete
+    //  [Obsolete ("this function is obsolete")]
     private static void exportPackage () {
         string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework_" + DateTime.Now.ToString ("yyyyMMdd") + ".unitypackage";
         string floderPath = "D:/UnityWork/AFrameWork/";
@@ -33,6 +35,5 @@ public class GenerateFileName {
 
         // open package floder
         Application.OpenURL ("file:///" + floderPath);
-
     }
 }
