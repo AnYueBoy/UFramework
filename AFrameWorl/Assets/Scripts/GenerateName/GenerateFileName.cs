@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,10 +15,10 @@ public class GenerateFileName {
 
     [MenuItem ("AFramework/exportPackage %e")]
     private static void callExportPackage () {
-        GenerateFileName.exportPackage();
+        exportPackage ();
     }
 
-    public static void exportPackage(){
+    public static void exportPackage () {
         string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework_" + DateTime.Now.ToString ("yyyyMMdd") + ".unitypackage";
         string floderPath = "D:/UnityWork/AFrameWork/";
 
@@ -29,7 +30,7 @@ public class GenerateFileName {
         AssetDatabase.ExportPackage (assetPathName, filePathName, ExportPackageOptions.Recurse);
 
         // open package floder
-        Application.OpenURL("file:///"+floderPath);
+        Application.OpenURL ("file:///" + floderPath);
 
     }
 }
