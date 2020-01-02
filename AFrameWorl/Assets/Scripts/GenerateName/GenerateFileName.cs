@@ -15,7 +15,7 @@ using UnityEngine;
 
 public class GenerateFileName {
 
-    [MenuItem ("AFramework/exportPackage %e")]
+    [MenuItem ("AFramework/ExportPackage %e")]
     private static void callExportPackage () {
         exportPackage ();
     }
