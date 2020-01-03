@@ -33,11 +33,7 @@ public class MapBuild : MonoBehaviour {
 
         string filePath = Application.dataPath + "/MapConfig" + "/MapConfig.json";
 
-        FileInfo fileInfo = new FileInfo (filePath);
-        if (!File.Exists (filePath)) {
-            File.Delete (filePath);
-        }
-
+        // 当不存在文件时，流写入会自动创建文件
         StreamWriter sw = new StreamWriter (filePath);
 
         string jsonData = JsonMapper.ToJson (nodeList);
