@@ -19,21 +19,24 @@ public class ExportWindow : ScriptableWizard {
         GUILayout.Label (errorInfo);
         if (GUILayout.Button ("导出")) {
             if (currentLevel == null || currentLevel == "") {
-                errorInfo = "当前关卡值不能为空";
+                EditorUtility.DisplayDialog("失败","导出关卡值不能为空","确认");
                 return;
             }
 
             int level = Int16.Parse (currentLevel);
             if (level < 0) {
-                errorInfo = "当前关卡值不能小于0";
+                EditorUtility.DisplayDialog("失败","关卡值不能小于0","确认");
                 return;
             }
 
             MapBuild.exprotJson (level);
             window.Close ();
 
-            string openDir = Application.dataPath + "/MapConfig";
-            Application.OpenURL ("file:///" + openDir);
+            bool isOpenDis = EditorUtility.DisplayDialog ("成功", "是否打开文件所在文件夹", "确认", "取消");
+            if (isOpenDis) {
+                string openDir = Application.dataPath + "/MapConfig";
+                Application.OpenURL ("file:///" + openDir);
+            }
 
         }
     }
