@@ -109,6 +109,7 @@ public class UIManager : MonoBehaviour {
 
         GameObject uiNode = GameObject.Instantiate (prefab);
         uiNode.transform.SetParent (this.uiRoot.transform);
+        uiNode.transform.localPosition = Vector3.zero;
         BaseUI targetUI = uiNode.GetComponent<BaseUI> ();
         this.uiDic.Add (uiName, targetUI);
         if (callBack != null) {
