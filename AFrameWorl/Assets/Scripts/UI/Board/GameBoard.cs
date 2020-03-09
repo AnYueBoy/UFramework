@@ -12,6 +12,5 @@ using UnityEngine;
 
 public class GameBoard : BaseUI {
 
-    protected static string resUrl = "Board/GameBoard";
 }
 

@@ -1,5 +1,4 @@
-﻿using System;
-/*
+﻿/*
  * @Author: l hy 
  * @Date: 2020-03-07 17:13:07 
  * @Description: 界面管理器 
@@ -7,6 +6,7 @@
  * @Last Modified time: 2020-03-08 21:57:27
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour {
 
     private static UIManager instance = null;
 
-    private List<BaseUI> uiList = new List<BaseUI> ();
+    private Dictionary<string, BaseUI> uiDic = new Dictionary<string, BaseUI> ();
 
     private BaseUI currentBoard = null;
 
@@ -34,102 +34,83 @@ public class UIManager : MonoBehaviour {
         this.currentBoard = null;
     }
 
-    public void showBoard (BaseUI ui, params object[] args) {
-        BaseUI bUI = this.getUI (ui);
-        if (currentBoard != null && this.currentBoard == ui) {
+    public void showBoard (string uiName, params object[] args) {
+        BaseUI targerUI = this.getUI (uiName);
+        if (currentBoard != null && this.currentBoard == targerUI) {
             return;
         }
 
         this.showUI (
-            ui,
+            uiName,
             () => {
                 if (this.currentBoard != null) {
-                    this.hideUI (this.currentBoard.Tag);
+                    this.hideUI (uiName);
                 }
-                this.currentBoard = this.getUI (ui);
+
+                this.currentBoard = this.getUI (uiName);
             },
             args);
     }
 
     public void hideAllDialog () {
-        for (int i = 0; i < this.uiList.Count; i++) {
-            BaseUI bUI = this.uiList[i];
-            if (bUI != null && bUI != this.currentBoard) {
-                this.hideUI (bUI.Tag);
+        foreach (BaseUI targerUI in this.uiDic.Values) {
+            if (targerUI != null && targerUI != this.currentBoard) {
+                this.hideUI (targerUI.name);
             }
         }
     }
 
-    public void showDialog (BaseUI ui, params object[] args) {
-        this.showUI (ui, null, args);
+    public void showDialog (string uiName, params object[] args) {
+        this.showUI (uiName, null, args);
     }
 
-    private void hideUI (BaseUI ui) {
-        BaseUI bUI = this.getUI (ui);
-        if (ui != null) {
-            ui.gameObject.SetActive (false);
+    private void hideUI (string uiName) {
+        BaseUI targetUI = this.getUI (uiName);
+        if (targetUI != null) {
+            targetUI.gameObject.SetActive (false);
         }
     }
 
-    private BaseUI getUI (BaseUI ui) {
-        for (int i = 0; i < this.uiList.Count; i++) {
-            if (this.uiList[i].Tag == ui) {
-                return this.uiList[i];
-            }
+    private BaseUI getUI (string uiName) {
+        if (this.uiDic.ContainsKey (uiName)) {
+            return this.uiDic[uiName];
         }
 
         return null;
     }
 
-    private void showUI (BaseUI ui, Action callBack = null) {
-        BaseUI bUI = this.getUI (ui);
-        if (ui != null) {
-            ui.gameObject.SetActive (true);
+    private void showUI (string uiName, Action callBack = null, params object[] args) {
+        BaseUI targetUI = this.getUI (uiName);
+        if (targetUI != null) {
+            targetUI.gameObject.SetActive (true);
             if (callBack != null) {
                 callBack ();
             }
 
-            bUI.onShow ();
+            targetUI.onShow (args);
         } else {
-            this.openUI (ui, () => {
-                if (callBack != null) {
-                    callBack ();
+            this.openUI (
+                uiName,
+                () => {
+                    if (callBack != null) {
+                        callBack ();
+                    }
+
+                    BaseUI ui = this.getUI (uiName);
+                    ui.onShow (args);
                 }
-                BaseUI ui1 = this.getUI (ui);
-                bUI.onShow ();
-            });
+            );
         }
     }
 
-    private void showUI (BaseUI ui, Action callBack = null, params object[] args) {
-        BaseUI bUI = this.getUI (ui);
-        if (ui != null) {
-            ui.gameObject.SetActive (true);
-            if (callBack != null) {
-                callBack ();
-            }
-
-            bUI.onShow (args);
-        } else {
-            this.openUI (ui, () => {
-                if (callBack != null) {
-                    callBack ();
-                }
-                BaseUI ui1 = this.getUI (ui);
-                bUI.onShow (args);
-            });
-        }
-    }
-
-    private void openUI (BaseUI ui, Action callBack) {
-        string url = ui.getUrl ();
-
+    private void openUI (string uiName, Action callBack) {
+        string url = UrlString.uiUrl + uiName;
         GameObject prefab = Resources.Load<GameObject> (url);
 
         GameObject uiNode = GameObject.Instantiate (prefab);
-        uiNode.transform.parent = this.uiRoot.transform;
-        BaseUI bUI = uiNode.GetComponent<BaseUI> ();
-        this.uiList.Add (bUI);
+        uiNode.transform.SetParent (this.uiRoot.transform);
+        BaseUI targetUI = uiNode.GetComponent<BaseUI> ();
+        this.uiDic.Add (uiName, targetUI);
         if (callBack != null) {
             callBack ();
         }

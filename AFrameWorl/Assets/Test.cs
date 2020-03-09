@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Test : MonoBehaviour {
-    // Start is called before the first frame update
+    private void Awake () {
+     
+    }
     void Start () {
-        UIManager.getInstance ().showBoard (GameBoard);
+      UIManager.getInstance().showBoard("GameBoard"); 
     }
 
-    // Update is called once per frame
     void Update () {
 
     }
