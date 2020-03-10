@@ -14,16 +14,8 @@ public class MonoUtil : MonoBehaviour {
         finished ();
     }
 
-    private Vector2[] pathList = null;
-
-    /// <summary>
-    /// 绘制路径
-    /// </summary>
-    /// <param name="path">路径信息</param>
-    protected void drawLine (Vector2[] path) {
-        this.pathList = path;
-    }
-
+    [Header ("路径点")]
+    public Vector2[] pathList = null;
     private void OnDrawGizmos () {
         if (this.pathList == null || this.pathList.Length <= 0) {
             return;
@@ -42,6 +34,5 @@ public class MonoUtil : MonoBehaviour {
         }
 
         Gizmos.color = orginColor;
-
     }
 }
