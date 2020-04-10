@@ -10,7 +10,7 @@ using UnityEngine;
  * @Date: 2019-12-08 14:39:05 
  * @Description: 导出unitypackage 包资源
  * @Last Modified by: l hy
- * @Last Modified time: 2019-12-08 17:02:32
+ * @Last Modified time: 2020-04-10 22:48:36
  */
 
 public class GenerateFileName {
@@ -23,10 +23,12 @@ public class GenerateFileName {
     // you can use this tag mean this function is obsolete
     //  [Obsolete ("this function is obsolete")]
     private static void exportPackage () {
-        string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework_" + DateTime.Now.ToString ("yyyyMMdd") + ".unitypackage";
+        // 时间戳
+        string timeStamp = DateTime.Now.ToString ("yyyyMMdd");
+        string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework" + ".unitypackage";
         string floderPath = "D:/UnityWork/AFrameWork/";
 
-        string assetPathName = "Assets/Scripts";
+        string assetPathName = "Assets/ExportAssets";
 
         // you can use this api let file name to copy board
         // GUIUtility.systemCopyBuffer = fileTime;
