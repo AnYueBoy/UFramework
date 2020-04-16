@@ -28,7 +28,7 @@ public class GenerateFileName {
         string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework" + ".unitypackage";
         string floderPath = "D:/UnityWork/AFrameWork/";
 
-        string assetPathName = "Assets/ExportAssets";
+        string assetPathName = "Assets/AFramework";
 
         // you can use this api let file name to copy board
         // GUIUtility.systemCopyBuffer = fileTime;
