@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+
 using UnityEngine;
 
 /*
  * @Author: l hy 
  * @Date: 2019-12-16 23:05:55 
  * @Description: 工具类
- * @Last Modified by: l hy 
- * @Last Modified time: 2019-12-16 23:05:55 
+ * @Last Modified by: l hy
+ * @Last Modified time: 2020-05-12 08:39:05
  */
 
 public class Util {
@@ -19,16 +17,6 @@ public class Util {
     private static float getAspect () {
         float aspect = (float) Screen.width / Screen.height;
         return aspect;
-    }
-
-    /// <summary>
-    /// 清空控制台信息
-    /// </summary>
-    public static void clearConsole () {
-        Type log = typeof (EditorWindow).Assembly.GetType ("UnityEditor.LogEntries");
-
-        var clearMethod = log.GetMethod ("Clear");
-        clearMethod.Invoke (null, null);
     }
 
     /// <summary>
