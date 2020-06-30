@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class ExportTexture {
 
-    [MenuItem ("AFramework/ExportTextures")]
+    [MenuItem ("UFramework/ExportTextures")]
     private static void exportTextures () {
         Texture2D image = Selection.activeObject as Texture2D;
         if (Selection.activeObject == null) {

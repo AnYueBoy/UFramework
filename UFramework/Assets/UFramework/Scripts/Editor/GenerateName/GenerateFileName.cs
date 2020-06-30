@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -15,7 +16,7 @@ using UnityEngine;
 
 public class GenerateFileName {
 
-    [MenuItem ("AFramework/ExportPackage %e")]
+    [MenuItem ("UFramework/ExportPackage %e")]
     private static void callExportPackage () {
         exportPackage ();
     }
@@ -25,10 +26,14 @@ public class GenerateFileName {
     private static void exportPackage () {
         // 时间戳
         string timeStamp = DateTime.Now.ToString ("yyyyMMdd");
-        string filePathName = "D:/UnityWork/AFrameWork/" + "AFramework" + ".unitypackage";
-        string floderPath = "D:/UnityWork/AFrameWork/";
+        string projectPath = Directory.GetParent (Application.dataPath).FullName;
+        string packagePath = Directory.GetParent (projectPath).FullName;
 
-        string assetPathName = "Assets/AFramework";
+        string filePathName = packagePath + @"\UFramework" + ".unitypackage";
+
+        Debug.LogWarning ("path: " + filePathName);
+
+        string assetPathName = "Assets/UFramework";
 
         // you can use this api let file name to copy board
         // GUIUtility.systemCopyBuffer = fileTime;
@@ -36,6 +41,6 @@ public class GenerateFileName {
         AssetDatabase.ExportPackage (assetPathName, filePathName, ExportPackageOptions.Recurse);
 
         // open package floder
-        Application.OpenURL ("file:///" + floderPath);
+        Application.OpenURL ("file:///" + packagePath);
     }
 }

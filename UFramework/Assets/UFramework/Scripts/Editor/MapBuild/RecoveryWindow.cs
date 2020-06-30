@@ -8,7 +8,7 @@ public class RecoveryWindow : ScriptableWizard {
 
     private static RecoveryWindow window = null;
 
-    [MenuItem ("AFramework/RecoveryWindow")]
+    [MenuItem ("UFramework/RecoveryWindow")]
     public static void recoveryNode () {
         window = EditorWindow.GetWindow<RecoveryWindow> (false, "恢复场景节点");
     }

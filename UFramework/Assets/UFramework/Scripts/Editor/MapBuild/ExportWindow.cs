@@ -6,7 +6,7 @@ public class ExportWindow : ScriptableWizard {
 
     private static ExportWindow window = null;
 
-    [MenuItem ("AFramework/ExportWindow")]
+    [MenuItem ("UFramework/ExportWindow")]
     private static void exportJson () {
         window = EditorWindow.GetWindow<ExportWindow> ("导出json数据");
     }
