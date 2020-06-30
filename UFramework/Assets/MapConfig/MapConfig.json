@@ -1,0 +1,70 @@
+{
+    "levels": [
+        {
+            "currentLevel": 2,
+            "nodeList": [
+                {
+                    "nodeName": "Cube",
+                    "x": 0.0,
+                    "y": 1.0,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                },
+                {
+                    "nodeName": "Cube",
+                    "x": 0.0,
+                    "y": 1.0,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                },
+                {
+                    "nodeName": "Cube",
+                    "x": 0.0,
+                    "y": 1.0,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                },
+                {
+                    "nodeName": "Cube",
+                    "x": 0.0,
+                    "y": 1.0,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                }
+            ]
+        },
+        {
+            "currentLevel": 1,
+            "nodeList": [
+                {
+                    "nodeName": "Cube",
+                    "x": -9.42000007629395,
+                    "y": 2.21000003814697,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                },
+                {
+                    "nodeName": "Cube",
+                    "x": -4.84000015258789,
+                    "y": 4.61999988555908,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                },
+                {
+                    "nodeName": "Cube",
+                    "x": -1.63999998569489,
+                    "y": 2.42999982833862,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                },
+                {
+                    "nodeName": "Cube",
+                    "x": -4.92999982833862,
+                    "y": -0.0199999809265137,
+                    "rotation": 0.0,
+                    "scale": 1.0
+                }
+            ]
+        }
+    ]
+}
