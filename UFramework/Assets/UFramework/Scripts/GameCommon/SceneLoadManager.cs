@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 /*
  * @Author: l hy 
  * @Date: 2020-04-10 21:54:42 
@@ -25,10 +26,11 @@ public class SceneLoadManager {
     }
 
     /// <summary>
-    /// 切换下一场景
+    /// 加载下一场景
     /// </summary>
-    public void loadNextScene (bool isSceneIndex = true) {
-        if (isSceneIndex) {
+    /// <param name="isFromSceneConfig">是否从场景配置文件中加载场景</param>
+    public void loadNextScene (bool isFromSceneConfig = false, Action<AsyncOperation> callBack = null) {
+        if (!isFromSceneConfig) {
             int currentSceneIndex = SceneManager.GetActiveScene ().buildIndex;
             int resultSceneIndex = currentSceneIndex + 1;
             int allSceneCount = SceneManager.sceneCountInBuildSettings;
@@ -36,7 +38,7 @@ public class SceneLoadManager {
                 resultSceneIndex = allSceneCount;
             }
 
-            SceneManager.LoadScene (resultSceneIndex);
+            this.loadScene (resultSceneIndex, callBack);
             return;
         }
 
@@ -63,14 +65,30 @@ public class SceneLoadManager {
             return;
         }
 
-        SceneManager.LoadScene (nextSceneName);
+        this.loadScene (nextSceneName, callBack);
     }
 
-    public void loadAppointScene (string sceneName) {
+    public void loadAppointScene (string sceneName, Action<AsyncOperation> callBack = null) {
         if (string.IsNullOrEmpty (sceneName)) {
             return;
         }
 
-        SceneManager.LoadScene (sceneName);
+        this.loadScene (sceneName, callBack);
+    }
+
+    public void loadScene (string sceneName, Action<AsyncOperation> callBack = null) {
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync (sceneName);
+
+        if (callBack != null) {
+            asyncOperation.completed += callBack;
+        }
+    }
+
+    public void loadScene (int sceneIndex, Action<AsyncOperation> callBack = null) {
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync (sceneIndex);
+
+        if (callBack != null) {
+            asyncOperation.completed += callBack;
+        }
     }
 }
