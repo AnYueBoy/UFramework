@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,6 @@ public class HallBoard : MonoBehaviour {
     }
 
     public void loadNextScene () {
-        SceneLoadManager.getInstance ().loadNextScene ();
+        SceneLoadManager.getInstance ().loadNextScene (false, (AsyncOperation asy) => { Debug.Log ("加载完成"); });
     }
 }
