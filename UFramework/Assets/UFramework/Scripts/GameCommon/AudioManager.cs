@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using UFramework;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour {
@@ -11,38 +13,112 @@ public class AudioManager : MonoBehaviour {
 
     private Dictionary<string, AudioClip> clipDic = new Dictionary<string, AudioClip> ();
 
-    private AudioSource audioSource = null;
-
     private void Awake () {
         instance = this;
 
         gameObject.AddComponent<AudioListener> ();
-        this.audioSource = gameObject.AddComponent<AudioSource> ();
     }
 
-    public void playSoundByName (string soundName, bool isOnShot = false) {
-        if (!this.audioSource) {
+    private AudioSource soundSource = null;
+
+    /// <summary>
+    /// 播放音效
+    /// </summary>
+    /// <param name="soundName">音效名</param>
+    public void playSound (string soundName) {
+        if (!this.soundSource) {
+            this.soundSource = gameObject.AddComponent<AudioSource> ();
+        }
+
+        AudioClip targetClip = this.getAudioClipByName (soundName);
+
+        this.soundSource.PlayOneShot (targetClip);
+    }
+
+    private AudioSource musicSource = null;
+
+    public void playMusic (string musicName, bool isLoop = true) {
+        if (!Util.isVialid (musicName)) {
             return;
         }
 
-        if (!this.clipDic.ContainsKey (soundName)) {
-            AudioClip clip = this.loadClipByUrl (soundName);
-            if (clip == null) {
+        if (!this.musicSource) {
+            this.musicSource = this.gameObject.AddComponent<AudioSource> ();
+        }
+
+        if (this.musicSource.clip) {
+            if (this.musicSource.clip.name == musicName) {
                 return;
             }
-
-            this.clipDic.Add (soundName, clip);
         }
 
-        AudioClip targetClip = this.clipDic[soundName];
+        AudioClip targetClip = this.getAudioClipByName (musicName);
+        this.musicSource.clip = targetClip;
+        this.musicSource.loop = isLoop;
+        this.musicSource.Play ();
+    }
 
-        if (isOnShot) {
-            this.audioSource.PlayOneShot (targetClip);
-        } else {
-            this.audioSource.clip = targetClip;
-            this.audioSource.Play ();
+    public void pauseMusic () {
+        if (!this.musicSource) {
+            return;
         }
 
+        if (!this.musicSource.clip) {
+            return;
+        }
+
+        if (!this.musicSource.isPlaying) {
+            return;
+        }
+
+        this.musicSource.Pause ();
+    }
+
+    public void stopMusic () {
+        if (!this.musicSource) {
+            return;
+        }
+
+        if (!this.musicSource.clip) {
+            return;
+        }
+
+        if (!this.musicSource.isPlaying) {
+            return;
+        }
+
+        this.musicSource.Stop ();
+        this.musicSource.clip = null;
+    }
+
+    public void resumeMusic () {
+        if (!this.musicSource) {
+            return;
+        }
+
+        if (!this.musicSource.clip) {
+            return;
+        }
+
+        if (this.musicSource.isPlaying) {
+            return;
+        }
+
+        this.musicSource.Play ();
+    }
+
+    private AudioClip getAudioClipByName (string clipName) {
+        if (this.clipDic.ContainsKey (clipName)) {
+            return this.clipDic[clipName];
+        }
+
+        AudioClip clip = this.loadClipByUrl (clipName);
+        if (clip == null) {
+            return null;
+        }
+
+        this.clipDic.Add (clipName, clip);
+        return clip;
     }
 
     private AudioClip loadClipByUrl (string url) {
