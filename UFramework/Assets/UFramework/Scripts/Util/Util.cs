@@ -130,5 +130,19 @@
            public static void qucikSort (List<double> array) {
                qSort (array, 0, array.Count - 1);
            }
+
+           /// <summary>
+           /// 字符串是否存在
+           /// </summary>
+           /// <param name="target"></param>
+           /// <returns></returns>
+           public static bool isVialid (string target) {
+               if (target == null || target == "") {
+                   return false;
+               }
+
+               return true;
+           }
        }
+
    }
