@@ -13,7 +13,7 @@
        using System;
        using UnityEngine;
 
-       public class Util {
+       public static class Util {
 
            private static float getAspect () {
                float aspect = (float) Screen.width / Screen.height;
@@ -62,7 +62,7 @@
            /// 归并排序
            /// </summary>
            /// <param name="targetArray">目标数组</param>
-           public static void mergeSort (List<double> targetArray) {
+           public static void mergeSort (this List<double> targetArray) {
                mSort (targetArray, 0, targetArray.Count - 1);
            }
 
@@ -127,7 +127,7 @@
            /// 快速排序
            /// </summary>
            /// <param name="array">目标数组</param>
-           public static void qucikSort (List<double> array) {
+           public static void quickSort (this List<double> array) {
                qSort (array, 0, array.Count - 1);
            }
 
@@ -136,7 +136,7 @@
            /// </summary>
            /// <param name="target"></param>
            /// <returns></returns>
-           public static bool isVialid (string target) {
+           public static bool isVialid (this string target) {
                if (target == null || target == "") {
                    return false;
                }

@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class MonoUtil : MonoBehaviour {
 
-    public void deleay (float time, Action onFinished) {
-        StartCoroutine (deleayCoroutine (time, onFinished));
+    public void delay (float time, Action onFinished) {
+        StartCoroutine (delayCoroutine (time, onFinished));
     }
 
-    private IEnumerator deleayCoroutine (float time, Action finished) {
+    private IEnumerator delayCoroutine (float time, Action finished) {
         yield return new WaitForSeconds (time);
         finished ();
     }
