@@ -3,7 +3,7 @@
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2020-10-10 07:20:59
+ * @Last Modified time: 2020-10-10 07:27:03
  */
 
 using System.Collections;
@@ -16,7 +16,7 @@ public class AssetsManager {
 
     private Dictionary<string, int> referenceCounter = new Dictionary<string, int> ();
 
-    public Object getJson (string assetsUrl) {
+    public Object getAssetsByUrl (string assetsUrl) {
         Object targetAssets = null;
         this.addRef (assetsUrl);
         if (assetsPool.ContainsKey (assetsUrl)) {
@@ -29,6 +29,13 @@ public class AssetsManager {
 
         return targetAssets;
     }
+
+    // FIXME: 等待完善
+    // public int unLoadAssetByUrl (string assetsUrl) {
+    //     if (!referenceCounter.ContainsKey (assetsUrl)) {
+    //         Resources.UnloadUnusedAssets ();
+    //     }
+    // }
 
     private void addRef (string assetsUrl) {
         if (referenceCounter.ContainsKey (assetsUrl)) {
