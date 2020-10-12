@@ -12,8 +12,8 @@ using UnityEngine;
 
 public class AssetsLoadManager {
 
-    public static Object loadAssets (string assetsUrl) {
+    public static T loadAssets<T> (string assetsUrl) where T : Object {
         //  load json prefab or audioclip 
-        return Resources.Load (assetsUrl);
+        return Resources.Load<T> (assetsUrl);
     }
 }

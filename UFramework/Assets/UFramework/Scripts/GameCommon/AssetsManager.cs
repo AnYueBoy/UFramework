@@ -16,18 +16,18 @@ public class AssetsManager {
 
     private Dictionary<string, int> referenceCounter = new Dictionary<string, int> ();
 
-    public Object getAssetsByUrl (string assetsUrl) {
+    public T getAssetsByUrl<T> (string assetsUrl) where T : Object {
         Object targetAssets = null;
         this.addRef (assetsUrl);
         if (assetsPool.ContainsKey (assetsUrl)) {
             targetAssets = assetsPool[assetsUrl];
-            return targetAssets;
+            return targetAssets as T;
         }
 
-        targetAssets = AssetsLoadManager.loadAssets (assetsUrl);
+        targetAssets = AssetsLoadManager.loadAssets<T> (assetsUrl);
         assetsPool.Add (assetsUrl, targetAssets);
 
-        return targetAssets;
+        return targetAssets as T;
     }
 
     // FIXME: 等待完善
