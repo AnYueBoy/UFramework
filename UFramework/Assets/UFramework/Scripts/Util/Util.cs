@@ -9,8 +9,6 @@
    namespace UFramework {
 
        using System.Collections.Generic;
-       using System.Collections;
-       using System;
        using UnityEngine;
 
        public static class Util {
@@ -142,6 +140,33 @@
                }
 
                return true;
+           }
+
+           /// <summary>
+           /// 获取区间内的随机数值[min,max]
+           /// </summary>
+           /// <param name="min"></param>
+           /// <param name="max"></param>
+           /// <returns></returns>
+           public static int getRandomValue (int min, int max) {
+               min = min > max?max : min;
+               max = max < min?min : max;
+               int result = Random.Range (min, max + 1);
+               return result;
+           }
+
+           /// <summary>
+           /// 混乱数组元素
+           /// </summary>
+           /// <param name="sourceList"></param>
+           /// <typeparam name="T"></typeparam>
+           public static void confusionElement<T> (List<T> sourceList) {
+               for (int i = sourceList.Count - 1; i >= 0; i--) {
+                   int randomValue = getRandomValue (0, i);
+                   T tempValue = sourceList[i];
+                   sourceList[i] = sourceList[randomValue];
+                   sourceList[randomValue] = tempValue;
+               }
            }
        }
 
