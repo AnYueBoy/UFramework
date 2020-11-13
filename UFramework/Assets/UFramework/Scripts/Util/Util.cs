@@ -129,6 +129,69 @@
                qSort (array, 0, array.Count - 1);
            }
 
+           #region 二叉堆
+
+           /// <summary>
+           /// 上浮(子节点,用于插入数据，插入数据放入数组尾端)
+           /// </summary>
+           private static void upFloat (List<int> targetList) {
+               int childIndex = targetList.Count - 1;
+               int parentIndex = childIndex >> 1;
+               int tempValue = targetList[childIndex];
+
+               while (childIndex > 0 && tempValue > targetList[parentIndex]) {
+                   targetList[childIndex] = targetList[parentIndex];
+                   childIndex = parentIndex;
+                   parentIndex >>= 1;
+               }
+
+               targetList[childIndex] = tempValue;
+           }
+
+           /// <summary>
+           /// 下沉(用于删除节点，亦用于重构整个二叉堆)
+           /// </summary>
+           /// <param name="targetIndex">删除的节点索引</param>
+           /// <param name="targetList"></param>
+           private static void downSink (int targetIndex, List<int> targetList) {
+               int parentIndex = targetIndex;
+               // 左子节点
+               int childIndex = (parentIndex << 1) + 1;
+               int tempValue = targetList[parentIndex];
+
+               while (childIndex <= targetList.Count - 1) {
+                   int rightChildIndex = childIndex + 1;
+                   // 若有右子节点，且右子节点比左子节点大，则将 childrenIndex 记录为右子节点的下标
+                   if (rightChildIndex <= targetList.Count - 1 && targetList[rightChildIndex] > targetList[childIndex]) {
+                       childIndex++;
+                   }
+
+                   // 如果父节点大于子节点，则无需下沉，直接返回
+                   if (tempValue >= targetList[childIndex]) {
+                       break;
+                   }
+
+                   targetList[parentIndex] = targetList[childIndex];
+
+                   parentIndex = childIndex;
+                   childIndex = (parentIndex << 1) + 1;
+               }
+
+               targetList[parentIndex] = tempValue;
+           }
+
+           /// <summary>
+           /// 构建二叉堆
+           /// </summary>
+           /// <param name="targetList"></param>
+           public static void buildBinaryHeap (List<int> targetList) {
+               for (int i = targetList.Count / 2 - 1; i >= 0; i--) {
+                   downSink (i, targetList);
+               }
+           }
+
+           #endregion
+
            /// <summary>
            /// 字符串是否存在
            /// </summary>
