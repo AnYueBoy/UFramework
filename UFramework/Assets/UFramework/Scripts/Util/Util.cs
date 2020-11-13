@@ -56,6 +56,8 @@
                return false;
            }
 
+           #region 归并排序
+
            /// <summary>
            /// 归并排序
            /// </summary>
@@ -101,6 +103,9 @@
                }
            }
 
+           #endregion
+
+           #region 快速排序
            private static void qSort (List<double> array, int low, int high) {
                if (low >= high) {
                    return;
@@ -128,6 +133,7 @@
            public static void quickSort (this List<double> array) {
                qSort (array, 0, array.Count - 1);
            }
+           #endregion
 
            #region 二叉堆
 
