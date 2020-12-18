@@ -237,6 +237,29 @@
                    sourceList[randomValue] = tempValue;
                }
            }
-       }
 
+           /// <summary>
+           /// 有序数组去重
+           /// </summary>
+           /// <param name="sourceList">原数组</param>
+           public static void removeDuplicate (List<int> sourceList) {
+               int first = 0;
+
+               int second;
+
+               int sourceListCount = sourceList.Count;
+               if (sourceListCount <= 1) {
+                   return;
+               }
+
+               for (second = 1; second < sourceListCount; second++) {
+                   if (sourceList[first] != sourceList[second]) {
+                       sourceList[++first] = sourceList[second];
+                   }
+               }
+
+               int newListLength = first + 1;
+               sourceList = sourceList.GetRange (0, newListLength);
+           }
+       }
    }
