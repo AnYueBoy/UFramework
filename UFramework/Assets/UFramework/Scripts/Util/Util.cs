@@ -239,7 +239,7 @@
            }
 
            /// <summary>
-           /// 数组去重
+           /// 有序数组去重
            /// </summary>
            /// <param name="sourceList">原数组</param>
            public static void removeDuplicate (List<int> sourceList) {
