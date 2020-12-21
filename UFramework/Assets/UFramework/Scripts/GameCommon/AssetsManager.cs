@@ -22,7 +22,7 @@ public class AssetsManager {
             return targetAssets as T;
         }
 
-        targetAssets = AssetsLoadManager.loadAssets<T> (assetsUrl);
+        targetAssets = Resources.Load<T> (assetsUrl);
         assetsPool.Add (assetsUrl, targetAssets);
         this.addRef (assetsUrl);
         return targetAssets as T;
