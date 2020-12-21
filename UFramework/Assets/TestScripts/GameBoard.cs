@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UFramework.GameCommon;
 using UnityEngine;
 
 public class GameBoard : MonoBehaviour

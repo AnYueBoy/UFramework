@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UFramework;
+using UFramework.GameCommon;
 using UnityEngine;
 
 public class HallBoard : MonoBehaviour {

@@ -3,15 +3,15 @@
     * @Date: 2019-12-16 23:05:55 
     * @Description: 工具类
     * @Last Modified by: l hy
-    * @Last Modified time: 2020-05-12 08:39:05
+    * @Last Modified time: 2020-12-21 16:44:12
     */
 
-   namespace UFramework {
+   namespace UFramework.Util {
 
        using System.Collections.Generic;
        using UnityEngine;
 
-       public static class Util {
+       public static class CommonUtil {
 
            private static float getAspect () {
                float aspect = (float) Screen.width / Screen.height;
