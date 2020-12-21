@@ -3,117 +3,119 @@
  * @Date: 2020-03-07 17:13:07 
  * @Description: 界面管理器 
  * @Last Modified by: l hy
- * @Last Modified time: 2020-03-08 21:57:27
+ * @Last Modified time: 2020-12-21 16:48:44
  */
+namespace UFramework.GameCommon {
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+    using System.Collections.Generic;
+    using System;
+    using UnityEngine;
+    using UFramework.Const;
 
-public class UIManager : MonoBehaviour {
+    public class UIManager : MonoBehaviour {
 
-    private static UIManager instance = null;
+        private static UIManager instance = null;
 
-    private Dictionary<string, BaseUI> uiDic = new Dictionary<string, BaseUI> ();
+        private Dictionary<string, BaseUI> uiDic = new Dictionary<string, BaseUI> ();
 
-    private BaseUI currentBoard = null;
+        private BaseUI currentBoard = null;
 
-    [Header ("ui根节点")]
-    public GameObject uiRoot;
+        [Header ("ui根节点")]
+        public GameObject uiRoot;
 
-    public static UIManager getInstance () {
-        return instance;
-    }
-
-    private void Awake () {
-        if (instance == null) {
-            instance = this;
+        public static UIManager getInstance () {
+            return instance;
         }
 
-        this.currentBoard = null;
-    }
+        private void Awake () {
+            if (instance == null) {
+                instance = this;
+            }
 
-    public void showBoard (string uiName, params object[] args) {
-        BaseUI targerUI = this.getUI (uiName);
-        if (currentBoard != null && this.currentBoard == targerUI) {
-            return;
+            this.currentBoard = null;
         }
 
-        this.showUI (
-            uiName,
-            () => {
-                if (this.currentBoard != null) {
-                    this.hideUI (uiName);
+        public void showBoard (string uiName, params object[] args) {
+            BaseUI targerUI = this.getUI (uiName);
+            if (currentBoard != null && this.currentBoard == targerUI) {
+                return;
+            }
+
+            this.showUI (
+                uiName,
+                () => {
+                    if (this.currentBoard != null) {
+                        this.hideUI (uiName);
+                    }
+
+                    this.currentBoard = this.getUI (uiName);
+                },
+                args);
+        }
+
+        public void hideAllDialog () {
+            foreach (BaseUI targerUI in this.uiDic.Values) {
+                if (targerUI != null && targerUI != this.currentBoard) {
+                    this.hideUI (targerUI.name);
                 }
-
-                this.currentBoard = this.getUI (uiName);
-            },
-            args);
-    }
-
-    public void hideAllDialog () {
-        foreach (BaseUI targerUI in this.uiDic.Values) {
-            if (targerUI != null && targerUI != this.currentBoard) {
-                this.hideUI (targerUI.name);
             }
         }
-    }
 
-    public void showDialog (string uiName, params object[] args) {
-        this.showUI (uiName, null, args);
-    }
-
-    private void hideUI (string uiName) {
-        BaseUI targetUI = this.getUI (uiName);
-        if (targetUI != null) {
-            targetUI.gameObject.SetActive (false);
-        }
-    }
-
-    private BaseUI getUI (string uiName) {
-        if (this.uiDic.ContainsKey (uiName)) {
-            return this.uiDic[uiName];
+        public void showDialog (string uiName, params object[] args) {
+            this.showUI (uiName, null, args);
         }
 
-        return null;
-    }
+        private void hideUI (string uiName) {
+            BaseUI targetUI = this.getUI (uiName);
+            if (targetUI != null) {
+                targetUI.gameObject.SetActive (false);
+            }
+        }
 
-    private void showUI (string uiName, Action callBack = null, params object[] args) {
-        BaseUI targetUI = this.getUI (uiName);
-        if (targetUI != null) {
-            targetUI.gameObject.SetActive (true);
+        private BaseUI getUI (string uiName) {
+            if (this.uiDic.ContainsKey (uiName)) {
+                return this.uiDic[uiName];
+            }
+
+            return null;
+        }
+
+        private void showUI (string uiName, Action callBack = null, params object[] args) {
+            BaseUI targetUI = this.getUI (uiName);
+            if (targetUI != null) {
+                targetUI.gameObject.SetActive (true);
+                if (callBack != null) {
+                    callBack ();
+                }
+
+                targetUI.onShow (args);
+            } else {
+                this.openUI (
+                    uiName,
+                    () => {
+                        if (callBack != null) {
+                            callBack ();
+                        }
+
+                        BaseUI ui = this.getUI (uiName);
+                        ui.onShow (args);
+                    }
+                );
+            }
+        }
+
+        private void openUI (string uiName, Action callBack) {
+            string url = UrlString.uiUrl + uiName;
+            GameObject prefab = Resources.Load<GameObject> (url);
+
+            GameObject uiNode = GameObject.Instantiate (prefab);
+            uiNode.transform.SetParent (this.uiRoot.transform);
+            uiNode.transform.localPosition = Vector3.zero;
+            BaseUI targetUI = uiNode.GetComponent<BaseUI> ();
+            this.uiDic.Add (uiName, targetUI);
             if (callBack != null) {
                 callBack ();
             }
-
-            targetUI.onShow (args);
-        } else {
-            this.openUI (
-                uiName,
-                () => {
-                    if (callBack != null) {
-                        callBack ();
-                    }
-
-                    BaseUI ui = this.getUI (uiName);
-                    ui.onShow (args);
-                }
-            );
-        }
-    }
-
-    private void openUI (string uiName, Action callBack) {
-        string url = UrlString.uiUrl + uiName;
-        GameObject prefab = Resources.Load<GameObject> (url);
-
-        GameObject uiNode = GameObject.Instantiate (prefab);
-        uiNode.transform.SetParent (this.uiRoot.transform);
-        uiNode.transform.localPosition = Vector3.zero;
-        BaseUI targetUI = uiNode.GetComponent<BaseUI> ();
-        this.uiDic.Add (uiName, targetUI);
-        if (callBack != null) {
-            callBack ();
         }
     }
 }
