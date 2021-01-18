@@ -1,7 +1,7 @@
 /*
  * @Author: l hy 
  * @Date: 2021-01-16 15:20:50 
- * @Description: 装饰节点(不能直接使用)
+ * @Description: 装饰节点(控制流节点)
  */
 
 using UFramework.AI.BehaviourTree.Node;
