@@ -3,7 +3,7 @@
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-01-18 22:24:06
+ * @Last Modified time: 2021-01-18 22:36:39
  */
 namespace UFramework.GameCommon {
 
@@ -21,16 +21,19 @@ namespace UFramework.GameCommon {
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public T getAssetByUrl<T> (string assetUrl) where T : Object {
-            Object targetAsset = null;
+            T targetAsset = null;
+            PackAsset packAsset = null;
             if (assetPool.ContainsKey (assetUrl)) {
-                targetAsset = assetPool[assetUrl].targetAsset;
-                return targetAsset as T;
+                packAsset = assetPool[assetUrl];
+                packAsset.addRef ();
+                targetAsset = packAsset.targetAsset as T;
+                return targetAsset;
             }
 
             targetAsset = Resources.Load<T> (assetUrl);
             PackAsset packageAsset = new PackAsset (targetAsset);
             assetPool.Add (assetUrl, packageAsset);
-            return targetAsset as T;
+            return targetAsset;
         }
 
         /// <summary>
@@ -46,6 +49,9 @@ namespace UFramework.GameCommon {
 
             PackAsset packAsset = this.assetPool[assetUrl];
             bool releaseResult = packAsset.releaseAsset ();
+            if (releaseResult) {
+                this.assetPool.Remove (assetUrl);
+            }
             return releaseResult;
         }
     }

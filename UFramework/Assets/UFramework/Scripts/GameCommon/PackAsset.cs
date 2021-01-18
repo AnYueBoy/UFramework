@@ -3,7 +3,7 @@
  * @Date: 2021-01-18 22:00:38 
  * @Description: 封装资源
  * @Last Modified by: l hy
- * @Last Modified time: 2021-01-18 22:14:44
+ * @Last Modified time: 2021-01-18 22:49:03
  */
 namespace UFramework.GameCommon {
     using UnityEngine;
@@ -22,14 +22,8 @@ namespace UFramework.GameCommon {
             this.referenceCounter++;
         }
 
-        public void reduceRef () {
-            this.referenceCounter--;
-            if (this.referenceCounter <= 0) {
-                this.releaseAsset ();
-            }
-        }
-
         public bool releaseAsset () {
+            this.referenceCounter--;
             if (this.referenceCounter > 0) {
                 return false;
             }
