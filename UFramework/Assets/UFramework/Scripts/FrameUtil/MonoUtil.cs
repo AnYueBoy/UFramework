@@ -3,7 +3,7 @@
  * @Date: 2020-12-21 16:30:23 
  * @Description: Mono工具类
  */
-namespace UFramework.Util {
+namespace UFramework.FrameUtil {
 
     using System.Collections;
     using System;
