@@ -3,7 +3,7 @@
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2020-12-21 16:42:38
+ * @Last Modified time: 2021-01-18 22:24:06
  */
 namespace UFramework.GameCommon {
 
@@ -12,60 +12,41 @@ namespace UFramework.GameCommon {
 
     public class AssetsManager {
 
-        private Dictionary<string, Object> assetsPool = new Dictionary<string, Object> ();
+        private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();
 
-        private Dictionary<string, int> referenceCounter = new Dictionary<string, int> ();
-
-        public T getAssetsByUrl<T> (string assetsUrl) where T : Object {
-            Object targetAssets = null;
-            if (assetsPool.ContainsKey (assetsUrl)) {
-                targetAssets = assetsPool[assetsUrl];
-                return targetAssets as T;
+        /// <summary>
+        /// 获取指定资源
+        /// </summary>
+        /// <param name="assetUrl"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T getAssetByUrl<T> (string assetUrl) where T : Object {
+            Object targetAsset = null;
+            if (assetPool.ContainsKey (assetUrl)) {
+                targetAsset = assetPool[assetUrl].targetAsset;
+                return targetAsset as T;
             }
 
-            targetAssets = Resources.Load<T> (assetsUrl);
-            assetsPool.Add (assetsUrl, targetAssets);
-            this.addRef (assetsUrl);
-            return targetAssets as T;
+            targetAsset = Resources.Load<T> (assetUrl);
+            PackAsset packageAsset = new PackAsset (targetAsset);
+            assetPool.Add (assetUrl, packageAsset);
+            return targetAsset as T;
         }
 
-        public void tryReleaseAssets (string assetsUrl) {
-            int result = this.redRef (assetsUrl);
-            if (result <= -1) {
-                Debug.LogError ("release assets error assets not exist");
-                return;
+        /// <summary>
+        /// 尝试释放资源并返回释放结果
+        /// </summary>
+        /// <param name="assetUrl"></param>
+        /// <returns></returns>
+        public bool tryReleaseAsset (string assetUrl) {
+            if (!this.assetPool.ContainsKey (assetUrl)) {
+                Debug.LogWarning ("can not release not exist asset");
+                return false;
             }
 
-            if (result == 0) {
-                Object assets = assetsPool[assetsUrl];
-                assetsPool.Remove (assetsUrl);
-                Resources.UnloadAsset (assets);
-                return;
-            }
-
-            Debug.LogWarning ("release assets error exist not zero ref");
-        }
-
-        private void addRef (string assetsUrl) {
-            if (referenceCounter.ContainsKey (assetsUrl)) {
-                referenceCounter[assetsUrl]++;
-            } else {
-                referenceCounter.Add (assetsUrl, 1);
-            }
-        }
-
-        private int redRef (string assetsUrl) {
-            if (!referenceCounter.ContainsKey (assetsUrl)) {
-                return -1;
-            }
-
-            referenceCounter[assetsUrl]--;
-            if (referenceCounter[assetsUrl] <= 0) {
-                referenceCounter.Remove (assetsUrl);
-                return 0;
-            }
-
-            return referenceCounter[assetsUrl];
+            PackAsset packAsset = this.assetPool[assetUrl];
+            bool releaseResult = packAsset.releaseAsset ();
+            return releaseResult;
         }
     }
 }
