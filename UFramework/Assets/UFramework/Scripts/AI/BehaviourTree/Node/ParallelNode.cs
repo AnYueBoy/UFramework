@@ -1,7 +1,7 @@
 /*
  * @Author: l hy 
  * @Date: 2021-01-16 14:59:57 
- * @Description: 并行节点
+ * @Description: 并行节点（控制流节点）
  */
 
 using System.Collections.Generic;

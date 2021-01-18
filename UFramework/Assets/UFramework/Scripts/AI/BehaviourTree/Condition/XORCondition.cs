@@ -1,7 +1,7 @@
 /*
  * @Author: l hy 
  * @Date: 2021-01-16 13:54:13 
- * @Description: 异或
+ * @Description: 异或条件
  */
 
 using UFramework.AI.BehaviourTree.Agent;

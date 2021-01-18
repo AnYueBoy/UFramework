@@ -1,7 +1,7 @@
 /*
  * @Author: l hy 
  * @Date: 2021-01-16 14:44:00 
- * @Description: 行为节点
+ * @Description: 动作节点（执行节点）
  */
 
 using UFramework.AI.BehaviourTree.Agent;

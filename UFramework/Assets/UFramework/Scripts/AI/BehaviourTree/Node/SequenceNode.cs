@@ -1,7 +1,7 @@
 /*
  * @Author: l hy 
  * @Date: 2021-01-16 15:40:08 
- * @Description: 队列节点
+ * @Description: 队列节点（控制流节点）
  */
 
 using UFramework.AI.BehaviourTree.Agent;
