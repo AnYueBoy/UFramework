@@ -3,7 +3,7 @@
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-01-18 22:36:39
+ * @Last Modified time: 2021-01-21 22:05:33
  */
 namespace UFramework.GameCommon {
 
@@ -20,7 +20,7 @@ namespace UFramework.GameCommon {
         /// <param name="assetUrl"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T getAssetByUrl<T> (string assetUrl) where T : Object {
+        public T getAssetByUrlSync<T> (string assetUrl) where T : Object {
             T targetAsset = null;
             PackAsset packAsset = null;
             if (assetPool.ContainsKey (assetUrl)) {
