@@ -1,4 +1,5 @@
-﻿/*
+﻿using System;
+/*
  * @Author: l hy 
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
@@ -8,6 +9,7 @@
 namespace UFramework.GameCommon {
 
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using UnityEngine;
 
     public class AssetsManager {
@@ -34,6 +36,47 @@ namespace UFramework.GameCommon {
             PackAsset packageAsset = new PackAsset (targetAsset);
             assetPool.Add (assetUrl, packageAsset);
             return targetAsset;
+        }
+
+        [Obsolete ("unity不允许")]
+        public async Task<T> getAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
+            T targetAsset = null;
+            PackAsset packAsset = null;
+            if (assetPool.ContainsKey (assetUrl)) {
+                packAsset = assetPool[assetUrl];
+                packAsset.addRef ();
+                targetAsset = packAsset.targetAsset as T;
+                return targetAsset;
+            }
+
+            targetAsset = await Task.Run (() => {
+                ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
+                return request.asset as T;
+            });
+
+            PackAsset packageAsset = new PackAsset (targetAsset);
+            assetPool.Add (assetUrl, packageAsset);
+            return targetAsset;
+        }
+
+        public void getAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object {
+            T targetAsset = null;
+            PackAsset packAsset = null;
+            if (assetPool.ContainsKey (assetUrl)) {
+                packAsset = assetPool[assetUrl];
+                packAsset.addRef ();
+                targetAsset = packAsset.targetAsset as T;
+                callback (targetAsset);
+            }
+
+            ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
+
+            request.completed += operation => {
+                PackAsset packageAsset = new PackAsset (targetAsset);
+                assetPool.Add (assetUrl, packageAsset);
+                callback (request.asset as T);
+            };
+
         }
 
         /// <summary>

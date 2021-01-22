@@ -16,11 +16,25 @@ public class Test : MonoBehaviour {
     private AssetsManager assetManager = new AssetsManager ();
 
     private void Start () {
-        GameObject cubePrefab = assetManager.getAssetByUrlSync<GameObject> ("Cube");
-        GameObject cubeNode = Instantiate<GameObject> (cubePrefab);
-        cubeNode.transform.SetParent (this.gameObject.transform);
+        // this.loadCube ();
+        this.loadCubeCallback ();
         this.loadAllRes ();
         Debug.Log ("继续下一步");
+    }
+
+    private async void loadCube () {
+        // FIXME: unity 不允许，在unity中我们使用多线程时。用子线程调用主线程时。用到unity的东西时就会报如下的错误。
+        GameObject cubePrefab = await assetManager.getAssetByUrlAsyncOb<GameObject> ("Cube");
+        GameObject cubeNode = Instantiate<GameObject> (cubePrefab);
+        cubeNode.transform.SetParent (this.gameObject.transform);
+    }
+
+    private void loadCubeCallback () {
+        assetManager.getAssetByUrlAsync<GameObject> ("Cube", (res) => {
+            GameObject cubeNode = Instantiate<GameObject> (res);
+            cubeNode.transform.SetParent (this.gameObject.transform);
+        });
+
     }
 
     private float assetTimer = 0;
