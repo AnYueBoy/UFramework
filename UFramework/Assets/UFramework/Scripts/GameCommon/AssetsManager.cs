@@ -23,15 +23,12 @@ namespace UFramework.GameCommon {
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public T getAssetByUrlSync<T> (string assetUrl) where T : Object {
-            T targetAsset = null;
-            PackAsset packAsset = null;
-            if (assetPool.ContainsKey (assetUrl)) {
-                packAsset = assetPool[assetUrl];
-                packAsset.addRef ();
-                targetAsset = packAsset.targetAsset as T;
-                return targetAsset;
+            T nativeAsset = this.findNativeAsset<T> (assetUrl);
+            if (nativeAsset != null) {
+                return nativeAsset;
             }
 
+            T targetAsset = null;
             targetAsset = Resources.Load<T> (assetUrl);
             PackAsset packageAsset = new PackAsset (targetAsset);
             assetPool.Add (assetUrl, packageAsset);
@@ -40,43 +37,45 @@ namespace UFramework.GameCommon {
 
         [Obsolete ("unity不允许")]
         public async Task<T> getAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
-            T targetAsset = null;
-            PackAsset packAsset = null;
-            if (assetPool.ContainsKey (assetUrl)) {
-                packAsset = assetPool[assetUrl];
-                packAsset.addRef ();
-                targetAsset = packAsset.targetAsset as T;
-                return targetAsset;
+            T nativeAsset = this.findNativeAsset<T> (assetUrl);
+            if (nativeAsset != null) {
+                return nativeAsset;
             }
 
+            T targetAsset = null;
             targetAsset = await Task.Run (() => {
                 ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
+                PackAsset packageAsset = new PackAsset (request.asset);
+                assetPool.Add (assetUrl, packageAsset);
                 return request.asset as T;
             });
 
-            PackAsset packageAsset = new PackAsset (targetAsset);
-            assetPool.Add (assetUrl, packageAsset);
             return targetAsset;
         }
 
         public void getAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object {
-            T targetAsset = null;
-            PackAsset packAsset = null;
-            if (assetPool.ContainsKey (assetUrl)) {
-                packAsset = assetPool[assetUrl];
-                packAsset.addRef ();
-                targetAsset = packAsset.targetAsset as T;
-                callback (targetAsset);
+            T nativeAsset = this.findNativeAsset<T> (assetUrl);
+            if (nativeAsset != null) {
+                callback (nativeAsset);
+                return;
             }
 
             ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
 
             request.completed += operation => {
-                PackAsset packageAsset = new PackAsset (targetAsset);
+                PackAsset packageAsset = new PackAsset (request.asset);
                 assetPool.Add (assetUrl, packageAsset);
                 callback (request.asset as T);
             };
+        }
 
+        private T findNativeAsset<T> (string assetUrl) where T : Object {
+            if (assetPool.ContainsKey (assetUrl)) {
+                PackAsset packAsset = assetPool[assetUrl];
+                packAsset.addRef ();
+                return packAsset.targetAsset as T;
+            }
+            return null;
         }
 
         /// <summary>
