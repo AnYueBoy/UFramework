@@ -5,6 +5,7 @@
  */
 namespace UFrameWork.Application {
     using System;
+    using UFrameWork.Develop;
     using UFrameWork.LogSystem;
     using UnityEngine;
 
@@ -63,7 +64,8 @@ namespace UFrameWork.Application {
             LogManager.init ();
 
             if (appMode != AppMode.Release) {
-                //TODO: 图形控制面板初始化
+                // 图形控制面板初始化
+                GUIConsole.init ();
             }
 
             // 热更
