@@ -73,7 +73,51 @@ namespace UFrameWork.Develop {
         }
 
         private static void consoleWindow (int windowID) {
+            if (scrollToBottom) {
+                GUILayout.BeginScrollView (Vector2.up * entries.Count * 100.0f);
+            } else {
+                scrollPos = GUILayout.BeginScrollView (scrollPos);
+            }
 
+            for (int i = 0; i < entries.Count; i++) {
+                ConsoleMessage entry = entries[i];
+                if (collapse && i > 0 && entry.message == entries[i - 1].message) {
+                    continue;
+                }
+
+                switch (entry.type) {
+                    case LogType.Error:
+                    case LogType.Exception:
+                        GUI.contentColor = Color.red;
+                        break;
+                    case LogType.Warning:
+                        GUI.contentColor = Color.yellow;
+                        break;
+                    default:
+                        GUI.contentColor = Color.white;
+                        break;
+                }
+
+                if (entry.type == LogType.Exception) {
+                    GUILayout.Label (entry.message + "||" + entry.stackTrace);
+                } else {
+                    GUILayout.Label (entry.message);
+                }
+
+                GUI.contentColor = Color.white;
+                GUILayout.EndScrollView ();
+
+                GUILayout.BeginHorizontal ();
+                if (GUILayout.Button (clearLabel)) {
+                    entries.Clear ();
+                }
+
+                collapse = GUILayout.Toggle (collapse, collapseLabel, GUILayout.ExpandWidth (false));
+                scrollToBottom = GUILayout.Toggle (scrollToBottom, scrollToBottomLabel, GUILayout.ExpandWidth (false));
+                GUILayout.EndHorizontal ();
+
+                GUI.DragWindow (new Rect (0, 0, 10000, 20));
+            }
         }
 
         private static void handleLog (string message, string stackTrace, LogType type) {
