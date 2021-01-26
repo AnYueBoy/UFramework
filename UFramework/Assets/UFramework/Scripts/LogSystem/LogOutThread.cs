@@ -10,8 +10,9 @@ namespace UFrameWork.LogSystem {
     using System.IO;
     using System.Threading;
     using System;
-    using UFrameWork.GameCommon;
     using UnityEngine;
+    using UFrameWork.Application;
+
     public class LogOutThread {
 
 #if UNITY_EDITOR
