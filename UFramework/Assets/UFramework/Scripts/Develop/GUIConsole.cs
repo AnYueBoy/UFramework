@@ -116,6 +116,8 @@ namespace UFrameWork.Develop {
                 scrollToBottom = GUILayout.Toggle (scrollToBottom, scrollToBottomLabel, GUILayout.ExpandWidth (false));
                 GUILayout.EndHorizontal ();
 
+                GUIUtility.ExitGUI ();
+
                 GUI.DragWindow (new Rect (0, 0, 10000, 20));
             }
         }
