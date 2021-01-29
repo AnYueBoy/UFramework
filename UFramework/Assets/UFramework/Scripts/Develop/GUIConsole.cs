@@ -22,7 +22,6 @@ namespace UFrameWork.Develop {
 
         private bool showGUI = false;
         private List<ConsoleMessage> entries = new List<ConsoleMessage> ();
-        private Vector2 scrollPos;
         private bool touching = false;
         public void init () {
             fPSCounter = new FPSCounter ();
@@ -55,7 +54,7 @@ namespace UFrameWork.Develop {
         }
 
         private const int margin = 20;
-        private Rect windowRect = new Rect (margin + Screen.width * 0.5f, margin, Screen.width * 0.5f - (2 * margin), Screen.height - (2 * margin));
+        private Rect windowRect = new Rect (Screen.width / 2, margin, Screen.width / 2 - margin, Screen.height - margin);
 
         public void drawGUI () {
             if (!showGUI) {
@@ -66,13 +65,13 @@ namespace UFrameWork.Develop {
             this.memoryDetector.drawGUI ();
 
             windowRect = GUILayout.Window (100, windowRect, consoleWindow, "Console");
-
         }
 
-        private GUIContent clearLabel = new GUIContent ("Clear", "Clear the contents of the console.");
-        private GUIContent collapseLabel = new GUIContent ("Collapse", "Hide repeated messages.");
-        private GUIContent scrollToBottomLabel = new GUIContent ("ScrollToBottom", "Scroll bar always at bottom");
+        private readonly GUIContent clearLabel = new GUIContent ("Clear", "Clear the contents of the console.");
+        private readonly GUIContent collapseLabel = new GUIContent ("Collapse", "Hide repeated messages.");
+        private readonly GUIContent scrollToBottomLabel = new GUIContent ("ScrollToBottom", "Scroll bar always at bottom");
         private bool collapse;
+        private Vector2 scrollPos;
 
         private void consoleWindow (int windowID) {
             scrollPos = GUILayout.BeginScrollView (scrollPos);
@@ -96,14 +95,13 @@ namespace UFrameWork.Develop {
                         break;
                 }
 
-                if (entry.type == LogType.Exception) {
+                if (entry.type == LogType.Exception || entry.type == LogType.Error) {
                     GUILayout.Label (entry.message + " || " + entry.stackTrace);
                 } else {
                     GUILayout.Label (entry.message);
                 }
             }
 
-            GUI.contentColor = Color.white;
             GUILayout.EndScrollView ();
 
             GUILayout.BeginHorizontal ();
