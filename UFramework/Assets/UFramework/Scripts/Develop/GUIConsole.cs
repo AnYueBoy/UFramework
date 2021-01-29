@@ -105,7 +105,6 @@ namespace UFrameWork.Develop {
 
             GUI.contentColor = Color.white;
             GUILayout.EndScrollView ();
-            GUILayout.EndHorizontal ();
 
             GUILayout.BeginHorizontal ();
             if (GUILayout.Button (clearLabel)) {
