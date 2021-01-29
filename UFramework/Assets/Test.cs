@@ -40,7 +40,6 @@ public class Test : MonoBehaviour {
     private float assetTimer = 0;
     private bool releaseCompleted = false;
 
-    private int index = 0;
     private void Update () {
         if (releaseCompleted) {
             return;

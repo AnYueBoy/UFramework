@@ -9,22 +9,26 @@
 namespace UFrameWork.LogSystem {
     using UnityEngine;
     public class LogManager {
-        private static LogOutThread logOutThread = new LogOutThread ();
+        private LogOutThread logOutThread = new LogOutThread ();
 
-        public static void init () {
+        public void init () {
             logOutThread.init ();
 
             Application.logMessageReceived += unityLogCallback;
             Application.logMessageReceivedThreaded += unityLogCallbackThread;
         }
 
-        private static void unityLogCallbackThread (string log, string track, LogType logType) {
+        private void unityLogCallbackThread (string log, string track, LogType logType) {
             LogInfo logInfo = new LogInfo (log, track, logType);
             logOutThread.log (logInfo);
         }
 
-        private static void unityLogCallback (string log, string track, LogType logType) {
+        private void unityLogCallback (string log, string track, LogType logType) {
             LogInfo logInfo = new LogInfo (log, track, logType);
+        }
+
+        public void quit () {
+            logOutThread.quit ();
         }
     }
 }

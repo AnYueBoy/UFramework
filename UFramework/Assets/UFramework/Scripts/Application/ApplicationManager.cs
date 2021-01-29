@@ -4,79 +4,66 @@
  * @Description: 程序入口
  */
 namespace UFrameWork.Application {
-    using System;
     using UFrameWork.Develop;
-    using UFrameWork.LogSystem;
     using UnityEngine;
 
-    public delegate void applicationCallback ();
     public class ApplicationManager : MonoBehaviour {
 
         [Header ("当前程序模式")]
         public AppMode appMode = AppMode.Developing;
 
+        private GUIConsole guiConsole = new GUIConsole ();
+
+        #region  程序生命周期函数
         private void Awake () {
             appLaunch ();
         }
 
         private void gameStart () {
-
-        }
-
-        #region 程序生命周期
-        public static applicationCallback applicationQuit = null;
-        public static applicationCallback applicationUpdate = null;
-        public static applicationCallback applicationOnGUI = null;
-
-        private void onApplicationQuit () {
-            if (applicationQuit != null) {
-                try {
-                    applicationQuit ();
-                } catch (Exception e) {
-                    Debug.LogError (e.ToString ());
-                }
-            }
+            // 游戏逻辑初始化
         }
 
         private void Update () {
-            if (applicationUpdate != null) {
-                applicationUpdate ();
+            if (guiConsole != null) {
+                guiConsole.localUpdate ();
             }
         }
 
         private void OnGUI () {
-            if (applicationOnGUI != null) {
-                applicationOnGUI ();
+            if (guiConsole != null) {
+                guiConsole.drawGUI ();
             }
+        }
+
+        private void onApplicationQuit () {
+            // 程序退出逻辑 
+            this.guiConsole.quit ();
         }
         #endregion
 
         #region 程序启动细节
 
-        private void setResourceLoadType () {
-            // TODO: 资源加载方式
-        }
-
         private void appLaunch () {
             setResourceLoadType ();
 
-            // 启动日志
-            LogManager.init ();
-
             if (appMode != AppMode.Release) {
                 // 图形控制面板初始化
-                GUIConsole.init ();
+                guiConsole.init ();
             }
 
             // 热更
             hotUpdate ();
         }
 
+        private void setResourceLoadType () {
+            // TODO: 资源加载方式
+        }
+
         public void hotUpdate () {
 
         }
 
-        public void hoyUpdateCompleted () {
+        public void hotUpdateCompleted () {
             // TODO: bundle配置初始化
             // TODO: uimanger初始化
             gameStart ();

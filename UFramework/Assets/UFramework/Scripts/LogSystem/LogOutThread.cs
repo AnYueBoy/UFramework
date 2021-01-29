@@ -11,7 +11,6 @@ namespace UFrameWork.LogSystem {
     using System.Threading;
     using System;
     using UnityEngine;
-    using UFrameWork.Application;
 
     public class LogOutThread {
 
@@ -34,8 +33,6 @@ namespace UFrameWork.LogSystem {
         private StreamWriter logWriter = null;
 
         public void init () {
-            ApplicationManager.applicationQuit += this.close;
-
             this.writingLogQueue = new Queue<LogInfo> ();
             this.waitingLogQueue = new Queue<LogInfo> ();
             this.logLock = new object ();
@@ -103,6 +100,10 @@ namespace UFrameWork.LogSystem {
                 this.waitingLogQueue.Enqueue (logData);
                 Monitor.Pulse (this.logLock);
             }
+        }
+
+        public void quit () {
+            this.close ();
         }
         private void close () {
             this.isRunning = false;

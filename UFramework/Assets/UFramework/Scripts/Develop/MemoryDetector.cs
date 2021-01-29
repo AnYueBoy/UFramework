@@ -27,8 +27,7 @@ namespace UFrameWork.Develop {
         private int y = 0;
         private int w = 0;
         private int h = 0;
-
-        public MemoryDetector () {
+        public void init () {
             this.x = 60;
             this.y = 60;
             this.w = 200;
@@ -39,11 +38,9 @@ namespace UFrameWork.Develop {
             this.unusedReservedMemoryRect = new Rect (x, y + 2 * h, w, h);
             this.monoHeapRect = new Rect (x, y + 3 * h, w, h);
             this.monoUsedRect = new Rect (x, y + 4 * h, w, h);
-
-            // FIXME:
         }
 
-        private void OnGUI () {
+        public void drawGUI () {
             GUI.Label (this.allocMemoryRect,
                 string.Format (totalAllocMemoryInfo, Profiler.GetTotalAllocatedMemoryLong () * byteToM));
             GUI.Label (this.reservedMemoryRect,

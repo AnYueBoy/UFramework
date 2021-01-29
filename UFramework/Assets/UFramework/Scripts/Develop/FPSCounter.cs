@@ -16,17 +16,13 @@ namespace UFrameWork.Develop {
 
         private int fps = 0;
 
-        public FPSCounter () {
-            // FIXME:
-        }
-
-        private void start () {
+        public void init () {
             this.frameCount = 0;
             this.rateTimer = 0;
             this.fps = 0;
         }
 
-        private void update () {
+        public void localUpdate () {
             ++this.frameCount;
             this.rateTimer += Time.deltaTime;
             if (rateTimer > this.calculateRate) {
@@ -36,7 +32,7 @@ namespace UFrameWork.Develop {
             }
         }
 
-        private void OnGUI () {
+        public void drawGUI () {
             GUI.color = Color.black;
             GUI.Label (new Rect (80, 20, 120, 20), "fps:" + this.fps.ToString ());
         }
