@@ -9,12 +9,6 @@ namespace UFrameWork.Develop {
     using UnityEngine;
 
     public class MemoryDetector {
-
-        private readonly static string totalAllocMemoryInfo = "Alloc Memory : {0}M";
-        private readonly static string totalReservedMemoryInfo = "Reserved Memory : {0}M";
-        private readonly static string totalUnusedReservedMemoryInfo = "Unused Reserved Memory : {0}M";
-        private readonly static string monoHeapInfo = "Mono Heap : {0}M";
-        private readonly static string monoUsedInfo = "Mono Used : {0}M";
         private float byteToM = 0.000001f;
 
         private Rect allocMemoryRect;
@@ -23,16 +17,11 @@ namespace UFrameWork.Develop {
         private Rect monoHeapRect;
         private Rect monoUsedRect;
 
-        private int x = 0;
-        private int y = 0;
-        private int w = 0;
-        private int h = 0;
+        private readonly int x = 80;
+        private readonly int y = 45;
+        private readonly int w = 210;
+        private readonly int h = 20;
         public void init () {
-            this.x = 60;
-            this.y = 60;
-            this.w = 200;
-            this.h = 20;
-
             this.allocMemoryRect = new Rect (x, y, w, h);
             this.reservedMemoryRect = new Rect (x, y + h, w, h);
             this.unusedReservedMemoryRect = new Rect (x, y + 2 * h, w, h);
@@ -41,16 +30,25 @@ namespace UFrameWork.Develop {
         }
 
         public void drawGUI () {
-            GUI.Label (this.allocMemoryRect,
-                string.Format (totalAllocMemoryInfo, Profiler.GetTotalAllocatedMemoryLong () * byteToM));
-            GUI.Label (this.reservedMemoryRect,
-                string.Format (totalReservedMemoryInfo, Profiler.GetTotalReservedMemoryLong () * byteToM));
-            GUI.Label (this.unusedReservedMemoryRect,
-                string.Format (totalUnusedReservedMemoryInfo, Profiler.GetTotalUnusedReservedMemoryLong () * byteToM));
-            GUI.Label (monoHeapRect,
-                string.Format (monoHeapInfo, Profiler.GetMonoHeapSizeLong () * byteToM));
-            GUI.Label (monoUsedRect,
-                string.Format (monoUsedInfo, Profiler.GetMonoUsedSizeLong () * byteToM));
+            GUI.Box (
+                this.allocMemoryRect,
+                string.Format ("Alloc Memory : {0}M", Mathf.Floor (Profiler.GetTotalAllocatedMemoryLong () * byteToM)));
+
+            GUI.Box (
+                this.reservedMemoryRect,
+                string.Format ("Reserved Memory : {0}M", Mathf.Floor (Profiler.GetTotalReservedMemoryLong () * byteToM)));
+
+            GUI.Box (
+                this.unusedReservedMemoryRect,
+                string.Format ("Unused Reserved Memory : {0}M", Mathf.Floor (Profiler.GetTotalUnusedReservedMemoryLong () * byteToM)));
+
+            GUI.Box (
+                monoHeapRect,
+                string.Format ("Mono Heap : {0}M", Mathf.Floor (Profiler.GetMonoHeapSizeLong () * byteToM)));
+
+            GUI.Box (
+                monoUsedRect,
+                string.Format ("Mono Used : {0}M", Mathf.Floor (Profiler.GetMonoUsedSizeLong () * byteToM)));
         }
     }
 }

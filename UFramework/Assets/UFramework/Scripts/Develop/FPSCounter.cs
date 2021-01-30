@@ -34,7 +34,7 @@ namespace UFrameWork.Develop {
 
         public void drawGUI () {
             GUI.color = Color.black;
-            GUI.Label (new Rect (80, 20, 120, 20), "fps:" + this.fps.ToString ());
+            GUI.Box (new Rect (80, 20, 120, 25), "fps:" + this.fps.ToString ());
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Threading;
 /*
  * @Author: l hy 
  * @Date: 2021-01-25 15:45:33 
@@ -102,12 +101,13 @@ namespace UFrameWork.LogSystem {
             }
         }
 
-        public void quit () {
-            this.close ();
-        }
         private void close () {
             this.isRunning = false;
             this.logWriter.Close ();
+        }
+
+        public void quit () {
+            this.close ();
         }
     }
 }
