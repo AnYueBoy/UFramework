@@ -19,17 +19,44 @@ namespace UFrameWork.Application {
             appLaunch ();
         }
 
-        private void gameStart () {
-            // 游戏逻辑初始化
+        private void OnEnable () {
+
+        }
+
+        private void Start () {
+            this.gameStart ();
         }
 
         private void Update () {
+            this.gameUpdate (Time.deltaTime);
+        }
+
+        private void OnGUI () {
+            this.gameOnGUI ();
+        }
+
+        #endregion
+
+        #region 启动与初始化
+
+        private void appLaunch () {
+            setResourceLoadType ();
+
+            if (appMode != AppMode.Release) {
+                // 图形控制面板初始化
+                guiConsole.init ();
+            }
+        }
+
+        private void gameStart () { }
+
+        private void gameUpdate (float dt) {
             if (guiConsole != null) {
                 guiConsole.localUpdate ();
             }
         }
 
-        private void OnGUI () {
+        private void gameOnGUI () {
             if (guiConsole != null) {
                 guiConsole.drawGUI ();
             }
@@ -40,35 +67,12 @@ namespace UFrameWork.Application {
             this.guiConsole.quit ();
         }
         #endregion
-
-        #region 程序启动细节
-
-        private void appLaunch () {
-            setResourceLoadType ();
-
-            if (appMode != AppMode.Release) {
-                // 图形控制面板初始化
-                guiConsole.init ();
-            }
-
-            // 热更
-            hotUpdate ();
-        }
-
+        
         private void setResourceLoadType () {
             // TODO: 资源加载方式
         }
 
-        public void hotUpdate () {
+        public void hotUpdateCompleted () { }
 
-        }
-
-        public void hotUpdateCompleted () {
-            // TODO: bundle配置初始化
-            // TODO: uimanger初始化
-            gameStart ();
-
-        }
-        #endregion
     }
 }
