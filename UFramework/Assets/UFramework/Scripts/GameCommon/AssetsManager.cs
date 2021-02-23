@@ -4,7 +4,7 @@
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-01-21 22:05:33
+ * @Last Modified time: 2021-02-23 21:46:25
  */
 namespace UFramework.GameCommon {
 
@@ -15,6 +15,16 @@ namespace UFramework.GameCommon {
     public class AssetsManager {
 
         private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();
+
+        private static AssetsManager _instance;
+        public static AssetsManager instance {
+            get {
+                if (_instance == null) {
+                    _instance = new AssetsManager ();
+                }
+                return _instance;
+            }
+        }
 
         /// <summary>
         /// 获取指定资源

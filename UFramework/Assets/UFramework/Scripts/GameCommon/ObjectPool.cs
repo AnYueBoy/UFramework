@@ -3,7 +3,7 @@
  * @Date: 2020-03-09 13:21:19 
  * @Description: 对象池 
  * @Last Modified by: l hy
- * @Last Modified time: 2020-12-21 16:43:13
+ * @Last Modified time: 2021-02-23 21:48:17
  */
 
 namespace UFramework.GameCommon {
@@ -11,18 +11,18 @@ namespace UFramework.GameCommon {
     using UnityEngine;
     public class ObjectPool {
 
-        private static ObjectPool instance = null;
+        private static ObjectPool _instance = null;
 
         private Dictionary<GameObject, List<GameObject>> pool = new Dictionary<GameObject, List<GameObject>> ();
 
         // 存放预制与实例的关系
         private Dictionary<GameObject, GameObject> relationShip = new Dictionary<GameObject, GameObject> ();
 
-        public static ObjectPool getInstance () {
-            if (instance == null) {
-                instance = new ObjectPool ();
+        public static ObjectPool instance () {
+            if (_instance == null) {
+                _instance = new ObjectPool ();
             }
-            return instance;
+            return _instance;
         }
 
         public GameObject requestInstance (GameObject prefab) {
