@@ -4,7 +4,7 @@
  * @Description: 程序模式
  */
 
-namespace UFrameWork.Application {
+namespace UFrameWork.Const {
     public enum AppMode {
         Developing,
         QA,
