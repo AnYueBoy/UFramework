@@ -1,20 +1,23 @@
 ﻿using System;
+
 /*
  * @Author: l hy 
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-02-23 21:46:25
+ * @Last Modified time: 2021-03-01 22:56:52
  */
 namespace UFramework.GameCommon {
 
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using UnityEngine;
-
     public class AssetsManager {
 
         private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();
+
+        private Dictionary<string, AssetBundle> bundleDic = new Dictionary<string, AssetBundle> ();
 
         private static AssetsManager _instance;
         public static AssetsManager instance {
@@ -26,6 +29,7 @@ namespace UFramework.GameCommon {
             }
         }
 
+        #region Resources Load Asset
         /// <summary>
         /// 获取指定资源
         /// </summary>
@@ -106,5 +110,67 @@ namespace UFramework.GameCommon {
             }
             return releaseResult;
         }
+
+        #endregion
+
+        #region Asset Bundle Load Asset
+        public T getAssetByBundleSync<T> (string bundleUrl, string bundleName, string assetName) where T : Object {
+            T nativeAsset = this.findNativeAsset<T> (assetName);
+            if (nativeAsset != null) {
+                return nativeAsset;
+            }
+
+            string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
+            AssetBundle targetAssetBundle = null;
+            if (!this.bundleDic.ContainsKey (targetBundleUrl)) {
+                targetAssetBundle = AssetBundle.LoadFromFile (targetBundleUrl);
+                this.bundleDic.Add (targetBundleUrl, targetAssetBundle);
+            }
+            targetAssetBundle = this.bundleDic[targetBundleUrl];
+            nativeAsset = targetAssetBundle.LoadAsset<T> (assetName);
+            return nativeAsset as T;
+        }
+
+        public void getAssetByBundleAsync<T> (string bundleUrl, string bundleName, string assetName, Action<T> callback) where T : Object {
+            T nativeAsset = this.findNativeAsset<T> (assetName);
+            if (nativeAsset != null) {
+                callback (nativeAsset);
+                return;
+            }
+
+            string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
+            if (this.bundleDic.ContainsKey (targetBundleUrl)) {
+                AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
+                nativeAsset = targetBundle.LoadAsset<T> (assetName);
+                PackAsset packAsset = new PackAsset (nativeAsset);
+                this.assetPool.Add (assetName, packAsset);
+                callback (nativeAsset);
+                return;
+            }
+
+            AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync (targetBundleUrl);
+            bundleCreateRequest.completed += opeartion => {
+                this.bundleDic.Add (targetBundleUrl, bundleCreateRequest.assetBundle);
+                AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
+                nativeAsset = targetBundle.LoadAsset<T> (assetName);
+                PackAsset packAsset = new PackAsset (nativeAsset);
+                this.assetPool.Add (assetName, packAsset);
+                callback (nativeAsset);
+            };
+        }
+
+        public bool tryReleaseBundle (string bundleUrl, string bundleName, bool unloadAllLoadedObjects = false) {
+            string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
+            if (!this.assetPool.ContainsKey (targetBundleUrl)) {
+                Debug.LogWarning ("can not release not exist bundle");
+                return false;
+            }
+
+            AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
+            targetBundle.Unload (unloadAllLoadedObjects);
+            return true;
+        }
+
+        #endregion
     }
 }
