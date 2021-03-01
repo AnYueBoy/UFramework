@@ -5,7 +5,7 @@ using System.Net.Mime;
  * @Date: 2021-01-21 22:15:59 
  * @Description: 用于各类测试项目
  * @Last Modified by: l hy
- * @Last Modified time: 2021-03-01 23:05:52
+ * @Last Modified time: 2021-03-01 23:17:35
  */
 
 using System.Collections;
@@ -86,10 +86,11 @@ public class Test : MonoBehaviour {
 
     public void loadBundle () {
         string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
-        GameObject cubeAsset = AssetsManager.instance.getAssetByBundleSync<GameObject> (bundleUrl, "resbundle", "Cube");
-        GameObject cube = Instantiate<GameObject> (cubeAsset);
-        cube.transform.SetParent (nodeParent);
-        cube.transform.localPosition = Vector3.zero;
+        AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
+            GameObject cube = Instantiate<GameObject> (cubeAsset);
+            cube.transform.SetParent (nodeParent);
+            cube.transform.localPosition = Vector3.zero;
+        });
     }
 
 }

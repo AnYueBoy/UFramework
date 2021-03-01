@@ -5,7 +5,7 @@
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-03-01 22:56:52
+ * @Last Modified time: 2021-03-01 23:18:24
  */
 namespace UFramework.GameCommon {
 
@@ -126,8 +126,11 @@ namespace UFramework.GameCommon {
                 targetAssetBundle = AssetBundle.LoadFromFile (targetBundleUrl);
                 this.bundleDic.Add (targetBundleUrl, targetAssetBundle);
             }
+
             targetAssetBundle = this.bundleDic[targetBundleUrl];
             nativeAsset = targetAssetBundle.LoadAsset<T> (assetName);
+            PackAsset packAsset = new PackAsset (nativeAsset);
+            this.assetPool.Add (assetName, packAsset);
             return nativeAsset as T;
         }
 
