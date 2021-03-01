@@ -1,19 +1,23 @@
-﻿/*
+﻿using System.IO;
+/*
  * @Author: l hy 
  * @Date: 2021-01-21 22:15:59 
  * @Description: 用于各类测试项目
  * @Last Modified by: l hy
- * @Last Modified time: 2021-01-21 22:38:30
+ * @Last Modified time: 2021-03-01 21:52:09
  */
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UFramework.GameCommon;
+using UnityEditor;
 using UnityEngine;
 public class Test : MonoBehaviour {
 
     private AssetsManager assetManager = new AssetsManager ();
+
+    public Transform nodeParent;
 
     private void Start () {
         // this.loadCube ();
@@ -77,6 +81,21 @@ public class Test : MonoBehaviour {
         await firstTask;
         await secondTask;
         Debug.Log ("资源全部加载完成");
+    }
+
+    public void loadBundle () {
+        string bundleUrl = Application.dataPath + "/AssetsBundles";
+        AssetBundle resBundle = AssetBundle.LoadFromFile (Path.Combine (bundleUrl, "resBundle"));
+        if (resBundle == null) {
+            Debug.Log ("load bundle fail");
+            return;
+        }
+        GameObject resInstance = resBundle.LoadAsset<GameObject> ("Cube");
+        GameObject cube = Instantiate<GameObject> (resInstance);
+        cube.transform.SetParent (nodeParent);
+        cube.transform.localPosition = Vector3.zero;
+
+        // FIXME: 注意一个bundle不能被重复加载否则会报错
     }
 
 }
