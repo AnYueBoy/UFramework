@@ -3,7 +3,7 @@
  * @Date: 2021-03-01 21:42:21 
  * @Description: AB包操作
  * @Last Modified by: l hy
- * @Last Modified time: 2021-03-01 21:46:00
+ * @Last Modified time: 2021-03-01 21:58:10
  */
 namespace UFramework.Editor.GenerateName {
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace UFramework.Editor.GenerateName {
 #endif
 
     public class BundleOperation {
-        [MenuItem ("UFramework/buildBundle")]
+        [MenuItem ("UFramework/BuildBundle")]
         private static void buildAssetBundle () {
             string bundleUrl = Application.dataPath + "/AssetsBundles";
             if (!Directory.Exists (bundleUrl)) {
