@@ -45,7 +45,7 @@ namespace UFramework.GameCommon {
             return targetAsset;
         }
 
-        [Obsolete ("unity不允许")]
+        [Obsolete ("unity not allow")]
         public async Task<T> getAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
             T nativeAsset = this.findNativeAsset<T> (assetUrl);
             if (nativeAsset != null) {
