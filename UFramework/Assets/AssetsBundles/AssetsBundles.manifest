@@ -1,7 +1,11 @@
 ManifestFileVersion: 0
-CRC: 1436931799
+CRC: 2569280911
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: resbundle
+      Dependencies:
+        Dependency_0: matbundle
+    Info_1:
+      Name: matbundle
       Dependencies: {}

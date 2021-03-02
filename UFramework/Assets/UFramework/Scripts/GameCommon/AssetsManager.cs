@@ -85,6 +85,7 @@ namespace UFramework.GameCommon {
 
         private T findNativeAsset<T> (string assetUrl) where T : Object {
             if (assetPool.ContainsKey (assetUrl)) {
+                // FIXME: 拿到资源不一定使用
                 PackAsset packAsset = assetPool[assetUrl];
                 packAsset.addRef ();
                 return packAsset.targetAsset as T;
