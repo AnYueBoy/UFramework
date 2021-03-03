@@ -85,15 +85,14 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        AssetsManager.instance.init ();
-        return;
         string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
-        AssetsManager.instance.getAssetByBundleSync<Material> (bundleUrl, "matbundle", "yellowMaterial");
-        GameObject cubeAsset = AssetsManager.instance.getAssetByBundleSync<GameObject> (bundleUrl, "resbundle", "Cube");
+        // AssetsManager.instance.getAssetByBundleSync<Material> (bundleUrl, "matbundle", "yellowMaterial");
+        AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (cubeAsset) => {
+            GameObject cube = Instantiate<GameObject> (cubeAsset);
+            cube.transform.SetParent (nodeParent);
+            cube.transform.localPosition = Vector3.zero;
+        });
 
-        GameObject cube = Instantiate<GameObject> (cubeAsset);
-        cube.transform.SetParent (nodeParent);
-        cube.transform.localPosition = Vector3.zero;
     }
 
 }

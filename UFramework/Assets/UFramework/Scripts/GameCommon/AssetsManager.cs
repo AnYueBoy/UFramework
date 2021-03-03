@@ -43,6 +43,7 @@ namespace UFramework.GameCommon {
             AssetBundle manifestFileBundle = AssetBundle.LoadFromFile (manifestFileBundleUrl);
             string manifestFileName = AssetUrl.bundleUrl.Substring (1);
             this.assetBundleManifest = manifestFileBundle.LoadAsset<AssetBundleManifest> (manifestFileName);
+            Debug.Log ("!!!");
         }
 
         #region Resources Load Asset
@@ -170,13 +171,16 @@ namespace UFramework.GameCommon {
             }
 
             AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync (targetBundleUrl);
-            bundleCreateRequest.completed += opeartion => {
+            bundleCreateRequest.completed += bundleCreateOperation => {
                 this.bundleDic.Add (targetBundleUrl, bundleCreateRequest.assetBundle);
                 AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
-                nativeAsset = targetBundle.LoadAsset<T> (assetName);
-                PackAsset packAsset = new PackAsset (nativeAsset);
-                this.assetPool.Add (assetName, packAsset);
-                callback (nativeAsset);
+                AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
+                assetBundleRequest.completed += bundleOperation => {
+                    nativeAsset = assetBundleRequest.asset as T;
+                    PackAsset packAsset = new PackAsset (nativeAsset);
+                    this.assetPool.Add (assetName, packAsset);
+                    callback (nativeAsset);
+                };
             };
         }
 
