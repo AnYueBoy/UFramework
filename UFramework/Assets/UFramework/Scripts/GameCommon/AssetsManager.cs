@@ -19,6 +19,8 @@ namespace UFramework.GameCommon {
 
         private Dictionary<string, AssetBundle> bundleDic = new Dictionary<string, AssetBundle> ();
 
+        private AssetBundleManifest assetBundleManifest = null;
+
         private static AssetsManager _instance;
         public static AssetsManager instance {
             get {
@@ -27,6 +29,20 @@ namespace UFramework.GameCommon {
                 }
                 return _instance;
             }
+        }
+
+        public void init () {
+            this.loadManifestFile ();
+        }
+
+        private void loadManifestFile () {
+            if (this.assetBundleManifest != null) {
+                return;
+            }
+            string manifestFileBundleUrl = Application.dataPath + AssetUrl.bundleUrl + AssetUrl.bundleUrl;
+            AssetBundle manifestFileBundle = AssetBundle.LoadFromFile (manifestFileBundleUrl);
+            string manifestFileName = AssetUrl.bundleUrl.Substring (1);
+            this.assetBundleManifest = manifestFileBundle.LoadAsset<AssetBundleManifest> (manifestFileName);
         }
 
         #region Resources Load Asset
@@ -122,6 +138,7 @@ namespace UFramework.GameCommon {
             }
 
             string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
+            // TODO: 检查依赖资源
             AssetBundle targetAssetBundle = null;
             if (!this.bundleDic.ContainsKey (targetBundleUrl)) {
                 targetAssetBundle = AssetBundle.LoadFromFile (targetBundleUrl);
