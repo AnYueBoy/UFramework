@@ -163,10 +163,13 @@ namespace UFramework.GameCommon {
             string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
             if (this.bundleDic.ContainsKey (targetBundleUrl)) {
                 AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
-                nativeAsset = targetBundle.LoadAsset<T> (assetName);
-                PackAsset packAsset = new PackAsset (nativeAsset);
-                this.assetPool.Add (assetName, packAsset);
-                callback (nativeAsset);
+                AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
+                assetBundleRequest.completed += bundleOperation => {
+                    nativeAsset = assetBundleRequest.asset as T;
+                    PackAsset packAsset = new PackAsset (nativeAsset);
+                    this.assetPool.Add (assetName, packAsset);
+                    callback (nativeAsset);
+                };
                 return;
             }
 
