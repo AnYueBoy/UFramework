@@ -41,9 +41,7 @@ namespace UFramework.GameCommon {
             }
             string manifestFileBundleUrl = Application.dataPath + AssetUrl.bundleUrl + AssetUrl.bundleUrl;
             AssetBundle manifestFileBundle = AssetBundle.LoadFromFile (manifestFileBundleUrl);
-            string manifestFileName = AssetUrl.bundleUrl.Substring (1);
-            this.assetBundleManifest = manifestFileBundle.LoadAsset<AssetBundleManifest> (manifestFileName);
-            Debug.Log ("!!!");
+            this.assetBundleManifest = manifestFileBundle.LoadAsset<AssetBundleManifest> ("AssetBundleManifest");
         }
 
         #region Resources Load Asset
@@ -154,6 +152,7 @@ namespace UFramework.GameCommon {
         }
 
         public void getAssetByBundleAsync<T> (string bundleUrl, string bundleName, string assetName, Action<T> callback) where T : Object {
+            // FIXME: 同时异步加载可能会加载两边bundle
             T nativeAsset = this.findNativeAsset<T> (assetName);
             if (nativeAsset != null) {
                 callback (nativeAsset);
@@ -197,6 +196,11 @@ namespace UFramework.GameCommon {
             AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
             targetBundle.Unload (unloadAllLoadedObjects);
             return true;
+        }
+
+        private void checkDependencies (string bundleName) {
+            this.loadManifestFile ();
+            string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
         }
 
         #endregion
