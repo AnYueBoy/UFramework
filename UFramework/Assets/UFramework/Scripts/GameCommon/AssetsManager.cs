@@ -157,7 +157,7 @@ namespace UFramework.GameCommon {
                 return;
             }
 
-            string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
+            string targetBundleUrl = bundleUrl + "/" + bundleName;
             if (this.bundleDic.ContainsKey (targetBundleUrl)) {
                 AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
                 AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
