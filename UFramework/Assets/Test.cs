@@ -85,10 +85,7 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        AssetsManager.instance.init ();
-        return;
         string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
-        AssetsManager.instance.getAssetByBundleSync<Material> (bundleUrl, "matbundle", "yellowMaterial");
         GameObject cubeAsset = AssetsManager.instance.getAssetByBundleSync<GameObject> (bundleUrl, "resbundle", "Cube");
 
         GameObject cube = Instantiate<GameObject> (cubeAsset);

@@ -136,18 +136,16 @@ namespace UFramework.GameCommon {
                 return nativeAsset;
             }
 
-            string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
-            // TODO: 检查依赖资源
-            AssetBundle targetAssetBundle = null;
-            if (!this.bundleDic.ContainsKey (targetBundleUrl)) {
-                targetAssetBundle = AssetBundle.LoadFromFile (targetBundleUrl);
-                this.bundleDic.Add (targetBundleUrl, targetAssetBundle);
-            }
+            // 检查依赖资源
+            this.checkDependencies (bundleName);
 
-            targetAssetBundle = this.bundleDic[targetBundleUrl];
+            string targetBundleUrl = bundleUrl + "/" + bundleName;
+            AssetBundle targetAssetBundle = this.loadTargetBundleSync (targetBundleUrl);
+
             nativeAsset = targetAssetBundle.LoadAsset<T> (assetName);
             PackAsset packAsset = new PackAsset (nativeAsset);
             this.assetPool.Add (assetName, packAsset);
+
             return nativeAsset as T;
         }
 
@@ -198,9 +196,31 @@ namespace UFramework.GameCommon {
             return true;
         }
 
+        /// <summary>
+        /// 递归检查依赖项
+        /// </summary>
+        /// <param name="bundleName"></param>
         private void checkDependencies (string bundleName) {
             this.loadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
+            if (allDependencies.Length <= 0) {
+                string bundleUrl = Application.dataPath + AssetUrl.bundleUrl + "/" + bundleName;
+                this.loadTargetBundleSync (bundleUrl);
+                return;
+            }
+            foreach (string dependenceBundleName in allDependencies) {
+                this.checkDependencies (dependenceBundleName);
+            }
+        }
+
+        private AssetBundle loadTargetBundleSync (string bundleUrl) {
+            AssetBundle targetAssetBundle = null;
+            if (!this.bundleDic.ContainsKey (bundleUrl)) {
+                targetAssetBundle = AssetBundle.LoadFromFile (bundleUrl);
+                this.bundleDic.Add (bundleUrl, targetAssetBundle);
+            }
+
+            return this.bundleDic[bundleUrl];
         }
 
         #endregion
