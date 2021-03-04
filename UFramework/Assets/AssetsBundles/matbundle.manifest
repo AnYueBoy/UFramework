@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 3041635513
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ca8bd195b3eba1d3596f46383947f7df
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 10a6a558690295dadb3dd990eda0821a
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Resources/Shape/yellowMaterial.mat
+Dependencies: []

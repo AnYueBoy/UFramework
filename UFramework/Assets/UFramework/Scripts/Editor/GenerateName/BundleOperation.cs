@@ -18,9 +18,10 @@ namespace UFramework.Editor.GenerateName {
         [MenuItem ("UFramework/BuildBundle")]
         private static void buildAssetBundle () {
             string bundleUrl = Application.dataPath + "/AssetsBundles";
-            if (!Directory.Exists (bundleUrl)) {
-                Directory.CreateDirectory (bundleUrl);
+            if (Directory.Exists (bundleUrl)) {
+                Directory.Delete (bundleUrl, true);
             }
+            Directory.CreateDirectory (bundleUrl);
             BuildPipeline.BuildAssetBundles (bundleUrl, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows64);
             Application.OpenURL ("file:///" + bundleUrl);
         }

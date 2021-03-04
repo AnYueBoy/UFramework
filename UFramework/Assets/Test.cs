@@ -86,11 +86,11 @@ public class Test : MonoBehaviour {
 
     public void loadBundle () {
         string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
-        AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
-            GameObject cube = Instantiate<GameObject> (cubeAsset);
-            cube.transform.SetParent (nodeParent);
-            cube.transform.localPosition = Vector3.zero;
-        });
+        GameObject cubeAsset = AssetsManager.instance.getAssetByBundleSync<GameObject> (bundleUrl, "resbundle", "Cube");
+
+        GameObject cube = Instantiate<GameObject> (cubeAsset);
+        cube.transform.SetParent (nodeParent);
+        cube.transform.localPosition = Vector3.zero;
     }
 
 }
