@@ -3,11 +3,10 @@
  * @Date: 2021-03-04 21:32:36 
  * @Description: Promise接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-03-04 22:28:01
+ * @Last Modified time: 2021-03-07 20:12:18
  */
 
 namespace UFramework.Promise {
-    using System.Collections.Generic;
     using System;
 
     public interface IPromise<PromisedT> {
@@ -25,12 +24,6 @@ namespace UFramework.Promise {
         IPromise<PromisedT> then (Action<PromisedT> onResolved, Action<Exception> onRejected);
         IPromise then (Func<PromisedT, IPromise> onResolved, Action<Exception> onRejected);
         IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved, Action<Exception> onRejected);
-
-        IPromise ThenAll (Func<PromisedT, IEnumerable<IPromise>> chain);
-        IPromise<IEnumerable<ConvertedT>> ThenAll<ConvertedT> (Func<PromisedT, IEnumerable<IPromise<ConvertedT>>> chain);
-
-        IPromise ThenRace (Func<PromisedT, IEnumerable<IPromise>> chain);
-        IPromise<ConvertedT> ThenRace<ConvertedT> (Func<PromisedT, IEnumerable<IPromise<ConvertedT>>> chain);
     }
 
     public interface IPromise {
@@ -46,13 +39,7 @@ namespace UFramework.Promise {
         IPromise then (Func<IPromise> onResolved);
         IPromise<ConvertedT> then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved, Action<Exception> onRejected);
         IPromise then (Action onResolved, Action<Exception> onRejected);
-
-        IPromise<IEnumerable<ConvertedT>> thenAll<ConvertedT> (Func<IEnumerable<IPromise<ConvertedT>>> chain);
-        IPromise thenAll (Func<IEnumerable<IPromise>> chain);
-
-        IPromise<ConvertedT> thenRace<ConvertedT> (Func<IEnumerable<IPromise<ConvertedT>>> chain);
-        IPromise thenRace (Func<IEnumerable<IPromise>> chain);
-
+        IPromise then (Func<IPromise> onResolved, Action<Exception> onRejected);
     }
 
 }

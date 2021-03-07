@@ -38,15 +38,28 @@ namespace UFramework.Promise {
         }
 
         public IPromise waitFor (float seconds) {
-            throw new NotImplementedException ();
+            return this.waitUtil ((TimeData timeInfo) => {
+                return timeInfo.elapsedTime >= seconds;
+            });
         }
 
         public IPromise waitUtil (Func<TimeData, bool> predicate) {
-            throw new NotImplementedException ();
+            Promise promise = new Promise ();
+            PredicateWait item = new PredicateWait {
+                timeStarted = this.curTime,
+                pendingPromise = promise,
+                timeData = new TimeData (),
+                predicate = predicate
+            };
+
+            this.waitingList.Add (item);
+            return promise;
         }
 
         public IPromise waitWhile (Func<TimeData, bool> predicate) {
-            throw new NotImplementedException ();
+            return this.waitUtil ((TimeData timeInfo) => {
+                return !predicate (timeInfo);
+            });
         }
     }
 }
