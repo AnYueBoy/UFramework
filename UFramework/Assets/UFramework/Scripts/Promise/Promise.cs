@@ -1,3 +1,4 @@
+using System.Linq;
 namespace UFramework.Promise {
     using System.Collections.Generic;
     using System;
@@ -557,7 +558,18 @@ namespace UFramework.Promise {
 
         public static IPromise<IEnumerable<PromisedT>> all (params IPromise<PromisedT>[] promises) {
             if (promises.Length == 0) {
-                // return Promise<IEnumerable<PromisedT>>.
+                return Promise<IEnumerable<PromisedT>>.resolved (Enumerable.Empty<PromisedT> ());
+            }
+
+            int remainingCount = promises.Length;
+            PromisedT[] results = new PromisedT[remainingCount];
+            Promise<IEnumerable<PromisedT>> resultPromise = new Promise<IEnumerable<PromisedT>> ();
+
+            foreach (IPromise<PromisedT> promise in promises) {
+                promise
+                    .catchs ((Exception exception)=>{
+                        
+                    })
             }
         }
 
