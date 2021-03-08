@@ -503,6 +503,64 @@ namespace UFramework.Promise {
             }
         }
 
+        public static IPromise<PromisedT> resolved (PromisedT promisedValue) {
+            Promise<PromisedT> promise = new Promise<PromisedT> ();
+            promise.resolve (promisedValue);
+            return promise;
+        }
+
+        public void resolve (PromisedT value) {
+            if (this.curState != PromiseState.Pending) {
+                throw new ApplicationException (
+                    string.Concat (
+                        new object[] {
+                            "Attempt to resolve a promise that is already in state: ",
+                            this.curState,
+                            ", a promise can only be resolved when it is still in state: ",
+                            PromiseState.Pending
+                        }));
+            }
+
+            this.resolveValue = value;
+            this.curState = PromiseState.Resolved;
+            if (Promise.enablePromiseTracking) {
+                Promise.pendingPromises.Remove (this);
+            }
+            this.invokeResolveHandlers (value);
+        }
+
+        public static IPromise<PromisedT> rejected (Exception exception) {
+            Promise<PromisedT> promise = new Promise<PromisedT> ();
+            promise.reject (exception);
+            return promise;
+        }
+
+        public void reject (Exception exception) {
+            if (this.curState != PromiseState.Pending) {
+                throw new ApplicationException (
+                    string.Concat (
+                        new object[] {
+                            "Attempt to reject a promise that is already in state: ",
+                            this.curState,
+                            ", a promise can only be rejected when it is still in state: ",
+                            PromiseState.Pending
+                        }));
+            }
+
+            this.rejectionException = exception;
+            this.curState = PromiseState.Rejected;
+            if (Promise.enablePromiseTracking) {
+                Promise.pendingPromises.Remove (this);
+            }
+            this.invokeRejectHandlers (exception);
+        }
+
+        public static IPromise<IEnumerable<PromisedT>> all (params IPromise<PromisedT>[] promises) {
+            if (promises.Length == 0) {
+                // return Promise<IEnumerable<PromisedT>>.
+            }
+        }
+
         public IPromise<PromisedT> catchs (Action<Exception> onRejected) {
             throw new NotImplementedException ();
         }
@@ -516,14 +574,6 @@ namespace UFramework.Promise {
         }
 
         public void done (Action<PromisedT> onResolved, Action<Exception> onRejected) {
-            throw new NotImplementedException ();
-        }
-
-        public void reject (Exception exception) {
-            throw new NotImplementedException ();
-        }
-
-        public void resolve (PromisedT value) {
             throw new NotImplementedException ();
         }
 
