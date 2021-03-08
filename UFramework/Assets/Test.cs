@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Mime;
 /*
  * @Author: l hy 
@@ -12,8 +13,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UFramework.GameCommon;
+using UFramework.Promise;
 using UnityEditor;
 using UnityEngine;
+
 public class Test : MonoBehaviour {
 
     private AssetsManager assetManager = new AssetsManager ();
@@ -85,12 +88,19 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
-        GameObject cubeAsset = AssetsManager.instance.getAssetByBundleSync<GameObject> (bundleUrl, "resbundle", "Cube");
+        Promise<GameObject> resultPromise = this.loadTest ();
+        resultPromise.then ((GameObject cubeAsset) => {
+            GameObject cube = Instantiate<GameObject> (cubeAsset);
+            cube.transform.SetParent (nodeParent);
+            cube.transform.localPosition = Vector3.zero;
+        });
+    }
 
-        GameObject cube = Instantiate<GameObject> (cubeAsset);
-        cube.transform.SetParent (nodeParent);
-        cube.transform.localPosition = Vector3.zero;
+    private Promise<GameObject> loadTest () {
+        return new Promise<GameObject> ((Action<GameObject> resolve, Action<Exception> reject) => {
+            string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
+            AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", resolve);
+        });
     }
 
 }
