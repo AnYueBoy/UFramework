@@ -19,7 +19,6 @@ namespace UFramework.Promise {
 
         IPromise<PromisedT> then (Action<PromisedT> onResolved);
         IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved);
-        IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, ConvertedT> transform);
         IPromise then (Func<PromisedT, IPromise> onResolved);
         IPromise<PromisedT> then (Action<PromisedT> onResolved, Action<Exception> onRejected);
         IPromise then (Func<PromisedT, IPromise> onResolved, Action<Exception> onRejected);

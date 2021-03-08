@@ -565,56 +565,184 @@ namespace UFramework.Promise {
             PromisedT[] results = new PromisedT[remainingCount];
             Promise<IEnumerable<PromisedT>> resultPromise = new Promise<IEnumerable<PromisedT>> ();
 
-            foreach (IPromise<PromisedT> promise in promises) {
+            for (var index = 0; index < promises.Length; index++) {
+                IPromise<PromisedT> promise = promises[index];
+                // FIXME: 可能会有问题，原版本使用的是Each循环(C# 新版未找到Each循环)
                 promise
-                    .catchs ((Exception exception)=>{
-                        
+                    .catchs ((Exception exception) => {
+                        if (resultPromise.curState == PromiseState.Pending) {
+                            resultPromise.reject (exception);
+                        }
                     })
+                    .then ((PromisedT result) => {
+                        results[index] = result;
+                        remainingCount--;
+                        if (remainingCount <= 0) {
+                            resultPromise.resolve (results);
+                        }
+                    })
+                    .done ();
             }
+            return resultPromise;
         }
 
         public IPromise<PromisedT> catchs (Action<Exception> onRejected) {
-            throw new NotImplementedException ();
+            Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
+
+            Action<PromisedT> resolveHandler = (PromisedT value) => {
+                resultPromise.resolve (value);
+            };
+
+            Action<Exception> rejectHandler = (Exception exception) => {
+                onRejected (exception);
+                resultPromise.reject (exception);
+            };
+
+            this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+            return resultPromise;
         }
 
         public void done () {
-            throw new NotImplementedException ();
+            this.catchs (
+                (Exception exception) => {
+                    Promise.propagateUnhandledException (this, exception);
+                }
+            );
         }
 
         public void done (Action<PromisedT> onResolved) {
-            throw new NotImplementedException ();
+            this.then (onResolved)
+                .catchs (
+                    (Exception exception) => {
+                        Promise.propagateUnhandledException (this, exception);
+                    }
+                );
         }
 
         public void done (Action<PromisedT> onResolved, Action<Exception> onRejected) {
-            throw new NotImplementedException ();
+            this.then (onResolved, onRejected)
+                .catchs (
+                    (Exception exception) => {
+                        Promise.propagateUnhandledException (this, exception);
+                    }
+                );
+        }
+
+        public static IPromise<PromisedT> race (params IPromise<PromisedT>[] promises) {
+            if (promises.Length == 0) {
+                throw new ApplicationException ("At least 1 input promise must be provided for Race");
+            }
+
+            Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
+            foreach (IPromise<PromisedT> promise in promises) {
+                promise
+                    .catchs ((Exception exception) => {
+                        if (resultPromise.curState == PromiseState.Pending) {
+                            resultPromise.reject (exception);
+                        }
+                    })
+                    .then (
+                        (PromisedT result) => {
+                            if (resultPromise.curState == PromiseState.Pending) {
+                                resultPromise.resolve (result);
+                            }
+                        }
+                    )
+                    .done ();
+            }
+
+            return resultPromise;
         }
 
         public IPromise<PromisedT> then (Action<PromisedT> onResolved) {
-            throw new NotImplementedException ();
+            return this.then (onResolved, null);
         }
 
         public IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved) {
-            throw new NotImplementedException ();
-        }
-
-        public IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, ConvertedT> transform) {
-            throw new NotImplementedException ();
+            return this.then<ConvertedT> (onResolved, null);
         }
 
         public IPromise then (Func<PromisedT, IPromise> onResolved) {
-            throw new NotImplementedException ();
+            return this.then (onResolved, null);
         }
 
         public IPromise<PromisedT> then (Action<PromisedT> onResolved, Action<Exception> onRejected) {
-            throw new NotImplementedException ();
+            Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
+
+            Action<PromisedT> resolveHandler = (PromisedT value) => {
+                if (onResolved != null) {
+                    onResolved (value);
+                }
+                resultPromise.resolve (value);
+            };
+
+            Action<Exception> rejectHandler = (Exception exception) => {
+                if (onRejected != null) {
+                    onRejected (exception);
+                }
+                resultPromise.reject (exception);
+            };
+
+            this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+            return resultPromise;
         }
 
         public IPromise then (Func<PromisedT, IPromise> onResolved, Action<Exception> onRejected) {
-            throw new NotImplementedException ();
+            Promise resultPromise = new Promise ();
+
+            Action<PromisedT> resolveHandler = (PromisedT value) => {
+                Action action1 = null;
+                Action<Exception> action2 = null;
+                if (onResolved != null) {
+                    if (action1 == null) {
+                        action1 = () => {
+                            resultPromise.resolve ();
+                        };
+                    }
+
+                    if (action2 == null) {
+                        action2 = (Exception exception) => {
+                            resultPromise.reject (exception);
+                        };
+                    }
+
+                    onResolved (value).then (action1, action2);
+                } else {
+                    resultPromise.resolve ();
+                }
+            };
+
+            Action<Exception> rejectHandler = (Exception exception) => {
+                if (onRejected != null) {
+                    onRejected (exception);
+                }
+                resultPromise.reject (exception);
+            };
+
+            this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+            return resultPromise;
         }
 
         public IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved, Action<Exception> onRejected) {
-            throw new NotImplementedException ();
+            Promise<ConvertedT> resultPromise = new Promise<ConvertedT> ();
+
+            Action<PromisedT> resolveHandler = (PromisedT value) => {
+                onResolved (value)
+                    .then ((ConvertedT chainedValue) => {
+                        resultPromise.resolve (chainedValue);
+                    });
+            };
+
+            Action<Exception> rejectHandler = (Exception exception) => {
+                if (onRejected != null) {
+                    onRejected (exception);
+                }
+                resultPromise.reject (exception);
+            };
+
+            this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+
+            return resultPromise;
         }
     }
 }
