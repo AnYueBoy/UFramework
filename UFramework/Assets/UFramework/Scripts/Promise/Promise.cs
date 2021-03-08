@@ -379,11 +379,129 @@ namespace UFramework.Promise {
     }
 
     public class Promise<PromisedT> : IPromise<PromisedT>, IPendingPromise<PromisedT>, IRejectable, IPromiseInfo {
-        public int id =>
-            throw new NotImplementedException ();
 
-        public string name =>
-            throw new NotImplementedException ();
+        public int id { get; private set; }
+        public string name { get; private set; }
+        public PromiseState curState { get; private set; }
+
+        private List<RejectHandler> rejectHandlers;
+        private Exception rejectionException;
+        private List<Action<PromisedT>> resolveCallbacks;
+        private List<IRejectable> resolveRejectables;
+        private PromisedT resolveValue;
+
+        public Promise () {
+            this.curState = PromiseState.Pending;
+            this.id = ++Promise.nextPromiseId;
+            if (Promise.enablePromiseTracking) {
+                Promise.pendingPromises.Add (this);
+            }
+        }
+
+        public Promise (Action<Action<PromisedT>, Action<Exception>> resolver) {
+            Action<PromisedT> action = null;
+            Action<Exception> action2 = null;
+            this.curState = PromiseState.Pending;
+            this.id = ++Promise.nextPromiseId;
+            if (Promise.enablePromiseTracking) {
+                Promise.pendingPromises.Add (this);
+            }
+
+            try {
+                if (action == null) {
+                    action = (PromisedT value) => {
+                        resolve (value);
+                    };
+                }
+
+                if (action2 == null) {
+                    action2 = (Exception exception) => {
+                        reject (exception);
+                    };
+                }
+
+                resolver (action, action2);
+            } catch (Exception exception) {
+                this.reject (exception);
+            }
+        }
+
+        private void invokeHandler<T> (Action<T> callback, IRejectable rejectable, T value) {
+            try {
+                callback (value);
+            } catch (Exception exception) {
+                rejectable.reject (exception);
+            }
+        }
+
+        private void invokeRejectHandlers (Exception exception) {
+            Action<RejectHandler> fn = null;
+            if (this.rejectHandlers != null) {
+                if (fn == null) {
+                    fn = (RejectHandler handler) => {
+                        this.invokeHandler<Exception> (handler.callback, handler.rejectable, exception);
+                    };
+                }
+
+                foreach (RejectHandler handler in this.rejectHandlers) {
+                    fn (handler);
+                }
+            }
+
+            this.clearHandlers ();
+        }
+
+        private void invokeResolveHandlers (PromisedT value) {
+            if (this.resolveCallbacks != null) {
+                int num = 0;
+                int count = this.resolveCallbacks.Count;
+                while (num < count) {
+                    this.invokeHandler<PromisedT> (this.resolveCallbacks[num], this.resolveRejectables[num], value);
+                    num++;
+                }
+            }
+            this.clearHandlers ();
+        }
+
+        private void addRejectHandler (Action<Exception> onRejected, IRejectable rejectable) {
+            if (this.rejectHandlers == null) {
+                this.rejectHandlers = new List<RejectHandler> ();
+            }
+
+            RejectHandler item = new RejectHandler {
+                callback = onRejected,
+                rejectable = rejectable
+            };
+            this.rejectHandlers.Add (item);
+        }
+
+        private void addResolveHandler (Action<PromisedT> onResolved, IRejectable rejectable) {
+            if (this.resolveCallbacks == null) {
+                this.resolveCallbacks = new List<Action<PromisedT>> ();
+            }
+            if (this.resolveRejectables == null) {
+                this.resolveRejectables = new List<IRejectable> ();
+            }
+            this.resolveCallbacks.Add (onResolved);
+            this.resolveRejectables.Add (rejectable);
+        }
+
+        private void clearHandlers () {
+            this.rejectHandlers = null;
+            this.resolveCallbacks = null;
+            this.resolveRejectables = null;
+        }
+
+        private void actionHandlers (IRejectable resultPromise, Action<PromisedT> resolveHandler, Action<Exception> rejectHandler) {
+            if (this.curState == PromiseState.Resolved) {
+                this.invokeHandler<PromisedT> (resolveHandler, resultPromise, this.resolveValue);
+            } else if (this.curState == PromiseState.Rejected) {
+                this.invokeHandler<Exception> (rejectHandler, resultPromise, this.rejectionException);
+            } else {
+                this.addResolveHandler (resolveHandler, resultPromise);
+                this.addRejectHandler (rejectHandler, resultPromise);
+            }
+        }
 
         public IPromise<PromisedT> catchs (Action<Exception> onRejected) {
             throw new NotImplementedException ();
