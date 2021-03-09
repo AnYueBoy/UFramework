@@ -1,7 +1,7 @@
 namespace UFramework.Promise {
     using System;
 
-    public struct RejectHandler {
+    public class RejectHandler {
         public Action<Exception> callback;
         public IRejectable rejectable;
     }
