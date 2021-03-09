@@ -3,7 +3,7 @@ CRC: 1775246364
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 75af035556de357c2f75f6f25f0a43f1
+    Hash: 5f2ef3a25cc4b46cbb6de416f0cb8aaf
   TypeTreeHash:
     serializedVersion: 2
     Hash: 7652f69dff3dcd0741269161f69220a7
@@ -27,4 +27,4 @@ SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/Resources/Shape/Cube.prefab
 Dependencies:
-- C:/anyue/unityworkstation/UFramework/UFramework/Assets/AssetsBundles/matbundle
+- D:/UnityWork/UFramework/UFramework/Assets/AssetsBundles/Windows/matbundle

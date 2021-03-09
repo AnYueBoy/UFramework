@@ -6,6 +6,8 @@
 namespace UFramework.Editor.Util {
     using System;
     using UnityEditor;
+    using UnityEngine;
+
     public class EditorUtil {
 
         /// <summary>
@@ -16,6 +18,38 @@ namespace UFramework.Editor.Util {
 
             var clearMethod = log.GetMethod ("Clear");
             clearMethod.Invoke (null, null);
+        }
+
+        /// <summary>
+        /// 获取当前平台名称
+        /// </summary>
+        /// <returns></returns>
+        public static string getCurPlatformName () {
+            BuildTarget buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            switch (buildTarget) {
+                case BuildTarget.StandaloneWindows:
+                case BuildTarget.StandaloneWindows64:
+                    return "Windows";
+
+                case BuildTarget.iOS:
+                    return "IOS";
+
+                case BuildTarget.Android:
+                    return "Android";
+
+                case BuildTarget.StandaloneLinux64:
+                    return "Linux";
+
+                default:
+                    // FIXME: other platfrom not support
+                    return null;
+            }
+
+        }
+
+        public static string getBuildBundleUrl () {
+            string platformName = getCurPlatformName ();
+            return Application.dataPath + "/AssetsBundles/" + platformName + "/";
         }
     }
 }

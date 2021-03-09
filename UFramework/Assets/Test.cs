@@ -8,6 +8,7 @@
  */
 
 using System.Threading.Tasks;
+using UFramework.FrameUtil;
 using UFramework.GameCommon;
 using UFramework.Promise;
 using UnityEngine;
@@ -83,7 +84,7 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
+        string bundleUrl = CommonUtil.getBundleUrl ();
         AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
             GameObject cube = Instantiate<GameObject> (cubeAsset);
             cube.transform.SetParent (nodeParent);

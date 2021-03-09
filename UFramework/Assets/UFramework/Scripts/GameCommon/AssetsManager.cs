@@ -13,6 +13,7 @@ namespace UFramework.GameCommon {
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using UFramework.FrameUtil;
     using UFramework.Promise;
     using UnityEngine;
     public class AssetsManager {
@@ -42,7 +43,7 @@ namespace UFramework.GameCommon {
             if (this.assetBundleManifest != null) {
                 return;
             }
-            string manifestFileBundleUrl = Application.dataPath + AssetUrl.bundleUrl + AssetUrl.bundleUrl;
+            string manifestFileBundleUrl = CommonUtil.getBundleUrl () + "/" + CommonUtil.getCurPlatformName ();
             AssetBundle manifestFileBundle = AssetBundle.LoadFromFile (manifestFileBundleUrl);
             this.assetBundleManifest = manifestFileBundle.LoadAsset<AssetBundleManifest> ("AssetBundleManifest");
         }
@@ -190,7 +191,7 @@ namespace UFramework.GameCommon {
             this.loadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
-                string bundleUrl = Application.dataPath + AssetUrl.bundleUrl + "/" + bundleName;
+                string bundleUrl = CommonUtil.getBundleUrl () + "/" + bundleName;
                 this.loadTargetBundleSync (bundleUrl);
                 return;
             }
@@ -211,7 +212,7 @@ namespace UFramework.GameCommon {
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
                 promiseList.Add (new Promise ((Action reslove, Action<Exception> reject) => {
-                    string bundleUrl = Application.dataPath + AssetUrl.bundleUrl + "/" + bundleName;
+                    string bundleUrl = CommonUtil.getBundleUrl () + "/" + bundleName;
                     this.loadTargetBundleAsync (bundleUrl).then (
                         (AssetBundle assetBundle) => {
                             reslove ();
