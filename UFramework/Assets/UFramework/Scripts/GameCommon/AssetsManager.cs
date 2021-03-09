@@ -139,51 +139,33 @@ namespace UFramework.GameCommon {
             }
 
             // 检查依赖资源
-            this.checkDependencies (bundleName);
+            this.checkDependenciesSync (bundleName);
 
             string targetBundleUrl = bundleUrl + "/" + bundleName;
-            AssetBundle targetAssetBundle = this.loadTargetBundleSync (targetBundleUrl);
 
-            nativeAsset = targetAssetBundle.LoadAsset<T> (assetName);
-            PackAsset packAsset = new PackAsset (nativeAsset);
-            this.assetPool.Add (assetName, packAsset);
+            AssetBundle targetBundle = this.loadTargetBundleSync (targetBundleUrl);
 
-            return nativeAsset as T;
+            return this.loadTargetBundleAssetSync<T> (targetBundle, assetName);
         }
 
         public void getAssetByBundleAsync<T> (string bundleUrl, string bundleName, string assetName, Action<T> callback) where T : Object {
-            // FIXME: 同时异步加载可能会加载两边bundle
             T nativeAsset = this.findNativeAsset<T> (assetName);
             if (nativeAsset != null) {
                 callback (nativeAsset);
                 return;
             }
 
-            string targetBundleUrl = bundleUrl + "/" + bundleName;
-            if (this.bundleDic.ContainsKey (targetBundleUrl)) {
-                AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
-                AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
-                assetBundleRequest.completed += bundleOperation => {
-                    nativeAsset = assetBundleRequest.asset as T;
-                    PackAsset packAsset = new PackAsset (nativeAsset);
-                    this.assetPool.Add (assetName, packAsset);
-                    callback (nativeAsset);
-                };
-                return;
-            }
+            // FIXME: 异步依赖检查
+            // this.checkDependenciesSync (bundleName);
 
-            AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync (targetBundleUrl);
-            bundleCreateRequest.completed += bundleCreateOperation => {
-                this.bundleDic.Add (targetBundleUrl, bundleCreateRequest.assetBundle);
-                AssetBundle targetBundle = this.bundleDic[targetBundleUrl];
-                AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
-                assetBundleRequest.completed += bundleOperation => {
-                    nativeAsset = assetBundleRequest.asset as T;
-                    PackAsset packAsset = new PackAsset (nativeAsset);
-                    this.assetPool.Add (assetName, packAsset);
-                    callback (nativeAsset);
-                };
-            };
+            string targetBundleUrl = bundleUrl + "/" + bundleName;
+            this.loadTargetBundleAsync (targetBundleUrl)
+                .then ((AssetBundle targetBundle) => {
+                    this.loadTargetBundleAssetAsync<T> (targetBundle, assetName)
+                        .then ((T targetAsset) => {
+                            callback (targetAsset);
+                        });
+                });
         }
 
         public bool tryReleaseBundle (string bundleUrl, string bundleName, bool unloadAllLoadedObjects = false) {
@@ -202,7 +184,7 @@ namespace UFramework.GameCommon {
         /// 递归检查依赖项
         /// </summary>
         /// <param name="bundleName"></param>
-        private void checkDependencies (string bundleName) {
+        private void checkDependenciesSync (string bundleName) {
             this.loadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
@@ -211,9 +193,14 @@ namespace UFramework.GameCommon {
                 return;
             }
             foreach (string dependenceBundleName in allDependencies) {
-                this.checkDependencies (dependenceBundleName);
+                this.checkDependenciesSync (dependenceBundleName);
             }
         }
+
+        // private Promise checkDependenciesAsync (string bundleName) {
+        //     this.loadManifestFile ();
+        //     string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
+        // }
 
         /* 同步加载目标AB包 */
         private AssetBundle loadTargetBundleSync (string bundleUrl) {
@@ -226,11 +213,23 @@ namespace UFramework.GameCommon {
             return this.bundleDic[bundleUrl];
         }
 
+        /* 同步加载目标AB包下的对应资源 */
+        private T loadTargetBundleAssetSync<T> (AssetBundle targetBundle, string assetName) where T : Object {
+            T nativeAsset = targetBundle.LoadAsset<T> (assetName);
+            PackAsset packAsset = new PackAsset (nativeAsset);
+            this.assetPool.Add (assetName, packAsset);
+            return nativeAsset as T;
+        }
+
         /* 异步加载目标AB包 */
         private Promise<AssetBundle> loadTargetBundleAsync (string bundleUrl) {
             if (this.bundleDic.ContainsKey (bundleUrl)) {
                 AssetBundle targetAssetBundle = this.bundleDic[bundleUrl];
                 return Promise<AssetBundle>.resolved (targetAssetBundle);
+            }
+
+            if (this.bundleMap.ContainsKey (bundleUrl)) {
+                return this.bundleMap[bundleUrl];
             }
 
             this.bundleMap.Add (bundleUrl, new Promise<AssetBundle> ((Action<AssetBundle> resolve, Action<Exception> reject) => {
@@ -244,6 +243,24 @@ namespace UFramework.GameCommon {
             }));
 
             return this.bundleMap[bundleUrl];
+        }
+
+        /* 异步加载目标AB下的对应资源 */
+        private Promise<T> loadTargetBundleAssetAsync<T> (AssetBundle targetBundle, string assetName) where T : Object {
+            AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
+            return new Promise<T> (
+                (Action<T> resolve, Action<Exception> reject) => {
+                    assetBundleRequest.completed += bundleOperation => {
+                        T nativeAsset = assetBundleRequest.asset as T;
+                        PackAsset packAsset = new PackAsset (nativeAsset);
+                        if (this.assetPool.ContainsKey (assetName)) {
+                            this.assetPool.Remove (assetName);
+                        }
+                        this.assetPool.Add (assetName, packAsset);
+                        resolve (nativeAsset);
+                    };
+                }
+            );
         }
 
         #endregion

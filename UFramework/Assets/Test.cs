@@ -88,19 +88,18 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        Promise<GameObject> resultPromise = this.loadTest ();
-        resultPromise.then ((GameObject cubeAsset) => {
+        string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
+        AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
             GameObject cube = Instantiate<GameObject> (cubeAsset);
             cube.transform.SetParent (nodeParent);
             cube.transform.localPosition = Vector3.zero;
         });
-    }
 
-    private Promise<GameObject> loadTest () {
-        return new Promise<GameObject> ((Action<GameObject> resolve, Action<Exception> reject) => {
-            string bundleUrl = Application.dataPath + AssetUrl.bundleUrl;
-            AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", resolve);
+        AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
+            GameObject cube = Instantiate<GameObject> (cubeAsset);
+            cube.transform.SetParent (nodeParent);
+            cube.transform.localPosition = Vector3.zero;
         });
-    }
 
+    }
 }
