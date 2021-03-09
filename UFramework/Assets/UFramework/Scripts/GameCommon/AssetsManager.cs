@@ -12,12 +12,14 @@ namespace UFramework.GameCommon {
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using UFramework.Promise;
     using UnityEngine;
     public class AssetsManager {
 
         private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();
 
         private Dictionary<string, AssetBundle> bundleDic = new Dictionary<string, AssetBundle> ();
+        private Dictionary<string, Promise<AssetBundle>> bundleMap = new Dictionary<string, Promise<AssetBundle>> ();
 
         private AssetBundleManifest assetBundleManifest = null;
 
@@ -213,6 +215,7 @@ namespace UFramework.GameCommon {
             }
         }
 
+        /* 同步加载目标AB包 */
         private AssetBundle loadTargetBundleSync (string bundleUrl) {
             AssetBundle targetAssetBundle = null;
             if (!this.bundleDic.ContainsKey (bundleUrl)) {
@@ -221,6 +224,26 @@ namespace UFramework.GameCommon {
             }
 
             return this.bundleDic[bundleUrl];
+        }
+
+        /* 异步加载目标AB包 */
+        private Promise<AssetBundle> loadTargetBundleAsync (string bundleUrl) {
+            if (this.bundleDic.ContainsKey (bundleUrl)) {
+                AssetBundle targetAssetBundle = this.bundleDic[bundleUrl];
+                return Promise<AssetBundle>.resolved (targetAssetBundle);
+            }
+
+            this.bundleMap.Add (bundleUrl, new Promise<AssetBundle> ((Action<AssetBundle> resolve, Action<Exception> reject) => {
+                AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync (bundleUrl);
+                bundleCreateRequest.completed += (AsyncOperation operation) => {
+                    AssetBundle assetBundle = bundleCreateRequest.assetBundle;
+                    this.bundleDic.Add (bundleUrl, assetBundle);
+                    resolve (assetBundle);
+                    this.bundleMap.Remove (bundleUrl);
+                };
+            }));
+
+            return this.bundleMap[bundleUrl];
         }
 
         #endregion

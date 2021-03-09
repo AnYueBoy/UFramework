@@ -260,7 +260,7 @@ namespace UFramework.Promise {
             this.invokeResolveHandlers ();
         }
 
-        public static IPromise resolved () {
+        public static Promise resolved () {
             Promise promise = new Promise ();
             promise.resolve ();
             return promise;
@@ -504,7 +504,7 @@ namespace UFramework.Promise {
             }
         }
 
-        public static IPromise<PromisedT> resolved (PromisedT promisedValue) {
+        public static Promise<PromisedT> resolved (PromisedT promisedValue) {
             Promise<PromisedT> promise = new Promise<PromisedT> ();
             promise.resolve (promisedValue);
             return promise;
