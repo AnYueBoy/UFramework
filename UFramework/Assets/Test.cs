@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net.Mime;
-/*
+﻿/*
  * @Author: l hy 
  * @Date: 2021-01-21 22:15:59 
  * @Description: 用于各类测试项目
@@ -9,12 +6,8 @@ using System.Net.Mime;
  * @Last Modified time: 2021-03-01 23:17:35
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UFramework.GameCommon;
-using UFramework.Promise;
-using UnityEditor;
 using UnityEngine;
 
 public class Test : MonoBehaviour {
