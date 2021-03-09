@@ -1,4 +1,5 @@
-﻿/*
+﻿using System;
+/*
  * @Author: l hy 
  * @Date: 2021-01-21 22:15:59 
  * @Description: 用于各类测试项目
@@ -8,6 +9,7 @@
 
 using System.Threading.Tasks;
 using UFramework.GameCommon;
+using UFramework.Promise;
 using UnityEngine;
 
 public class Test : MonoBehaviour {
@@ -94,5 +96,22 @@ public class Test : MonoBehaviour {
             cube.transform.localPosition = Vector3.zero;
         });
 
+        test ();
+
+    }
+
+    private Promise loadPromise () {
+        return new Promise (
+            (Action resolve, Action<Exception> reject) => {
+                resolve ();
+            }
+        );
+    }
+
+    private void test () {
+        this.loadPromise ()
+            .then (() => {
+                Debug.Log ("over");
+            });
     }
 }

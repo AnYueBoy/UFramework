@@ -42,6 +42,7 @@ namespace UFramework.Promise {
                     rejectHandler = ex => this.reject (ex);
                 }
 
+                // 创建后执行resolver
                 resolver (resolveHandler, rejectHandler);
             } catch (Exception exception) {
                 this.reject (exception);
