@@ -27,4 +27,4 @@ SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/Resources/Shape/Cube.prefab
 Dependencies:
-- D:/UnityWork/UFramework/UFramework/Assets/AssetsBundles/matbundle
+- C:/anyue/unityworkstation/UFramework/UFramework/Assets/AssetsBundles/matbundle
