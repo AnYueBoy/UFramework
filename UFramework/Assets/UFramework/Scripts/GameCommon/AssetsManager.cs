@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 /*
  * @Author: l hy 
@@ -155,15 +156,16 @@ namespace UFramework.GameCommon {
                 return;
             }
 
-            // FIXME: 异步依赖检查
-            // this.checkDependenciesSync (bundleName);
-
-            string targetBundleUrl = bundleUrl + "/" + bundleName;
-            this.loadTargetBundleAsync (targetBundleUrl)
-                .then ((AssetBundle targetBundle) => {
-                    this.loadTargetBundleAssetAsync<T> (targetBundle, assetName)
-                        .then ((T targetAsset) => {
-                            callback (targetAsset);
+            // 异步依赖检查
+            this.checkDependenciesAsync (bundleName)
+                .then (() => {
+                    string targetBundleUrl = bundleUrl + "/" + bundleName;
+                    this.loadTargetBundleAsync (targetBundleUrl)
+                        .then ((AssetBundle targetBundle) => {
+                            this.loadTargetBundleAssetAsync<T> (targetBundle, assetName)
+                                .then ((T targetAsset) => {
+                                    callback (targetAsset);
+                                });
                         });
                 });
         }
@@ -181,7 +183,7 @@ namespace UFramework.GameCommon {
         }
 
         /// <summary>
-        /// 递归检查依赖项
+        /// 同步递归检查依赖项
         /// </summary>
         /// <param name="bundleName"></param>
         private void checkDependenciesSync (string bundleName) {
@@ -197,10 +199,32 @@ namespace UFramework.GameCommon {
             }
         }
 
-        // private Promise checkDependenciesAsync (string bundleName) {
-        //     this.loadManifestFile ();
-        //     string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
-        // }
+        /* 异步检查依赖项 */
+        private Promise checkDependenciesAsync (string bundleName) {
+            List<Promise> allPromise = new List<Promise> ();
+            this.addAllDependenciesBundle (allPromise, bundleName);
+            return Promise.all (allPromise.ToArray ());
+        }
+
+        private void addAllDependenciesBundle (List<Promise> promiseList, string bundleName) {
+            this.loadManifestFile ();
+            string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
+            if (allDependencies.Length <= 0) {
+                promiseList.Add (new Promise ((Action reslove, Action<Exception> reject) => {
+                    string bundleUrl = Application.dataPath + AssetUrl.bundleUrl + "/" + bundleName;
+                    this.loadTargetBundleAsync (bundleUrl).then (
+                        (AssetBundle assetBundle) => {
+                            reslove ();
+                        }
+                    );
+                }));
+                return;
+            }
+
+            foreach (string dependenceBundleName in allDependencies) {
+                this.addAllDependenciesBundle (promiseList, dependenceBundleName);
+            }
+        }
 
         /* 同步加载目标AB包 */
         private AssetBundle loadTargetBundleSync (string bundleUrl) {

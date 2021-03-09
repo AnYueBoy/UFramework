@@ -132,7 +132,7 @@ namespace UFramework.Promise {
             this.rejectHandlers.Add (item);
         }
 
-        public static IPromise all (params IPromise[] promises) {
+        public static Promise all (params IPromise[] promises) {
             if (promises.Length == 0) {
                 return resolved ();
             }
@@ -556,7 +556,7 @@ namespace UFramework.Promise {
             this.invokeRejectHandlers (exception);
         }
 
-        public static IPromise<IEnumerable<PromisedT>> all (params IPromise<PromisedT>[] promises) {
+        public static Promise<IEnumerable<PromisedT>> all (params IPromise<PromisedT>[] promises) {
             if (promises.Length == 0) {
                 return Promise<IEnumerable<PromisedT>>.resolved (Enumerable.Empty<PromisedT> ());
             }
