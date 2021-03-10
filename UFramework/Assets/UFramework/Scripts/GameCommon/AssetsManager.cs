@@ -43,7 +43,7 @@ namespace UFramework.GameCommon {
             if (this.assetBundleManifest != null) {
                 return;
             }
-            string manifestFileBundleUrl = CommonUtil.getBundleUrl () + "/" + CommonUtil.getCurPlatformName ();
+            string manifestFileBundleUrl = CommonUtil.getBundleUrl () + CommonUtil.getCurPlatformName ();
             AssetBundle manifestFileBundle = AssetBundle.LoadFromFile (manifestFileBundleUrl);
             this.assetBundleManifest = manifestFileBundle.LoadAsset<AssetBundleManifest> ("AssetBundleManifest");
         }
@@ -143,7 +143,7 @@ namespace UFramework.GameCommon {
             // 检查依赖资源
             this.checkDependenciesSync (bundleName);
 
-            string targetBundleUrl = bundleUrl + "/" + bundleName;
+            string targetBundleUrl = bundleUrl + bundleName;
 
             AssetBundle targetBundle = this.loadTargetBundleSync (targetBundleUrl);
 
@@ -160,7 +160,7 @@ namespace UFramework.GameCommon {
             // 异步依赖检查
             this.checkDependenciesAsync (bundleName)
                 .then (() => {
-                    string targetBundleUrl = bundleUrl + "/" + bundleName;
+                    string targetBundleUrl = bundleUrl + bundleName;
                     this.loadTargetBundleAsync (targetBundleUrl)
                         .then ((AssetBundle targetBundle) => {
                             this.loadTargetBundleAssetAsync<T> (targetBundle, assetName)
@@ -191,7 +191,7 @@ namespace UFramework.GameCommon {
             this.loadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
-                string bundleUrl = CommonUtil.getBundleUrl () + "/" + bundleName;
+                string bundleUrl = CommonUtil.getBundleUrl () + bundleName;
                 this.loadTargetBundleSync (bundleUrl);
                 return;
             }
@@ -212,7 +212,7 @@ namespace UFramework.GameCommon {
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
                 promiseList.Add (new Promise ((Action reslove, Action<Exception> reject) => {
-                    string bundleUrl = CommonUtil.getBundleUrl () + "/" + bundleName;
+                    string bundleUrl = CommonUtil.getBundleUrl () + bundleName;
                     this.loadTargetBundleAsync (bundleUrl).then (
                         (AssetBundle assetBundle) => {
                             reslove ();

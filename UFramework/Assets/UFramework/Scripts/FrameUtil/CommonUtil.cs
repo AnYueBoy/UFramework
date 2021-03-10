@@ -318,7 +318,7 @@ namespace UFramework.FrameUtil {
 
         public static string getBundleUrl () {
             string platformName = getCurPlatformName ();
-            string bundleUrl = Application.dataPath + "/AssetsBundles/" + platformName;
+            string bundleUrl = Application.dataPath + "/AssetsBundles/" + platformName+"/";
             return bundleUrl;
         }
     }
