@@ -49,6 +49,7 @@ namespace UFramework.Promise {
             }
         }
 
+        #region promise handler execute
         private void actionHandlers (IRejectable resultPromise, Action resolveHandler, Action<Exception> rejectHandler) {
             if (this.curState == PromiseState.Resolved) {
                 this.invokeResolveHandler (resolveHandler, resultPromise);
@@ -92,19 +93,6 @@ namespace UFramework.Promise {
             this.clearHandlers ();
         }
 
-        private void addResolveHandler (Action onResolved, IRejectable rejectable) {
-            if (this.resolveHandlers == null) {
-                this.resolveHandlers = new List<ResolveHandler> ();
-            }
-
-            ResolveHandler item = new ResolveHandler {
-                callback = onResolved,
-                rejectable = rejectable
-            };
-
-            this.resolveHandlers.Add (item);
-        }
-
         private void invokeResolveHandlers () {
             Action<ResolveHandler> fn = null;
             if (this.resolveHandlers != null) {
@@ -121,6 +109,19 @@ namespace UFramework.Promise {
             this.clearHandlers ();
         }
 
+        private void addResolveHandler (Action onResolved, IRejectable rejectable) {
+            if (this.resolveHandlers == null) {
+                this.resolveHandlers = new List<ResolveHandler> ();
+            }
+
+            ResolveHandler item = new ResolveHandler {
+                callback = onResolved,
+                rejectable = rejectable
+            };
+
+            this.resolveHandlers.Add (item);
+        }
+
         private void addRejectHandler (Action<Exception> onRejected, IRejectable rejectable) {
             if (this.rejectHandlers == null) {
                 this.rejectHandlers = new List<RejectHandler> ();
@@ -133,6 +134,20 @@ namespace UFramework.Promise {
             this.rejectHandlers.Add (item);
         }
 
+        private void clearHandlers () {
+            this.rejectHandlers = null;
+            this.resolveHandlers = null;
+        }
+
+        #endregion
+
+        internal static void propagateUnhandledException (object sender, Exception exception) {
+            if (unHandledException != null) {
+                unHandledException (sender, new ExceptionEventArgs (exception));
+            }
+        }
+
+        #region  public methond
         public static Promise all (params IPromise[] promises) {
             if (promises.Length == 0) {
                 return resolved ();
@@ -173,17 +188,6 @@ namespace UFramework.Promise {
             this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
             return resultPromise;
 
-        }
-
-        private void clearHandlers () {
-            this.rejectHandlers = null;
-            this.resolveHandlers = null;
-        }
-
-        internal static void propagateUnhandledException (object sender, Exception exception) {
-            if (unHandledException != null) {
-                unHandledException (sender, new ExceptionEventArgs (exception));
-            }
         }
 
         public void done () {
@@ -378,6 +382,8 @@ namespace UFramework.Promise {
             }
             return resultPromise;
         }
+
+        #endregion
     }
 
     public class Promise<PromisedT> : IPromise<PromisedT>, IPendingPromise<PromisedT>, IRejectable, IPromiseInfo {
