@@ -142,9 +142,8 @@ namespace UFramework.Promise {
         #endregion
 
         internal static void propagateUnhandledException (object sender, Exception exception) {
-            if (unHandledException != null) {
-                unHandledException (sender, new ExceptionEventArgs (exception));
-            }
+            // C# 6.0 null 空值操作符
+            unHandledException?.Invoke (sender, new ExceptionEventArgs (exception));
         }
 
         #region  public methond
@@ -286,16 +285,12 @@ namespace UFramework.Promise {
         public IPromise then (Action onResolved, Action<Exception> onRejected) {
             Promise resultPromise = new Promise ();
             Action resolveHandler = () => {
-                if (onResolved != null) {
-                    onResolved ();
-                }
+                onResolved?.Invoke ();
                 resultPromise.resolve ();
             };
 
             Action<Exception> rejectHandler = (Exception exception) => {
-                if (onRejected != null) {
-                    onRejected (exception);
-                }
+                onRejected?.Invoke (exception);
                 resultPromise.reject (exception);
             };
 
@@ -328,9 +323,7 @@ namespace UFramework.Promise {
             };
 
             Action<Exception> rejectHandler = (Exception exception) => {
-                if (onRejected != null) {
-                    onRejected (exception);
-                }
+                onRejected?.Invoke (exception);
                 resultPromise.reject (exception);
             };
 
@@ -350,9 +343,7 @@ namespace UFramework.Promise {
             };
 
             Action<Exception> rejectHandler = (Exception exception) => {
-                if (onRejected != null) {
-                    onRejected (exception);
-                }
+                onRejected?.Invoke (exception);
                 resultPromise.reject (exception);
             };
 
@@ -677,16 +668,12 @@ namespace UFramework.Promise {
             Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
 
             Action<PromisedT> resolveHandler = (PromisedT value) => {
-                if (onResolved != null) {
-                    onResolved (value);
-                }
+                onResolved?.Invoke (value);
                 resultPromise.resolve (value);
             };
 
             Action<Exception> rejectHandler = (Exception exception) => {
-                if (onRejected != null) {
-                    onRejected (exception);
-                }
+                onRejected?.Invoke (exception);
                 resultPromise.reject (exception);
             };
 
@@ -720,9 +707,7 @@ namespace UFramework.Promise {
             };
 
             Action<Exception> rejectHandler = (Exception exception) => {
-                if (onRejected != null) {
-                    onRejected (exception);
-                }
+                onRejected?.Invoke (exception);
                 resultPromise.reject (exception);
             };
 
@@ -741,9 +726,7 @@ namespace UFramework.Promise {
             };
 
             Action<Exception> rejectHandler = (Exception exception) => {
-                if (onRejected != null) {
-                    onRejected (exception);
-                }
+                onRejected?.Invoke (exception);
                 resultPromise.reject (exception);
             };
 
