@@ -8,9 +8,8 @@ namespace UFramework.Promise {
         internal static int nextPromiseId = 0;
         internal static HashSet<IPromiseInfo> pendingPromises = new HashSet<IPromiseInfo> ();
         private List<RejectHandler> rejectHandlers;
-        private Exception rejectionException;
         private List<ResolveHandler> resolveHandlers = new List<ResolveHandler> ();
-
+        private Exception rejectionException;
         public static event EventHandler<ExceptionEventArgs> unHandledException;
 
         public PromiseState curState { get; private set; }
