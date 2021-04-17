@@ -354,10 +354,9 @@ namespace UFramework.Promise {
         public string name { get; private set; }
         public PromiseState curState { get; private set; }
 
-        private List<RejectHandler> rejectHandlers;
         private Exception rejectionException;
-        private List<Action<PromisedT>> resolveCallbacks;
-        private List<IRejectable> resolveRejectables;
+        private List<RejectHandler> rejectHandlers = new List<RejectHandler> ();
+        private List<ResolveHandler<PromisedT>> resolveHandlers = new List<ResolveHandler<PromisedT>> ();
         private PromisedT resolveValue;
 
         public Promise () {
@@ -413,13 +412,8 @@ namespace UFramework.Promise {
         }
 
         private void invokeResolveHandlers (PromisedT value) {
-            if (this.resolveCallbacks != null) {
-                int num = 0;
-                int count = this.resolveCallbacks.Count;
-                while (num < count) {
-                    this.executeHandler<PromisedT> (this.resolveCallbacks[num], this.resolveRejectables[num], value);
-                    num++;
-                }
+            foreach (ResolveHandler<PromisedT> handler in this.resolveHandlers) {
+                this.executeHandler<PromisedT> (handler.callback, handler.rejectable, value);
             }
             this.clearHandlers ();
         }
@@ -437,20 +431,17 @@ namespace UFramework.Promise {
         }
 
         private void addResolveHandler (Action<PromisedT> onResolved, IRejectable rejectable) {
-            if (this.resolveCallbacks == null) {
-                this.resolveCallbacks = new List<Action<PromisedT>> ();
-            }
-            if (this.resolveRejectables == null) {
-                this.resolveRejectables = new List<IRejectable> ();
-            }
-            this.resolveCallbacks.Add (onResolved);
-            this.resolveRejectables.Add (rejectable);
+            ResolveHandler<PromisedT> item = new ResolveHandler<PromisedT> {
+                callback = onResolved,
+                rejectable = rejectable
+            };
+
+            this.resolveHandlers.Add (item);
         }
 
         private void clearHandlers () {
             this.rejectHandlers = null;
-            this.resolveCallbacks = null;
-            this.resolveRejectables = null;
+            this.resolveHandlers = null;
         }
 
         private void actionHandlers (IRejectable resultPromise, Action<PromisedT> resolveHandler, Action<Exception> rejectHandler) {
