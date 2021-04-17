@@ -6,10 +6,12 @@ namespace UFramework.Promise {
     public class Promise : IPromise, IPendingPromise, IRejectable, IPromiseInfo {
         public static bool enablePromiseTracking = false;
         internal static int nextPromiseId = 0;
-        internal static HashSet<IPromiseInfo> pendingPromises = new HashSet<IPromiseInfo> ();
-        private List<RejectHandler> rejectHandlers;
+        private List<RejectHandler> rejectHandlers = new List<RejectHandler> ();
         private List<ResolveHandler> resolveHandlers = new List<ResolveHandler> ();
         private Exception rejectionException;
+
+        /* 未处理的异常列表 */
+        internal static HashSet<IPromiseInfo> pendingPromises = new HashSet<IPromiseInfo> ();
         public static event EventHandler<ExceptionEventArgs> unHandledException;
 
         public PromiseState curState { get; private set; }
@@ -19,6 +21,7 @@ namespace UFramework.Promise {
         public string name { get; private set; }
 
         public Promise () {
+            this.id = ++Promise.nextPromiseId;
             this.curState = PromiseState.Pending;
             if (enablePromiseTracking) {
                 pendingPromises.Add (this);
@@ -26,20 +29,15 @@ namespace UFramework.Promise {
         }
 
         public Promise (Action<Action, Action<Exception>> resolver) {
-            Action resolveHandler = null;
-            Action<Exception> rejectHandler = null;
+            this.id = ++Promise.nextPromiseId;
             this.curState = PromiseState.Pending;
             if (enablePromiseTracking) {
                 pendingPromises.Add (this);
             }
 
             try {
-                if (resolveHandler == null) {
-                    resolveHandler = () => this.resolve ();
-                }
-                if (rejectHandler == null) {
-                    rejectHandler = ex => this.reject (ex);
-                }
+                Action resolveHandler = () => this.resolve ();
+                Action<Exception> rejectHandler = ex => this.reject (ex);
 
                 // 创建后执行resolver
                 resolver (resolveHandler, rejectHandler);
@@ -51,16 +49,16 @@ namespace UFramework.Promise {
         #region promise handler execute
         private void actionHandlers (IRejectable resultPromise, Action resolveHandler, Action<Exception> rejectHandler) {
             if (this.curState == PromiseState.Resolved) {
-                this.invokeResolveHandler (resolveHandler, resultPromise);
+                this.executeResolveHandler (resolveHandler, resultPromise);
             } else if (this.curState == PromiseState.Rejected) {
-                this.invokeRejectHandler (rejectHandler, resultPromise, this.rejectionException);
+                this.executeRejectHandler (rejectHandler, resultPromise, this.rejectionException);
             } else {
                 this.addResolveHandler (resolveHandler, resultPromise);
                 this.addRejectHandler (rejectHandler, resultPromise);
             }
         }
 
-        private void invokeResolveHandler (Action callback, IRejectable rejectable) {
+        private void executeResolveHandler (Action callback, IRejectable rejectable) {
             try {
                 callback ();
             } catch (Exception exception) {
@@ -68,7 +66,7 @@ namespace UFramework.Promise {
             }
         }
 
-        private void invokeRejectHandler (Action<Exception> callback, IRejectable rejectable, Exception value) {
+        private void executeRejectHandler (Action<Exception> callback, IRejectable rejectable, Exception value) {
             try {
                 callback (value);
             } catch (Exception exception) {
@@ -77,42 +75,22 @@ namespace UFramework.Promise {
         }
 
         private void invokeRejectHandlers (Exception exception) {
-            Action<RejectHandler> fn = null;
-            if (this.rejectHandlers != null) {
-                if (fn == null) {
-                    fn = (RejectHandler handler) => {
-                        this.invokeRejectHandler (handler.callback, handler.rejectable, exception);
-                    };
-                    foreach (RejectHandler rejectHandler in this.rejectHandlers) {
-                        fn (rejectHandler);
-                    }
-                }
+            foreach (RejectHandler rejectHandler in this.rejectHandlers) {
+                this.executeRejectHandler (rejectHandler.callback, rejectHandler.rejectable, exception);
             }
 
             this.clearHandlers ();
         }
 
         private void invokeResolveHandlers () {
-            Action<ResolveHandler> fn = null;
-            if (this.resolveHandlers != null) {
-                if (fn == null) {
-                    fn = (ResolveHandler handler) => {
-                        this.invokeResolveHandler (handler.callback, handler.rejectable);
-                    };
-                    foreach (ResolveHandler resolveHandler in this.resolveHandlers) {
-                        fn (resolveHandler);
-                    }
-                }
+            foreach (ResolveHandler resolveHandler in this.resolveHandlers) {
+                this.executeResolveHandler (resolveHandler.callback, resolveHandler.rejectable);
             }
 
             this.clearHandlers ();
         }
 
         private void addResolveHandler (Action onResolved, IRejectable rejectable) {
-            if (this.resolveHandlers == null) {
-                this.resolveHandlers = new List<ResolveHandler> ();
-            }
-
             ResolveHandler item = new ResolveHandler {
                 callback = onResolved,
                 rejectable = rejectable
@@ -122,10 +100,6 @@ namespace UFramework.Promise {
         }
 
         private void addRejectHandler (Action<Exception> onRejected, IRejectable rejectable) {
-            if (this.rejectHandlers == null) {
-                this.rejectHandlers = new List<RejectHandler> ();
-            }
-
             RejectHandler item = new RejectHandler {
                 callback = onRejected,
                 rejectable = rejectable
@@ -140,6 +114,7 @@ namespace UFramework.Promise {
 
         #endregion
 
+        /* 仅允许在本程序集内访问 */
         internal static void propagateUnhandledException (object sender, Exception exception) {
             // C# 6.0 null 空值操作符
             unHandledException?.Invoke (sender, new ExceptionEventArgs (exception));
@@ -214,6 +189,7 @@ namespace UFramework.Promise {
                 );
         }
 
+        /* 返回未处理异常的迭代器 */
         public static IEnumerable<IPromiseInfo> getPendingPromise () {
             return pendingPromises;
         }
@@ -297,25 +273,20 @@ namespace UFramework.Promise {
             return resultPromise;
         }
 
+        /* 此then方法的onResolved回调会携带返回值，但要到的地方较少 */
         public IPromise then (Func<IPromise> onResolved, Action<Exception> onRejected) {
             Promise resultPromise = new Promise ();
             Action resolverHandler = () => {
-                Action action1 = null;
-                Action<Exception> action2 = null;
                 if (onResolved != null) {
-                    if (action1 == null) {
-                        action1 = () => {
-                            resultPromise.resolve ();
-                        };
-                    }
+                    Action nextResolveHandler = () => {
+                        resultPromise.resolve ();
+                    };
 
-                    if (action2 == null) {
-                        action2 = (Exception exception) => {
-                            resultPromise.reject (exception);
-                        };
-                    }
+                    Action<Exception> nextRejectHandler = (Exception exception) => {
+                        resultPromise.reject (exception);
+                    };
 
-                    onResolved ().then (action1, action2);
+                    onResolved ().then (nextResolveHandler, nextRejectHandler);
                 } else {
                     resultPromise.resolve ();
                 }
@@ -350,6 +321,7 @@ namespace UFramework.Promise {
             return resultPromise;
         }
 
+        /* 竞态状态 */
         public static IPromise race (params IPromise[] promises) {
             if (promises.Length == 0) {
                 throw new ApplicationException ("at least 1 input promise must be provided for race");
@@ -382,10 +354,9 @@ namespace UFramework.Promise {
         public string name { get; private set; }
         public PromiseState curState { get; private set; }
 
-        private List<RejectHandler> rejectHandlers;
         private Exception rejectionException;
-        private List<Action<PromisedT>> resolveCallbacks;
-        private List<IRejectable> resolveRejectables;
+        private List<RejectHandler> rejectHandlers = new List<RejectHandler> ();
+        private List<ResolveHandler<PromisedT>> resolveHandlers = new List<ResolveHandler<PromisedT>> ();
         private PromisedT resolveValue;
 
         public Promise () {
@@ -397,8 +368,6 @@ namespace UFramework.Promise {
         }
 
         public Promise (Action<Action<PromisedT>, Action<Exception>> resolver) {
-            Action<PromisedT> action = null;
-            Action<Exception> action2 = null;
             this.curState = PromiseState.Pending;
             this.id = ++Promise.nextPromiseId;
             if (Promise.enablePromiseTracking) {
@@ -406,25 +375,21 @@ namespace UFramework.Promise {
             }
 
             try {
-                if (action == null) {
-                    action = (PromisedT value) => {
-                        resolve (value);
-                    };
-                }
+                Action<PromisedT> resolveHandler = (PromisedT value) => {
+                    resolve (value);
+                };
 
-                if (action2 == null) {
-                    action2 = (Exception exception) => {
-                        reject (exception);
-                    };
-                }
+                Action<Exception> rejectHandler = (Exception exception) => {
+                    reject (exception);
+                };
 
-                resolver (action, action2);
+                resolver (resolveHandler, rejectHandler);
             } catch (Exception exception) {
                 this.reject (exception);
             }
         }
 
-        private void invokeHandler<T> (Action<T> callback, IRejectable rejectable, T value) {
+        private void executeHandler<T> (Action<T> callback, IRejectable rejectable, T value) {
             try {
                 callback (value);
             } catch (Exception exception) {
@@ -433,30 +398,16 @@ namespace UFramework.Promise {
         }
 
         private void invokeRejectHandlers (Exception exception) {
-            Action<RejectHandler> fn = null;
-            if (this.rejectHandlers != null) {
-                if (fn == null) {
-                    fn = (RejectHandler handler) => {
-                        this.invokeHandler<Exception> (handler.callback, handler.rejectable, exception);
-                    };
-                }
-
-                foreach (RejectHandler handler in this.rejectHandlers) {
-                    fn (handler);
-                }
+            foreach (RejectHandler handler in this.rejectHandlers) {
+                this.executeHandler<Exception> (handler.callback, handler.rejectable, exception);
             }
 
             this.clearHandlers ();
         }
 
         private void invokeResolveHandlers (PromisedT value) {
-            if (this.resolveCallbacks != null) {
-                int num = 0;
-                int count = this.resolveCallbacks.Count;
-                while (num < count) {
-                    this.invokeHandler<PromisedT> (this.resolveCallbacks[num], this.resolveRejectables[num], value);
-                    num++;
-                }
+            foreach (ResolveHandler<PromisedT> handler in this.resolveHandlers) {
+                this.executeHandler<PromisedT> (handler.callback, handler.rejectable, value);
             }
             this.clearHandlers ();
         }
@@ -474,27 +425,24 @@ namespace UFramework.Promise {
         }
 
         private void addResolveHandler (Action<PromisedT> onResolved, IRejectable rejectable) {
-            if (this.resolveCallbacks == null) {
-                this.resolveCallbacks = new List<Action<PromisedT>> ();
-            }
-            if (this.resolveRejectables == null) {
-                this.resolveRejectables = new List<IRejectable> ();
-            }
-            this.resolveCallbacks.Add (onResolved);
-            this.resolveRejectables.Add (rejectable);
+            ResolveHandler<PromisedT> item = new ResolveHandler<PromisedT> {
+                callback = onResolved,
+                rejectable = rejectable
+            };
+
+            this.resolveHandlers.Add (item);
         }
 
         private void clearHandlers () {
             this.rejectHandlers = null;
-            this.resolveCallbacks = null;
-            this.resolveRejectables = null;
+            this.resolveHandlers = null;
         }
 
         private void actionHandlers (IRejectable resultPromise, Action<PromisedT> resolveHandler, Action<Exception> rejectHandler) {
             if (this.curState == PromiseState.Resolved) {
-                this.invokeHandler<PromisedT> (resolveHandler, resultPromise, this.resolveValue);
+                this.executeHandler<PromisedT> (resolveHandler, resultPromise, this.resolveValue);
             } else if (this.curState == PromiseState.Rejected) {
-                this.invokeHandler<Exception> (rejectHandler, resultPromise, this.rejectionException);
+                this.executeHandler<Exception> (rejectHandler, resultPromise, this.rejectionException);
             } else {
                 this.addResolveHandler (resolveHandler, resultPromise);
                 this.addRejectHandler (rejectHandler, resultPromise);
@@ -564,7 +512,6 @@ namespace UFramework.Promise {
 
             for (var index = 0; index < promises.Length; index++) {
                 IPromise<PromisedT> promise = promises[index];
-                // FIXME: 可能会有问题，原版本使用的是Each循环(C# 新版未找到Each循环)
                 promise
                     .catchs ((Exception exception) => {
                         if (resultPromise.curState == PromiseState.Pending) {
@@ -684,22 +631,16 @@ namespace UFramework.Promise {
             Promise resultPromise = new Promise ();
 
             Action<PromisedT> resolveHandler = (PromisedT value) => {
-                Action action1 = null;
-                Action<Exception> action2 = null;
                 if (onResolved != null) {
-                    if (action1 == null) {
-                        action1 = () => {
-                            resultPromise.resolve ();
-                        };
-                    }
+                    Action nextResolveHandler = () => {
+                        resultPromise.resolve ();
+                    };
 
-                    if (action2 == null) {
-                        action2 = (Exception exception) => {
-                            resultPromise.reject (exception);
-                        };
-                    }
+                    Action<Exception> nextRejectHandler = (Exception exception) => {
+                        resultPromise.reject (exception);
+                    };
 
-                    onResolved (value).then (action1, action2);
+                    onResolved (value).then (nextResolveHandler, nextRejectHandler);
                 } else {
                     resultPromise.resolve ();
                 }
