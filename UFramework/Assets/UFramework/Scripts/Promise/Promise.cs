@@ -6,10 +6,12 @@ namespace UFramework.Promise {
     public class Promise : IPromise, IPendingPromise, IRejectable, IPromiseInfo {
         public static bool enablePromiseTracking = false;
         internal static int nextPromiseId = 0;
-        internal static HashSet<IPromiseInfo> pendingPromises = new HashSet<IPromiseInfo> ();
-        private List<RejectHandler> rejectHandlers;
+        private List<RejectHandler> rejectHandlers = new List<RejectHandler> ();
         private List<ResolveHandler> resolveHandlers = new List<ResolveHandler> ();
         private Exception rejectionException;
+
+        /* 未处理的异常列表 */
+        internal static HashSet<IPromiseInfo> pendingPromises = new HashSet<IPromiseInfo> ();
         public static event EventHandler<ExceptionEventArgs> unHandledException;
 
         public PromiseState curState { get; private set; }
@@ -89,10 +91,6 @@ namespace UFramework.Promise {
         }
 
         private void addResolveHandler (Action onResolved, IRejectable rejectable) {
-            if (this.resolveHandlers == null) {
-                this.resolveHandlers = new List<ResolveHandler> ();
-            }
-
             ResolveHandler item = new ResolveHandler {
                 callback = onResolved,
                 rejectable = rejectable
@@ -102,10 +100,6 @@ namespace UFramework.Promise {
         }
 
         private void addRejectHandler (Action<Exception> onRejected, IRejectable rejectable) {
-            if (this.rejectHandlers == null) {
-                this.rejectHandlers = new List<RejectHandler> ();
-            }
-
             RejectHandler item = new RejectHandler {
                 callback = onRejected,
                 rejectable = rejectable
@@ -120,6 +114,7 @@ namespace UFramework.Promise {
 
         #endregion
 
+        /* 仅允许在本程序集内访问 */
         internal static void propagateUnhandledException (object sender, Exception exception) {
             // C# 6.0 null 空值操作符
             unHandledException?.Invoke (sender, new ExceptionEventArgs (exception));
@@ -194,6 +189,7 @@ namespace UFramework.Promise {
                 );
         }
 
+        /* 返回未处理异常的迭代器 */
         public static IEnumerable<IPromiseInfo> getPendingPromise () {
             return pendingPromises;
         }
@@ -277,25 +273,20 @@ namespace UFramework.Promise {
             return resultPromise;
         }
 
+        /* 此then方法的onResolved回调会携带返回值，但要到的地方较少 */
         public IPromise then (Func<IPromise> onResolved, Action<Exception> onRejected) {
             Promise resultPromise = new Promise ();
             Action resolverHandler = () => {
-                Action action1 = null;
-                Action<Exception> action2 = null;
                 if (onResolved != null) {
-                    if (action1 == null) {
-                        action1 = () => {
-                            resultPromise.resolve ();
-                        };
-                    }
+                    Action nextResolveHandler = () => {
+                        resultPromise.resolve ();
+                    };
 
-                    if (action2 == null) {
-                        action2 = (Exception exception) => {
-                            resultPromise.reject (exception);
-                        };
-                    }
+                    Action<Exception> nextRejectHandler = (Exception exception) => {
+                        resultPromise.reject (exception);
+                    };
 
-                    onResolved ().then (action1, action2);
+                    onResolved ().then (nextResolveHandler, nextRejectHandler);
                 } else {
                     resultPromise.resolve ();
                 }
@@ -330,6 +321,7 @@ namespace UFramework.Promise {
             return resultPromise;
         }
 
+        /* 竞态状态 */
         public static IPromise race (params IPromise[] promises) {
             if (promises.Length == 0) {
                 throw new ApplicationException ("at least 1 input promise must be provided for race");
