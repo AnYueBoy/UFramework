@@ -368,8 +368,6 @@ namespace UFramework.Promise {
         }
 
         public Promise (Action<Action<PromisedT>, Action<Exception>> resolver) {
-            Action<PromisedT> action = null;
-            Action<Exception> action2 = null;
             this.curState = PromiseState.Pending;
             this.id = ++Promise.nextPromiseId;
             if (Promise.enablePromiseTracking) {
@@ -377,19 +375,15 @@ namespace UFramework.Promise {
             }
 
             try {
-                if (action == null) {
-                    action = (PromisedT value) => {
-                        resolve (value);
-                    };
-                }
+                Action<PromisedT> resolveHandler = (PromisedT value) => {
+                    resolve (value);
+                };
 
-                if (action2 == null) {
-                    action2 = (Exception exception) => {
-                        reject (exception);
-                    };
-                }
+                Action<Exception> rejectHandler = (Exception exception) => {
+                    reject (exception);
+                };
 
-                resolver (action, action2);
+                resolver (resolveHandler, rejectHandler);
             } catch (Exception exception) {
                 this.reject (exception);
             }
@@ -518,7 +512,6 @@ namespace UFramework.Promise {
 
             for (var index = 0; index < promises.Length; index++) {
                 IPromise<PromisedT> promise = promises[index];
-                // FIXME: 可能会有问题，原版本使用的是Each循环(C# 新版未找到Each循环)
                 promise
                     .catchs ((Exception exception) => {
                         if (resultPromise.curState == PromiseState.Pending) {
@@ -638,22 +631,16 @@ namespace UFramework.Promise {
             Promise resultPromise = new Promise ();
 
             Action<PromisedT> resolveHandler = (PromisedT value) => {
-                Action action1 = null;
-                Action<Exception> action2 = null;
                 if (onResolved != null) {
-                    if (action1 == null) {
-                        action1 = () => {
-                            resultPromise.resolve ();
-                        };
-                    }
+                    Action nextResolveHandler = () => {
+                        resultPromise.resolve ();
+                    };
 
-                    if (action2 == null) {
-                        action2 = (Exception exception) => {
-                            resultPromise.reject (exception);
-                        };
-                    }
+                    Action<Exception> nextRejectHandler = (Exception exception) => {
+                        resultPromise.reject (exception);
+                    };
 
-                    onResolved (value).then (action1, action2);
+                    onResolved (value).then (nextResolveHandler, nextRejectHandler);
                 } else {
                     resultPromise.resolve ();
                 }
