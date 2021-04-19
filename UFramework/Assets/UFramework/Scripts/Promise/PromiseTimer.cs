@@ -5,7 +5,7 @@ namespace UFramework.Promise {
     public class PromiseTimer : IPromiseTimer {
         private float curTime;
         private List<PredicateWait> waitingList = new List<PredicateWait> ();
-        public void update (float deltaTime) {
+        public void localUpdate (float deltaTime) {
             this.curTime += deltaTime;
             int index = 0;
             while (index < this.waitingList.Count) {
@@ -14,13 +14,13 @@ namespace UFramework.Promise {
 
                 // 当前wait从创建开始到现在的时间(存在时间)
                 float alreadyWaitTime = this.curTime - wait.timeStarted;
-
-                // 存在时间 - wait的活跃时间 = wait的不活跃时间
+                // 帧时间
                 wait.timeData.deltaTime = alreadyWaitTime - wait.timeData.elapsedTime;
-                // FIXME: 不明确
+                // 已用时间
                 wait.timeData.elapsedTime = alreadyWaitTime;
 
                 try {
+                    // 达成条件
                     flag = wait.predicate (wait.timeData);
                 } catch (Exception exception) {
                     wait.pendingPromise.reject (exception);
@@ -43,6 +43,12 @@ namespace UFramework.Promise {
             });
         }
 
+        public IPromise waitWhile (Func<TimeData, bool> predicate) {
+            return this.waitUtil ((TimeData timeInfo) => {
+                return !predicate (timeInfo);
+            });
+        }
+
         public IPromise waitUtil (Func<TimeData, bool> predicate) {
             Promise promise = new Promise ();
             PredicateWait item = new PredicateWait {
@@ -54,12 +60,6 @@ namespace UFramework.Promise {
 
             this.waitingList.Add (item);
             return promise;
-        }
-
-        public IPromise waitWhile (Func<TimeData, bool> predicate) {
-            return this.waitUtil ((TimeData timeInfo) => {
-                return !predicate (timeInfo);
-            });
         }
     }
 }
