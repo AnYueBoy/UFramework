@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using UFramework.FrameUtil;
 using UFramework.GameCommon;
 using UFramework.Promise;
+using UFrameWork;
 using UnityEngine;
 
 public class Test : MonoBehaviour {
@@ -24,6 +25,12 @@ public class Test : MonoBehaviour {
         this.loadCubeCallback ();
         this.loadAllRes ();
         Debug.Log ("继续下一步");
+
+        ModuleManager.instance.promiseTimer.waitFor (3).then (
+            () => {
+                Debug.Log ("时间等待结束");
+            }
+        );
     }
 
     private async void loadCube () {
