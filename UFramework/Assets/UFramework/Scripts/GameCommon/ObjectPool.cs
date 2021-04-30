@@ -18,11 +18,13 @@ namespace UFramework.GameCommon {
         // 存放预制与实例的关系
         private Dictionary<GameObject, GameObject> relationShip = new Dictionary<GameObject, GameObject> ();
 
-        public static ObjectPool instance () {
-            if (_instance == null) {
-                _instance = new ObjectPool ();
+        public static ObjectPool instance {
+            get {
+                if (_instance == null) {
+                    _instance = new ObjectPool ();
+                }
+                return _instance;
             }
-            return _instance;
         }
 
         public GameObject requestInstance (GameObject prefab) {
