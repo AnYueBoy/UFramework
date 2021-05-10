@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 349238923
+CRC: 500213527
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -8,4 +8,7 @@ AssetBundleManifest:
         Dependency_0: matbundle
     Info_1:
       Name: matbundle
+      Dependencies: {}
+    Info_2:
+      Name: texturesbundle
       Dependencies: {}

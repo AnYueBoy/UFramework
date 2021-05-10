@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 878612602
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 16e3dde025214a802eea43ce4b857dce
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c90fc19e2679e5295d10bd00f33cb4c3
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Resources/Textures/coalGenie.png
+- Assets/Resources/Textures/attack.png
+- Assets/Resources/Textures/cook.png
+- Assets/Resources/Textures/bite.png
+Dependencies: []
