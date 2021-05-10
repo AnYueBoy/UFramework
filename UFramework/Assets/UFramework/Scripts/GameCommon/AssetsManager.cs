@@ -172,7 +172,8 @@ namespace UFramework.GameCommon {
 
         #region Asset Bundle Load Asset
         public T getAssetByBundleSync<T> (string bundleUrl, string bundleName, string assetName) where T : Object {
-            T nativeAsset = this.findNativeAsset<T> (assetName);
+            string nativeUrl = bundleName + "/" + assetName;
+            T nativeAsset = this.findNativeAsset<T> (nativeUrl);
             if (nativeAsset != null) {
                 return nativeAsset;
             }
@@ -330,7 +331,8 @@ namespace UFramework.GameCommon {
             T nativeAsset = targetBundle.LoadAsset<T> (assetName);
             string assetUrl = targetBundle.name + ":" + assetName;
             PackAsset packAsset = new PackAsset (assetUrl, nativeAsset);
-            this.assetPool.Add (assetName, packAsset);
+            string nativeUrl = targetBundle.name + "/" + assetName;
+            this.assetPool.Add (nativeUrl, packAsset);
             return nativeAsset as T;
         }
 
@@ -342,7 +344,8 @@ namespace UFramework.GameCommon {
                 string assetUrl = targetBundle.name + ":" + targetAsset.name;
                 PackAsset packAsset = new PackAsset (assetUrl, targetAsset);
                 nativeAssetList.Add (packAsset);
-                assetPool.Add (targetAsset.name, packAsset);
+                string nativeUrl = targetBundle.name + "/" + targetAsset.name;
+                assetPool.Add (nativeUrl, packAsset);
             }
             floderAssetPool.Add (targetBundle.name, nativeAssetList);
             return nativeAssetList;
@@ -381,10 +384,11 @@ namespace UFramework.GameCommon {
                         T nativeAsset = assetBundleRequest.asset as T;
                         string assetUrl = targetBundle.name + ":" + assetName;
                         PackAsset packAsset = new PackAsset (assetUrl, nativeAsset);
-                        if (this.assetPool.ContainsKey (assetName)) {
-                            this.assetPool.Remove (assetName);
+                        string nativeUrl = targetBundle.name + "/" + assetName;
+                        if (this.assetPool.ContainsKey (nativeUrl)) {
+                            this.assetPool.Remove (nativeUrl);
                         }
-                        this.assetPool.Add (assetName, packAsset);
+                        this.assetPool.Add (nativeUrl, packAsset);
                         resolve (nativeAsset);
                     };
                 }
@@ -403,7 +407,8 @@ namespace UFramework.GameCommon {
                             string assetUrl = targetBundle.name + ":" + targetAsset.name;
                             PackAsset packAsset = new PackAsset (assetUrl, targetAsset);
                             nativeAssetList.Add (packAsset);
-                            assetPool.Add (targetAsset.name, packAsset);
+                            string nativeUrl = targetBundle.name + "/" + targetAsset.name;
+                            assetPool.Add (nativeUrl, packAsset);
                         }
                         floderAssetPool.Add (targetBundle.name, nativeAssetList);
                         resolve (nativeAssetList);
