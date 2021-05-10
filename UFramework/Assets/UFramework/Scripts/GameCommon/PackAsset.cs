@@ -9,16 +9,24 @@ namespace UFramework.GameCommon {
     using UnityEngine;
     public class PackAsset {
 
-        public Object targetAsset;
+        public string assetUrl;
+        private Object _targetAsset;
 
         private int referenceCounter = 0;
 
-        public PackAsset (Object targetAsset) {
-            this.targetAsset = targetAsset;
-            this.addRef ();
+        public PackAsset (string assetUrl, Object targetAsset) {
+            this.assetUrl = assetUrl;
+            this._targetAsset = targetAsset;
         }
 
-        public void addRef () {
+        public Object targetAsset {
+            get {
+                this.addRef ();
+                return this._targetAsset;
+            }
+        }
+
+        private void addRef () {
             this.referenceCounter++;
         }
 

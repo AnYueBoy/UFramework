@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 /*
  * @Author: l hy 
@@ -19,6 +20,8 @@ namespace UFramework.GameCommon {
     public class AssetsManager {
 
         private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();
+
+        private Dictionary<string, List<PackAsset>> floderAssetPool = new Dictionary<string, List<PackAsset>> ();
 
         private Dictionary<string, AssetBundle> bundleDic = new Dictionary<string, AssetBundle> ();
         private Dictionary<string, Promise<AssetBundle>> bundleMap = new Dictionary<string, Promise<AssetBundle>> ();
@@ -63,9 +66,37 @@ namespace UFramework.GameCommon {
 
             T targetAsset = null;
             targetAsset = Resources.Load<T> (assetUrl);
-            PackAsset packageAsset = new PackAsset (targetAsset);
+            PackAsset packageAsset = new PackAsset (assetUrl, targetAsset);
             assetPool.Add (assetUrl, packageAsset);
             return targetAsset;
+        }
+
+        /// <summary>
+        /// 加载文件夹下的所有资源
+        /// </summary>
+        /// <param name="folderUrl"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public List<PackAsset> getAllAssetsByUrlSync<T> (string folderUrl) where T : Object {
+            List<PackAsset> nativeAssets = this.findNativeAssets (folderUrl);
+            if (nativeAssets != null) {
+                return nativeAssets;
+            }
+
+            T[] targetAssets = Resources.LoadAll<T> (folderUrl);
+            nativeAssets = new List<PackAsset> ();
+            bool isContainSplash = folderUrl[folderUrl.Length - 1] == '/';
+            if (!isContainSplash) {
+                folderUrl = folderUrl + "/";
+            }
+            foreach (T targetAsset in targetAssets) {
+                string assetUrl = folderUrl + targetAsset.name;
+                PackAsset packAsset = new PackAsset (assetUrl, targetAsset);
+                nativeAssets.Add (packAsset);
+                assetPool.Add (assetUrl, packAsset);
+            }
+            floderAssetPool.Add (folderUrl, nativeAssets);
+            return nativeAssets;
         }
 
         [Obsolete ("unity not allow")]
@@ -78,7 +109,7 @@ namespace UFramework.GameCommon {
             T targetAsset = null;
             targetAsset = await Task.Run (() => {
                 ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
-                PackAsset packageAsset = new PackAsset (request.asset);
+                PackAsset packageAsset = new PackAsset (assetUrl, request.asset);
                 assetPool.Add (assetUrl, packageAsset);
                 return request.asset as T;
             });
@@ -96,7 +127,7 @@ namespace UFramework.GameCommon {
             ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
 
             request.completed += operation => {
-                PackAsset packageAsset = new PackAsset (request.asset);
+                PackAsset packageAsset = new PackAsset (assetUrl, request.asset);
                 assetPool.Add (assetUrl, packageAsset);
                 callback (request.asset as T);
             };
@@ -106,8 +137,14 @@ namespace UFramework.GameCommon {
             if (assetPool.ContainsKey (assetUrl)) {
                 // FIXME: 拿到资源不一定使用
                 PackAsset packAsset = assetPool[assetUrl];
-                packAsset.addRef ();
                 return packAsset.targetAsset as T;
+            }
+            return null;
+        }
+
+        private List<PackAsset> findNativeAssets (string assetUrl) {
+            if (floderAssetPool.ContainsKey (assetUrl)) {
+                return this.floderAssetPool[assetUrl];
             }
             return null;
         }
@@ -150,6 +187,28 @@ namespace UFramework.GameCommon {
             return this.loadTargetBundleAssetSync<T> (targetBundle, assetName);
         }
 
+        /// <summary>
+        /// 同步获取目标bundle下的所有资源
+        /// </summary>
+        /// <param name="bundleUrl"></param>
+        /// <param name="bundleName"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public List<PackAsset> getAllAssetsByBundleSync<T> (string bundleUrl, string bundleName) where T : Object {
+            List<PackAsset> nativeAssets = this.findNativeAssets (bundleName);
+            if (nativeAssets != null) {
+                return nativeAssets;
+            }
+
+            // 检查依赖资源
+            this.checkDependenciesSync (bundleName);
+
+            string targetBundleUrl = bundleUrl + bundleName;
+
+            AssetBundle targetBundle = this.loadTargetBundleSync (targetBundleUrl);
+            return this.loadTaregetBundleAllAssetSync<T> (targetBundle);
+        }
+
         public void getAssetByBundleAsync<T> (string bundleUrl, string bundleName, string assetName, Action<T> callback) where T : Object {
             T nativeAsset = this.findNativeAsset<T> (assetName);
             if (nativeAsset != null) {
@@ -166,6 +225,34 @@ namespace UFramework.GameCommon {
                             this.loadTargetBundleAssetAsync<T> (targetBundle, assetName)
                                 .then ((T targetAsset) => {
                                     callback (targetAsset);
+                                });
+                        });
+                });
+        }
+
+        /// <summary>
+        /// 异步加载某bundle下的所有资源
+        /// </summary>
+        /// <param name="bundleUrl"></param>
+        /// <param name="bundleName"></param>
+        /// <param name="callback"></param>
+        /// <typeparam name="T"></typeparam>
+        public void getAllAssetsByBundleASync<T> (string bundleUrl, string bundleName, Action<List<PackAsset>> callback) where T : Object {
+            List<PackAsset> nativeAssets = this.findNativeAssets (bundleName);
+            if (nativeAssets != null) {
+                callback?.Invoke (nativeAssets);
+                return;
+            }
+
+            // 异步依赖检查
+            this.checkDependenciesAsync (bundleName)
+                .then (() => {
+                    string targetBundleUrl = bundleUrl + bundleName;
+                    this.loadTargetBundleAsync (targetBundleUrl)
+                        .then ((AssetBundle targetBundle) => {
+                            this.loadTargetBundleAllAssetAsync<T> (targetBundle)
+                                .then ((List<PackAsset> targetAssets) => {
+                                    callback (targetAssets);
                                 });
                         });
                 });
@@ -241,9 +328,24 @@ namespace UFramework.GameCommon {
         /* 同步加载目标AB包下的对应资源 */
         private T loadTargetBundleAssetSync<T> (AssetBundle targetBundle, string assetName) where T : Object {
             T nativeAsset = targetBundle.LoadAsset<T> (assetName);
-            PackAsset packAsset = new PackAsset (nativeAsset);
+            string assetUrl = targetBundle.name + ":" + assetName;
+            PackAsset packAsset = new PackAsset (assetUrl, nativeAsset);
             this.assetPool.Add (assetName, packAsset);
             return nativeAsset as T;
+        }
+
+        /*同步加载目标AB包下的所有资源*/
+        private List<PackAsset> loadTaregetBundleAllAssetSync<T> (AssetBundle targetBundle) where T : Object {
+            T[] targetAssetArray = targetBundle.LoadAllAssets<T> ();
+            List<PackAsset> nativeAssetList = new List<PackAsset> ();
+            foreach (T targetAsset in targetAssetArray) {
+                string assetUrl = targetBundle.name + ":" + targetAsset.name;
+                PackAsset packAsset = new PackAsset (assetUrl, targetAsset);
+                nativeAssetList.Add (packAsset);
+                assetPool.Add (targetAsset.name, packAsset);
+            }
+            floderAssetPool.Add (targetBundle.name, nativeAssetList);
+            return nativeAssetList;
         }
 
         /* 异步加载目标AB包 */
@@ -277,12 +379,34 @@ namespace UFramework.GameCommon {
                 (Action<T> resolve, Action<Exception> reject) => {
                     assetBundleRequest.completed += bundleOperation => {
                         T nativeAsset = assetBundleRequest.asset as T;
-                        PackAsset packAsset = new PackAsset (nativeAsset);
+                        string assetUrl = targetBundle.name + ":" + assetName;
+                        PackAsset packAsset = new PackAsset (assetUrl, nativeAsset);
                         if (this.assetPool.ContainsKey (assetName)) {
                             this.assetPool.Remove (assetName);
                         }
                         this.assetPool.Add (assetName, packAsset);
                         resolve (nativeAsset);
+                    };
+                }
+            );
+        }
+
+        /*异步加载目标AB下的所有资源*/
+        private Promise<List<PackAsset>> loadTargetBundleAllAssetAsync<T> (AssetBundle targetBundle) where T : Object {
+            AssetBundleRequest assetBundleRequest = targetBundle.LoadAllAssetsAsync<T> ();
+            return new Promise<List<PackAsset>> (
+                (Action<List<PackAsset>> resolve, Action<Exception> reject) => {
+                    assetBundleRequest.completed += bundleOperation => {
+                        Object[] allAssets = assetBundleRequest.allAssets;
+                        List<PackAsset> nativeAssetList = new List<PackAsset> ();
+                        foreach (Object targetAsset in allAssets) {
+                            string assetUrl = targetBundle.name + ":" + targetAsset.name;
+                            PackAsset packAsset = new PackAsset (assetUrl, targetAsset);
+                            nativeAssetList.Add (packAsset);
+                            assetPool.Add (targetAsset.name, packAsset);
+                        }
+                        floderAssetPool.Add (targetBundle.name, nativeAssetList);
+                        resolve (nativeAssetList);
                     };
                 }
             );
