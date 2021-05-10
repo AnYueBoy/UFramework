@@ -105,7 +105,7 @@ public class Test : MonoBehaviour {
         //     cube.transform.localPosition = Vector3.zero;
         // });
 
-        // test ();
+        test ();
 
         // 同步加载文件夹资源
         // List<PackAsset> assetList = AssetsManager.instance.getAllAssetsByUrlSync<Sprite> ("Textures/");

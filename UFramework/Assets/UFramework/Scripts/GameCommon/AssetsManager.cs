@@ -211,7 +211,8 @@ namespace UFramework.GameCommon {
         }
 
         public void getAssetByBundleAsync<T> (string bundleUrl, string bundleName, string assetName, Action<T> callback) where T : Object {
-            T nativeAsset = this.findNativeAsset<T> (assetName);
+            string nativeUrl = bundleName + "/" + assetName;
+            T nativeAsset = this.findNativeAsset<T> (nativeUrl);
             if (nativeAsset != null) {
                 callback (nativeAsset);
                 return;
