@@ -3,35 +3,25 @@
  * @Date: 2020-03-07 17:13:07 
  * @Description: 界面管理器 
  * @Last Modified by: l hy
- * @Last Modified time: 2020-12-21 16:48:44
+ * @Last Modified time: 2021-05-05 10:30:58
  */
 namespace UFramework.GameCommon {
 
     using System.Collections.Generic;
     using System;
-    using UnityEngine;
     using UFramework.Const;
+    using UnityEngine;
 
-    public class UIManager : MonoBehaviour {
-
-        private static UIManager instance = null;
+    public class UIManager {
 
         private Dictionary<string, BaseUI> uiDic = new Dictionary<string, BaseUI> ();
 
         private BaseUI currentBoard = null;
 
-        [Header ("ui根节点")]
-        public GameObject uiRoot;
+        private GameObject uiRoot;
 
-        public static UIManager getInstance () {
-            return instance;
-        }
-
-        private void Awake () {
-            if (instance == null) {
-                instance = this;
-            }
-
+        public void init (GameObject uiRoot) {
+            this.uiRoot = uiRoot;
             this.currentBoard = null;
         }
 
@@ -41,16 +31,7 @@ namespace UFramework.GameCommon {
                 return;
             }
 
-            this.showUI (
-                uiName,
-                () => {
-                    if (this.currentBoard != null) {
-                        this.hideUI (uiName);
-                    }
-
-                    this.currentBoard = this.getUI (uiName);
-                },
-                args);
+            this.showUI (uiName, args);
         }
 
         public void hideAllDialog () {
@@ -80,42 +61,29 @@ namespace UFramework.GameCommon {
             return null;
         }
 
-        private void showUI (string uiName, Action callBack = null, params object[] args) {
+        private void showUI (string uiName, params object[] args) {
             BaseUI targetUI = this.getUI (uiName);
             if (targetUI != null) {
                 targetUI.gameObject.SetActive (true);
-                if (callBack != null) {
-                    callBack ();
-                }
-
-                targetUI.onShow (args);
             } else {
-                this.openUI (
-                    uiName,
-                    () => {
-                        if (callBack != null) {
-                            callBack ();
-                        }
+                string url = UrlString.uiUrl + uiName;
+                GameObject prefab = Resources.Load<GameObject> (url);
 
-                        BaseUI ui = this.getUI (uiName);
-                        ui.onShow (args);
-                    }
-                );
+                GameObject uiNode = GameObject.Instantiate (prefab);
+                uiNode.transform.SetParent (this.uiRoot.transform);
+                uiNode.transform.localPosition = Vector3.zero;
+                targetUI = uiNode.GetComponent<BaseUI> ();
+                this.uiDic.Add (uiName, targetUI);
+                uiNode.SetActive (true);
             }
-        }
 
-        private void openUI (string uiName, Action callBack) {
-            string url = UrlString.uiUrl + uiName;
-            GameObject prefab = Resources.Load<GameObject> (url);
-
-            GameObject uiNode = GameObject.Instantiate (prefab);
-            uiNode.transform.SetParent (this.uiRoot.transform);
-            uiNode.transform.localPosition = Vector3.zero;
-            BaseUI targetUI = uiNode.GetComponent<BaseUI> ();
-            this.uiDic.Add (uiName, targetUI);
-            if (callBack != null) {
-                callBack ();
+            if (this.currentBoard != null) {
+                this.currentBoard.gameObject.SetActive (false);
             }
+
+            this.currentBoard = targetUI;
+
+            this.currentBoard.onShow (args);
         }
     }
 }
