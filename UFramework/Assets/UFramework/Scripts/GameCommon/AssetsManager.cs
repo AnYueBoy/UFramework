@@ -7,7 +7,7 @@ using System.Diagnostics;
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-03-01 23:18:24
+ * @Last Modified time: 2021-05-11 17:11:33
  */
 namespace UFramework.GameCommon {
 
@@ -171,7 +171,7 @@ namespace UFramework.GameCommon {
         #endregion
 
         #region Asset Bundle Load Asset
-        public T getAssetByBundleSync<T> (string bundleUrl, string bundleName, string assetName) where T : Object {
+        public T getAssetByBundleSync<T> (string bundleName, string assetName) where T : Object {
             string nativeUrl = bundleName + "/" + assetName;
             T nativeAsset = this.findNativeAsset<T> (nativeUrl);
             if (nativeAsset != null) {
@@ -180,6 +180,8 @@ namespace UFramework.GameCommon {
 
             // 检查依赖资源
             this.checkDependenciesSync (bundleName);
+
+            string bundleUrl = CommonUtil.getBundleUrl ();
 
             string targetBundleUrl = bundleUrl + bundleName;
 
@@ -195,7 +197,7 @@ namespace UFramework.GameCommon {
         /// <param name="bundleName"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<PackAsset> getAllAssetsByBundleSync<T> (string bundleUrl, string bundleName) where T : Object {
+        public List<PackAsset> getAllAssetsByBundleSync<T> (string bundleName) where T : Object {
             List<PackAsset> nativeAssets = this.findNativeAssets (bundleName);
             if (nativeAssets != null) {
                 return nativeAssets;
@@ -204,13 +206,14 @@ namespace UFramework.GameCommon {
             // 检查依赖资源
             this.checkDependenciesSync (bundleName);
 
+            string bundleUrl = CommonUtil.getBundleUrl ();
             string targetBundleUrl = bundleUrl + bundleName;
 
             AssetBundle targetBundle = this.loadTargetBundleSync (targetBundleUrl);
             return this.loadTaregetBundleAllAssetSync<T> (targetBundle);
         }
 
-        public void getAssetByBundleAsync<T> (string bundleUrl, string bundleName, string assetName, Action<T> callback) where T : Object {
+        public void getAssetByBundleAsync<T> (string bundleName, string assetName, Action<T> callback) where T : Object {
             string nativeUrl = bundleName + "/" + assetName;
             T nativeAsset = this.findNativeAsset<T> (nativeUrl);
             if (nativeAsset != null) {
@@ -221,6 +224,7 @@ namespace UFramework.GameCommon {
             // 异步依赖检查
             this.checkDependenciesAsync (bundleName)
                 .then (() => {
+                    string bundleUrl = CommonUtil.getBundleUrl ();
                     string targetBundleUrl = bundleUrl + bundleName;
                     this.loadTargetBundleAsync (targetBundleUrl)
                         .then ((AssetBundle targetBundle) => {
@@ -239,7 +243,7 @@ namespace UFramework.GameCommon {
         /// <param name="bundleName"></param>
         /// <param name="callback"></param>
         /// <typeparam name="T"></typeparam>
-        public void getAllAssetsByBundleASync<T> (string bundleUrl, string bundleName, Action<List<PackAsset>> callback) where T : Object {
+        public void getAllAssetsByBundleASync<T> (string bundleName, Action<List<PackAsset>> callback) where T : Object {
             List<PackAsset> nativeAssets = this.findNativeAssets (bundleName);
             if (nativeAssets != null) {
                 callback?.Invoke (nativeAssets);
@@ -249,6 +253,7 @@ namespace UFramework.GameCommon {
             // 异步依赖检查
             this.checkDependenciesAsync (bundleName)
                 .then (() => {
+                    string bundleUrl = CommonUtil.getBundleUrl ();
                     string targetBundleUrl = bundleUrl + bundleName;
                     this.loadTargetBundleAsync (targetBundleUrl)
                         .then ((AssetBundle targetBundle) => {
@@ -260,7 +265,8 @@ namespace UFramework.GameCommon {
                 });
         }
 
-        public bool tryReleaseBundle (string bundleUrl, string bundleName, bool unloadAllLoadedObjects = false) {
+        public bool tryReleaseBundle (string bundleName, bool unloadAllLoadedObjects = false) {
+            string bundleUrl = CommonUtil.getBundleUrl ();
             string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
             if (!this.assetPool.ContainsKey (targetBundleUrl)) {
                 Debug.LogWarning ("can not release not exist bundle");

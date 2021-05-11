@@ -92,18 +92,17 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        string bundleUrl = CommonUtil.getBundleUrl ();
-        // AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
-        //     GameObject cube = Instantiate<GameObject> (cubeAsset);
-        //     cube.transform.SetParent (nodeParent);
-        //     cube.transform.localPosition = Vector3.zero;
-        // });
+        AssetsManager.instance.getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
+            GameObject cube = Instantiate<GameObject> (cubeAsset);
+            cube.transform.SetParent (nodeParent);
+            cube.transform.localPosition = Vector3.zero;
+        });
 
-        // AssetsManager.instance.getAssetByBundleAsync<GameObject> (bundleUrl, "resbundle", "Cube", (GameObject cubeAsset) => {
-        //     GameObject cube = Instantiate<GameObject> (cubeAsset);
-        //     cube.transform.SetParent (nodeParent);
-        //     cube.transform.localPosition = Vector3.zero;
-        // });
+        AssetsManager.instance.getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
+            GameObject cube = Instantiate<GameObject> (cubeAsset);
+            cube.transform.SetParent (nodeParent);
+            cube.transform.localPosition = Vector3.zero;
+        });
 
         test ();
 
@@ -112,13 +111,13 @@ public class Test : MonoBehaviour {
         // Sprite attackSprite = AssetsManager.instance.getAssetByUrlSync<Sprite> ("Textures/attack");
 
         // 使用bundle同步加载文件夹资源
-        // List<PackAsset> assetList = AssetsManager.instance.getAllAssetsByBundleSync<Sprite> (bundleUrl, "texturesbundle");
-        // Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> (bundleUrl, "texturesbundle", "attack");
+        // List<PackAsset> assetList = AssetsManager.instance.getAllAssetsByBundleSync<Sprite> ("texturesbundle");
+        // Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
 
         // 使用bundle异步加载文件夹资源
-        AssetsManager.instance.getAllAssetsByBundleASync<Sprite> (bundleUrl, "texturesbundle", (List<PackAsset> assetsArray) => {
+        AssetsManager.instance.getAllAssetsByBundleASync<Sprite> ("texturesbundle", (List<PackAsset> assetsArray) => {
             List<PackAsset> assets = assetsArray;
-            Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> (bundleUrl, "texturesbundle", "attack");
+            Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
         });
 
     }
