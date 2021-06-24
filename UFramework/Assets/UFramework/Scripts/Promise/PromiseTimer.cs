@@ -5,57 +5,51 @@ namespace UFramework.Promise {
     public class PromiseTimer : IPromiseTimer {
         private float curTime;
         private List<PredicateWait> waitingList = new List<PredicateWait> ();
+
         public void localUpdate (float deltaTime) {
             this.curTime += deltaTime;
             int index = 0;
             while (index < this.waitingList.Count) {
-                bool flag;
                 PredicateWait wait = this.waitingList[index];
-
                 // 当前wait从创建开始到现在的时间(存在时间)
-                float alreadyWaitTime = this.curTime - wait.timeStarted;
-                // 帧时间
-                wait.timeData.deltaTime = alreadyWaitTime - wait.timeData.elapsedTime;
+                float alreadyWaitTime = this.curTime - wait.createTime;
                 // 已用时间
-                wait.timeData.elapsedTime = alreadyWaitTime;
+                wait.alreadyWaitTime = alreadyWaitTime;
 
+                bool flag;
                 try {
                     // 达成条件
-                    flag = wait.predicate (wait.timeData);
+                    flag = wait.predicate (wait.alreadyWaitTime);
                 } catch (Exception exception) {
                     wait.pendingPromise.reject (exception);
-                    this.waitingList.RemoveAt (index);
+                    this.waitingList.Remove (wait);
+                    index = 0;
                     continue;
                 }
 
                 if (flag) {
                     wait.pendingPromise.resolve ();
-                    this.waitingList.RemoveAt (index);
-                } else {
-                    index++;
+                    this.waitingList.Remove (wait);
+                    index = 0;
                 }
+
+                index++;
             }
         }
 
         public IPromise waitFor (float seconds) {
-            return this.waitUtil ((TimeData timeInfo) => {
-                return timeInfo.elapsedTime >= seconds;
+            return this.waitUtil ((float alreadyTime) => {
+                return alreadyTime >= seconds;
             });
         }
 
-        public IPromise waitWhile (Func<TimeData, bool> predicate) {
-            return this.waitUtil ((TimeData timeInfo) => {
-                return !predicate (timeInfo);
-            });
-        }
-
-        public IPromise waitUtil (Func<TimeData, bool> predicate) {
+        public IPromise waitUtil (Func<float, bool> predicate) {
             Promise promise = new Promise ();
             PredicateWait item = new PredicateWait {
-                timeStarted = this.curTime,
+                createTime = this.curTime,
                 pendingPromise = promise,
-                timeData = new TimeData (),
-                predicate = predicate
+                predicate = predicate,
+                alreadyWaitTime = 0
             };
 
             this.waitingList.Add (item);

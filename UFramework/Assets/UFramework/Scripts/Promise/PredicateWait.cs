@@ -4,8 +4,9 @@ namespace UFramework.Promise {
     internal class PredicateWait {
 
         public IPendingPromise pendingPromise;
-        public Func<TimeData, bool> predicate;
-        public TimeData timeData;
-        public float timeStarted;
+        public Func<float, bool> predicate;
+        public float createTime;
+
+        public float alreadyWaitTime;
     }
 }
