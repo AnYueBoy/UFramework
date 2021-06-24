@@ -26,24 +26,35 @@ namespace UFramework.GameCommon {
         }
 
         public void showBoard (string uiName, params object[] args) {
-            BaseUI targerUI = this.getUI (uiName);
-            if (currentBoard != null && this.currentBoard == targerUI) {
+            BaseUI targetUI = this.getUI (uiName);
+            if (currentBoard != null && this.currentBoard == targetUI) {
                 return;
             }
 
-            this.showUI (uiName, args);
+            targetUI = this.showUI (uiName, args);
+
+            if (this.currentBoard != null) {
+                this.currentBoard.gameObject.SetActive (false);
+            }
+
+            this.currentBoard = targetUI;
         }
 
-        public void hideAllDialog () {
+        public void hideAll () {
             foreach (BaseUI targerUI in this.uiDic.Values) {
-                if (targerUI != null && targerUI != this.currentBoard) {
-                    this.hideUI (targerUI.name);
+                if (targerUI == null) {
+                    continue;
                 }
+                this.hideUI (targerUI.name);
             }
         }
 
         public void showDialog (string uiName, params object[] args) {
-            this.showUI (uiName, null, args);
+            this.showUI (uiName, args);
+        }
+
+        public void closeDialog (string uiName) {
+            this.hideUI (uiName);
         }
 
         private void hideUI (string uiName) {
@@ -61,7 +72,7 @@ namespace UFramework.GameCommon {
             return null;
         }
 
-        private void showUI (string uiName, params object[] args) {
+        private BaseUI showUI (string uiName, params object[] args) {
             BaseUI targetUI = this.getUI (uiName);
             if (targetUI != null) {
                 targetUI.gameObject.SetActive (true);
@@ -77,13 +88,9 @@ namespace UFramework.GameCommon {
                 uiNode.SetActive (true);
             }
 
-            if (this.currentBoard != null) {
-                this.currentBoard.gameObject.SetActive (false);
-            }
+            targetUI.onShow (args);
 
-            this.currentBoard = targetUI;
-
-            this.currentBoard.onShow (args);
+            return targetUI;
         }
     }
 }

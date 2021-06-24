@@ -32,6 +32,29 @@ public class Test : MonoBehaviour {
                 Debug.Log ("时间等待结束");
             }
         );
+
+        ListenerManager.getInstance ().add ("event1", this, this.testListener);
+        ListenerManager.getInstance ().add ("event2", this, this.testListener);
+    }
+
+    private void testListener () {
+        Debug.Log ("xxxx");
+    }
+
+    public void event1 () {
+        ListenerManager.getInstance ().trigger ("event1");
+    }
+
+    public void event2 () {
+        ListenerManager.getInstance ().trigger ("event2");
+    }
+
+    public void unloadAll () {
+        ListenerManager.getInstance ().removeAll (this);
+    }
+
+    public void unloadAt () {
+        ListenerManager.getInstance ().removeAt ("event1", this);
     }
 
     private async void loadCube () {
