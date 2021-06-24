@@ -23,6 +23,8 @@ namespace UFramework.GameCommon {
         }
         private Dictionary<string, Dictionary<object, Delegate>> listenerMap = new Dictionary<string, Dictionary<object, Delegate>> ();
 
+        private Dictionary<object, List<string>> reverseListenerMap = new Dictionary<object, List<string>> ();
+
         public void add (string eventName, object caller, CallBack listener) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
@@ -47,12 +49,26 @@ namespace UFramework.GameCommon {
                 listenerMap.Add (eventName, listenerDic);
             }
 
+            // 反向映射
+            List<string> listenerNameList;
+            if (this.reverseListenerMap.ContainsKey (caller)) {
+                listenerNameList = this.reverseListenerMap[caller];
+            } else {
+                listenerNameList = new List<string> ();
+                reverseListenerMap.Add (caller, listenerNameList);
+            }
+
             CallBack listenerCall;
             if (listenerDic.ContainsKey (caller)) {
                 listenerCall = (CallBack) listenerDic[caller];
                 listenerCall += listener;
             } else {
                 listenerDic.Add (caller, listener);
+            }
+
+            // 反向映射
+            if (listenerNameList.IndexOf (eventName) == -1) {
+                listenerNameList.Add (eventName);
             }
         }
 
@@ -80,12 +96,26 @@ namespace UFramework.GameCommon {
                 listenerMap.Add (eventName, listenerDic);
             }
 
+            // 反向映射
+            List<string> listenerNameList;
+            if (this.reverseListenerMap.ContainsKey (caller)) {
+                listenerNameList = this.reverseListenerMap[caller];
+            } else {
+                listenerNameList = new List<string> ();
+                reverseListenerMap.Add (caller, listenerNameList);
+            }
+
             CallBack<T> listenerCall;
             if (listenerDic.ContainsKey (caller)) {
                 listenerCall = (CallBack<T>) listenerDic[caller];
                 listenerCall += listener;
             } else {
                 listenerDic.Add (caller, listener);
+            }
+
+            // 反向映射
+            if (listenerNameList.IndexOf (eventName) == -1) {
+                listenerNameList.Add (eventName);
             }
         }
 
@@ -113,12 +143,26 @@ namespace UFramework.GameCommon {
                 listenerMap.Add (eventName, listenerDic);
             }
 
+            // 反向映射
+            List<string> listenerNameList;
+            if (this.reverseListenerMap.ContainsKey (caller)) {
+                listenerNameList = this.reverseListenerMap[caller];
+            } else {
+                listenerNameList = new List<string> ();
+                reverseListenerMap.Add (caller, listenerNameList);
+            }
+
             CallBack<T, X> listenerCall;
             if (listenerDic.ContainsKey (caller)) {
                 listenerCall = (CallBack<T, X>) listenerDic[caller];
                 listenerCall += listener;
             } else {
                 listenerDic.Add (caller, listener);
+            }
+
+            // 反向映射
+            if (listenerNameList.IndexOf (eventName) == -1) {
+                listenerNameList.Add (eventName);
             }
         }
 
@@ -146,12 +190,26 @@ namespace UFramework.GameCommon {
                 listenerMap.Add (eventName, listenerDic);
             }
 
+            // 反向映射
+            List<string> listenerNameList;
+            if (this.reverseListenerMap.ContainsKey (caller)) {
+                listenerNameList = this.reverseListenerMap[caller];
+            } else {
+                listenerNameList = new List<string> ();
+                reverseListenerMap.Add (caller, listenerNameList);
+            }
+
             CallBack<T, X, V> listenerCall;
             if (listenerDic.ContainsKey (caller)) {
                 listenerCall = (CallBack<T, X, V>) listenerDic[caller];
                 listenerCall += listener;
             } else {
                 listenerDic.Add (caller, listener);
+            }
+
+            // 反向映射
+            if (listenerNameList.IndexOf (eventName) == -1) {
+                listenerNameList.Add (eventName);
             }
         }
 
@@ -179,6 +237,15 @@ namespace UFramework.GameCommon {
                 listenerMap.Add (eventName, listenerDic);
             }
 
+            // 反向映射
+            List<string> listenerNameList;
+            if (this.reverseListenerMap.ContainsKey (caller)) {
+                listenerNameList = this.reverseListenerMap[caller];
+            } else {
+                listenerNameList = new List<string> ();
+                reverseListenerMap.Add (caller, listenerNameList);
+            }
+
             CallBack<T, X, V, M> listenerCall;
             if (listenerDic.ContainsKey (caller)) {
                 listenerCall = (CallBack<T, X, V, M>) listenerDic[caller];
@@ -186,9 +253,40 @@ namespace UFramework.GameCommon {
             } else {
                 listenerDic.Add (caller, listener);
             }
+
+            // 反向映射
+            if (listenerNameList.IndexOf (eventName) == -1) {
+                listenerNameList.Add (eventName);
+            }
         }
 
-        public void removeAll (string eventName, object caller) {
+        public void removeAll (object caller) {
+            if (caller == null) {
+                Debug.LogError ("caller is null");
+                return;
+            }
+
+            List<string> eventNameList = this.reverseListenerMap[caller];
+            if (eventNameList == null) {
+                Debug.LogError ("target event list not exist");
+                return;
+            }
+
+            foreach (string eventName in eventNameList) {
+                if (!this.listenerMap.ContainsKey (eventName)) {
+                    continue;
+                }
+                Dictionary<object, Delegate> listenerDic = this.listenerMap[eventName];
+                if (!listenerDic.ContainsKey (caller)) {
+                    continue;
+                }
+                listenerDic.Remove (caller);
+            }
+
+            this.reverseListenerMap.Remove (caller);
+        }
+
+        public void removeAt (string eventName, object caller) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -209,11 +307,15 @@ namespace UFramework.GameCommon {
                 return;
             }
 
-            if (listenerDic.ContainsKey (caller)) {
-                listenerDic.Remove (caller);
-            } else {
+            if (!listenerDic.ContainsKey (caller)) {
                 Debug.LogError ("remove fail not exist caller: " + caller);
+                return;
             }
+
+            listenerDic.Remove (caller);
+
+            List<string> eventNameList = this.reverseListenerMap[caller];
+            eventNameList.Remove (eventName);
         }
 
         public void trigger (string eventName) {
