@@ -9,7 +9,7 @@ public class ZenjectTest : MonoBehaviour {
     [Inject] private JectTwoManager jectTwoManager;
     void Start () {
         jectTwoManager.connect ();
-        jectOneManager.connect ();
+        jectOneManager.connect (this.ToString ());
     }
 
     // Update is called once per frame
