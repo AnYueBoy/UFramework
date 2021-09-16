@@ -4,7 +4,7 @@
  * @Description: 帧率计算器
  */
 
-namespace UFrameWork.Develop {
+namespace UFramework.Develop {
     using UnityEngine;
     public class FPSCounter {
 

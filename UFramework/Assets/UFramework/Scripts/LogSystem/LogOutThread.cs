@@ -4,7 +4,7 @@
  * @Description: 日志输出线程
  */
 
-namespace UFrameWork.LogSystem {
+namespace UFramework.LogSystem {
     using System.Collections.Generic;
     using System.IO;
     using System.Threading;

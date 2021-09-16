@@ -5,7 +5,7 @@
  * @Last Modified by: l hy
  * @Last Modified time: 2021-01-19 21:59:45
  */
-namespace UFrameWork.FrameUtil {
+namespace UFramework.FrameUtil {
     public class RefCounter : IRefCounter {
         public int refCount { get; private set; }
 

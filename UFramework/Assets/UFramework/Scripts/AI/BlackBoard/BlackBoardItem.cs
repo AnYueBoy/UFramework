@@ -4,7 +4,7 @@
  * @Description: 数据收集单元
  */
 using UnityEngine;
-namespace UFrameWork.AI.BlackBoard {
+namespace UFramework.AI.BlackBoard {
     public class BlackBoardItem {
 
         private float m_expiredTime;

@@ -7,8 +7,8 @@
 using System.Collections.Generic;
 using UFramework.AI.BehaviourTree.Agent;
 using UFramework.AI.BehaviourTree.Condition;
-using UFrameWork.AI.BehaviourTree;
-using UFrameWork.AI.BlackBoard;
+using UFramework.AI.BehaviourTree;
+using UFramework.AI.BlackBoard;
 
 namespace UFramework.AI.BehaviourTree.Node {
     public class BaseNode {

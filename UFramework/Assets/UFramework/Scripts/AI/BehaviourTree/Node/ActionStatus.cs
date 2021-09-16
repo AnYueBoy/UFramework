@@ -4,7 +4,7 @@
  * @Description: 行为节点状态
  */
 
-namespace UFrameWork.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree.Node {
     public enum ActionStatus {
         ACTION_READY,
 

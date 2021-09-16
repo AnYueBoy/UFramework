@@ -4,7 +4,7 @@
  * @Description: 运行状态
  */
 
-namespace UFrameWork.AI.BehaviourTree {
+namespace UFramework.AI.BehaviourTree {
 
     public enum RunningStatus {
 

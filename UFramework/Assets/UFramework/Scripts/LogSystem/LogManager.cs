@@ -6,7 +6,7 @@
  * @Last Modified time: 2021-01-25 17:28:21
  */
 
-namespace UFrameWork.LogSystem {
+namespace UFramework.LogSystem {
     using UnityEngine;
     public class LogManager {
         private LogOutThread logOutThread = new LogOutThread ();

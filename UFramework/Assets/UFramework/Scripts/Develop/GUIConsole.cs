@@ -3,9 +3,9 @@
  * @Date: 2021-01-25 18:58:53 
  * @Description: 控制台
  */
-namespace UFrameWork.Develop {
+namespace UFramework.Develop {
     using System.Collections.Generic;
-    using UFrameWork.LogSystem;
+    using UFramework.LogSystem;
     using UnityEngine;
     public class GUIConsole {
 

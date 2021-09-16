@@ -6,10 +6,10 @@
  * @Last Modified time: 2021-02-23 21:52:31
  */
 
-namespace UFrameWork {
+namespace UFramework {
     using UFramework.Promise;
-    using UFrameWork.Const;
-    using UFrameWork.Develop;
+    using UFramework.Const;
+    using UFramework.Develop;
     using UnityEngine;
     public class ModuleManager : MonoBehaviour {
         public AppMode appMode = AppMode.Developing;

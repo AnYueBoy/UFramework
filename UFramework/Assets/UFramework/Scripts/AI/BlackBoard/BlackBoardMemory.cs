@@ -5,7 +5,7 @@
  */
 
 using System.Collections.Generic;
-namespace UFrameWork.AI.BlackBoard {
+namespace UFramework.AI.BlackBoard {
     public class BlackBoardMemory {
         private Dictionary<int, BlackBoardItem> m_items;
 

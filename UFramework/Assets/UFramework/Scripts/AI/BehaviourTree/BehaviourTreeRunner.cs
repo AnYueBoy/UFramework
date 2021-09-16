@@ -5,9 +5,9 @@
  */
 using UFramework.AI.BehaviourTree.Agent;
 using UFramework.AI.BehaviourTree.Node;
-using UFrameWork.AI.BlackBoard;
+using UFramework.AI.BlackBoard;
 
-namespace UFrameWork.AI.BehaviourTree {
+namespace UFramework.AI.BehaviourTree {
     public static class BehaviourTreeRunner {
 
         public static void execute (BaseNode root, IAgent agent, BlackBoardMemory workingMemory) {

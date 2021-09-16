@@ -6,9 +6,9 @@
 
 using UFramework.AI.BehaviourTree.Agent;
 using UFramework.AI.BehaviourTree.Node;
-using UFrameWork.AI.BlackBoard;
+using UFramework.AI.BlackBoard;
 
-namespace UFrameWork.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree.Node {
     public class SequenceNode : BaseNode {
 
         private int m_currentNodeIndex = -1;

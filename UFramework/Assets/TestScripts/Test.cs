@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using UFramework.FrameUtil;
 using UFramework.GameCommon;
 using UFramework.Promise;
-using UFrameWork;
+using UFramework;
 using UnityEngine;
 
 public class Test : MonoBehaviour {

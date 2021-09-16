@@ -5,7 +5,7 @@
  * @Last Modified by: l hy
  * @Last Modified time: 2021-01-19 22:00:20
  */
-namespace UFrameWork.FrameUtil {
+namespace UFramework.FrameUtil {
     interface IRefCounter {
 
         int refCount { get; }

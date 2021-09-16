@@ -4,7 +4,7 @@
  * @Description: 内存监视
  */
 
-namespace UFrameWork.Develop {
+namespace UFramework.Develop {
     using UnityEngine.Profiling;
     using UnityEngine;
 

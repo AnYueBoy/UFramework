@@ -4,7 +4,7 @@
  * @Description: 控制台信息
  */
 
-namespace UFrameWork.Develop {
+namespace UFramework.Develop {
     using UnityEngine;
     public class ConsoleMessage {
 

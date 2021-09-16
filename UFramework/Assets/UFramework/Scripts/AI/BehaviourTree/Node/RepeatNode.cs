@@ -5,10 +5,10 @@
  */
 using UFramework.AI.BehaviourTree.Agent;
 using UFramework.AI.BehaviourTree.Node;
-using UFrameWork.AI.BlackBoard;
+using UFramework.AI.BlackBoard;
 using UnityEngine;
 
-namespace UFrameWork.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree.Node {
     public class RepeatNode : DecoratorNode {
 
         private int m_repeatCount;

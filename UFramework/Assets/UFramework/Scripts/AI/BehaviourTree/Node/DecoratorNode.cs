@@ -6,7 +6,7 @@
 
 using UFramework.AI.BehaviourTree.Node;
 
-namespace UFrameWork.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree.Node {
     public class DecoratorNode : BaseNode {
 
         public BaseNode child {
