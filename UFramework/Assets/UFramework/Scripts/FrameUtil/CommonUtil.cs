@@ -262,6 +262,22 @@ namespace UFramework.FrameUtil {
             sourceList = sourceList.GetRange (0, newListLength);
         }
 
+        public static bool isOddNumber (int value) {
+            // 奇数的二进制最后一位为1
+            return (value & 1) == 1;
+        }
+
+        //取一定范围内的一个奇数
+        public static int getOddNumber (int min, int max) {
+            while (true) {
+                int temp = Random.Range (min, max);
+                if (!isOddNumber (temp)) {
+                    continue;
+                }
+                return temp;
+            }
+        }
+
         /// <summary> 
         /// 简单2d射线检测（只返回是否检测到目标）       
         /// </summary> 
@@ -318,7 +334,7 @@ namespace UFramework.FrameUtil {
 
         public static string getBundleUrl () {
             string platformName = getCurPlatformName ();
-            string bundleUrl = Application.dataPath + "/AssetsBundles/" + platformName+"/";
+            string bundleUrl = Application.dataPath + "/AssetsBundles/" + platformName + "/";
             return bundleUrl;
         }
     }
