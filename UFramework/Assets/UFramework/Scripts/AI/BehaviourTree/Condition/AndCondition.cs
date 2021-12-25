@@ -8,16 +8,16 @@ namespace UFramework.AI.BehaviourTree {
 
     public class AndCondition : BaseCondition {
 
-        private BaseCondition m_LHS;
-        private BaseCondition m_RHS;
+        private BaseCondition leftCondistion;
+        private BaseCondition rightCondition;
 
-        public AndCondition (BaseCondition lhs, BaseCondition rhs) {
-            this.m_LHS = lhs;
-            this.m_RHS = rhs;
+        public AndCondition (BaseCondition leftCondistion, BaseCondition rightCondition) {
+            this.leftCondistion = leftCondistion;
+            this.rightCondition = rightCondition;
         }
 
         public override bool isTrue (IAgent agent) {
-            return this.m_LHS.isTrue (agent) && this.m_RHS.isTrue (agent);
+            return this.leftCondistion.isTrue (agent) && this.rightCondition.isTrue (agent);
         }
     }
 }

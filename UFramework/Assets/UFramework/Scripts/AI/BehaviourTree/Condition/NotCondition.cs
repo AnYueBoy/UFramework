@@ -8,14 +8,14 @@ namespace UFramework.AI.BehaviourTree {
 
     public class NotCondition : BaseCondition {
 
-        private BaseCondition m_LHS;
+        private BaseCondition condistion;
 
-        public NotCondition (BaseCondition lhs) {
-            this.m_LHS = lhs;
+        public NotCondition (BaseCondition condition) {
+            this.condistion = condition;
         }
 
         public override bool isTrue (IAgent agent) {
-            return !this.m_LHS.isTrue (agent);
+            return !this.condistion.isTrue (agent);
         }
     }
 }
