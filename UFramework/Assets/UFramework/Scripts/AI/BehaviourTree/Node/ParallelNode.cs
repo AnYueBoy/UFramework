@@ -54,8 +54,8 @@ namespace UFramework.AI.BehaviourTree {
         }
 
         protected override void onReset () {
-            for (int i = 0; i < m_Children.Count; ++i) {
-                m_Children[i].reset ();
+            foreach (BaseNode node in m_Children) {
+                node.reset ();
             }
 
             m_childrenRunning.Clear ();

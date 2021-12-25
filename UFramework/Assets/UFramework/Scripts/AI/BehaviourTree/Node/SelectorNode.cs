@@ -31,8 +31,8 @@ namespace UFramework.AI.BehaviourTree {
         }
 
         protected override void onReset () {
-            if (m_lastRunningNode != null) {
-                m_lastRunningNode.reset ();
+            foreach (BaseNode node in m_Children) {
+                node.reset ();
             }
 
             m_lastRunningNode = null;
