@@ -29,7 +29,7 @@ namespace UFramework.AI.BehaviourTree {
                     break;
                 }
 
-                if (++m_repeatIndex == m_repeatIndex) {
+                if (++m_repeatIndex == m_repeatCount) {
                     return RunningStatus.Finished;
                 }
                 child.reset ();
