@@ -8,14 +8,14 @@ namespace UFramework.AI.BehaviourTree {
     public class SelectorNode : BaseNode {
         private BaseNode m_lastRunningNode;
 
-        protected override RunningStatus onUpdate (IAgent agent, BlackBoardMemory workingMemory) {
+        protected override RunningStatus onUpdate () {
             RunningStatus runningStatus = RunningStatus.Finished;
             BaseNode previousNode = m_lastRunningNode;
 
             // select running node
             m_lastRunningNode = null;
             foreach (BaseNode node in m_Children) {
-                runningStatus = node.update (agent, workingMemory);
+                runningStatus = node.update (this.agent, this.blackBoardMemory);
                 if (runningStatus != RunningStatus.Failed) {
                     m_lastRunningNode = node;
                     break;
@@ -24,15 +24,15 @@ namespace UFramework.AI.BehaviourTree {
 
             // clear last running node
             if (previousNode != m_lastRunningNode && previousNode != null) {
-                previousNode.reset (agent, workingMemory);
+                previousNode.reset ();
             }
 
             return runningStatus;
         }
 
-        protected override void onReset (IAgent agent, BlackBoardMemory workingMemory) {
+        protected override void onReset () {
             if (m_lastRunningNode != null) {
-                m_lastRunningNode.reset (agent, workingMemory);
+                m_lastRunningNode.reset ();
             }
 
             m_lastRunningNode = null;

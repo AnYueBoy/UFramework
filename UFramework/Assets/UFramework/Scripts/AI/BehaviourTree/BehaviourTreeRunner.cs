@@ -8,10 +8,9 @@ namespace UFramework.AI.BehaviourTree {
     public static class BehaviourTreeRunner {
 
         public static void execute (BaseNode root, IAgent agent, BlackBoardMemory workingMemory) {
-
             RunningStatus status = root.update (agent, workingMemory);
             if (status != RunningStatus.Executing) {
-                root.reset (agent, workingMemory);
+                root.reset ();
             }
         }
     }

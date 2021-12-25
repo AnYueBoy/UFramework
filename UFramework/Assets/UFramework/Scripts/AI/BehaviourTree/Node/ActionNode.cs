@@ -9,46 +9,46 @@ namespace UFramework.AI.BehaviourTree {
 
         private ActionStatus m_actionStauts = ActionStatus.ACTION_READY;
 
-        protected override RunningStatus onUpdate (IAgent agent, BlackBoardMemory workingMemory) {
-            if (!this.onEvaluate (agent, workingMemory)) {
+        protected override RunningStatus onUpdate () {
+            if (!this.onEvaluate ()) {
                 return RunningStatus.Failed;
             }
 
             RunningStatus runningStatus = RunningStatus.Finished;
             if (m_actionStauts == ActionStatus.ACTION_READY) {
-                this.onEnter (agent, workingMemory);
+                this.onEnter ();
                 m_actionStauts = ActionStatus.ACTION_RUNNING;
             }
 
             if (m_actionStauts == ActionStatus.ACTION_RUNNING) {
-                runningStatus = onExecute (agent, workingMemory);
+                runningStatus = onExecute ();
             }
 
             return runningStatus;
         }
 
-        protected override void onReset (IAgent agent, BlackBoardMemory workingMemory) {
+        protected override void onReset () {
             if (m_actionStauts == ActionStatus.ACTION_RUNNING) {
-                this.onExit (agent, workingMemory);
+                this.onExit ();
             }
 
             m_actionStauts = ActionStatus.ACTION_READY;
         }
 
         //implemented by inherited class
-        protected virtual bool onEvaluate (IAgent agent, BlackBoardMemory workingMemory) {
+        protected virtual bool onEvaluate () {
             return true;
         }
 
-        protected virtual void onEnter (IAgent agent, BlackBoardMemory workingMemory) {
+        protected virtual void onEnter () {
 
         }
 
-        protected virtual RunningStatus onExecute (IAgent agent, BlackBoardMemory workingMemory) {
+        protected virtual RunningStatus onExecute () {
             return RunningStatus.Finished;
         }
 
-        protected virtual void onExit (IAgent agent, BlackBoardMemory workingMemory) {
+        protected virtual void onExit () {
 
         }
     }

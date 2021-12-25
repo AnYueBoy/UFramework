@@ -18,7 +18,7 @@ namespace UFramework.AI.BehaviourTree {
             m_requestFinishedCount = threshold;
         }
 
-        protected override RunningStatus onUpdate (IAgent agent, BlackBoardMemory workingMemory) {
+        protected override RunningStatus onUpdate () {
             if (m_Children.Count == 0) {
                 return RunningStatus.Finished;
             }
@@ -33,7 +33,7 @@ namespace UFramework.AI.BehaviourTree {
             for (int i = 0; i < m_Children.Count; ++i) {
                 RunningStatus status = m_childrenRunning[i];
                 if (status == RunningStatus.Executing) {
-                    status = m_Children[i].update (agent, workingMemory);
+                    status = m_Children[i].update (this.agent, this.blackBoardMemory);
                 }
 
                 if (status == RunningStatus.Finished) {
@@ -53,9 +53,9 @@ namespace UFramework.AI.BehaviourTree {
             return RunningStatus.Executing;
         }
 
-        protected override void onReset (IAgent agent, BlackBoardMemory workingMemory) {
+        protected override void onReset () {
             for (int i = 0; i < m_Children.Count; ++i) {
-                m_Children[i].reset (agent, workingMemory);
+                m_Children[i].reset ();
             }
 
             m_childrenRunning.Clear ();
