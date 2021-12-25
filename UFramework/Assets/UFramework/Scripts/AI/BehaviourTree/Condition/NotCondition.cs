@@ -4,18 +4,18 @@
  * @Description: 非条件
  */
 
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Condition;
+namespace UFramework.AI.BehaviourTree {
 
-public class NotCondition : BaseCondition {
+    public class NotCondition : BaseCondition {
 
-    private BaseCondition m_LHS;
+        private BaseCondition m_LHS;
 
-    public NotCondition (BaseCondition lhs) {
-        this.m_LHS = lhs;
-    }
+        public NotCondition (BaseCondition lhs) {
+            this.m_LHS = lhs;
+        }
 
-    public override bool isTrue (IAgent agent) {
-        return !this.m_LHS.isTrue (agent);
+        public override bool isTrue (IAgent agent) {
+            return !this.m_LHS.isTrue (agent);
+        }
     }
 }

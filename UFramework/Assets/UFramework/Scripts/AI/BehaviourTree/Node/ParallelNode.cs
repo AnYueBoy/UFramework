@@ -6,12 +6,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Node;
-using UFramework.AI.BlackBoard;
 using UnityEngine;
 
-namespace UFramework.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree {
     public class ParallelNode : BaseNode {
 
         private int m_requestFinishedCount;

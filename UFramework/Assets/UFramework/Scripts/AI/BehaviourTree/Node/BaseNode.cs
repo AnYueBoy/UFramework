@@ -5,12 +5,8 @@
  */
 
 using System.Collections.Generic;
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Condition;
-using UFramework.AI.BehaviourTree;
-using UFramework.AI.BlackBoard;
 
-namespace UFramework.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree {
     public class BaseNode {
 
         // Tree Structure

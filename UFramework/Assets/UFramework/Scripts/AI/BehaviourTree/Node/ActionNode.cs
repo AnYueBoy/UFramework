@@ -4,11 +4,7 @@
  * @Description: 动作节点（执行节点）
  */
 
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Node;
-using UFramework.AI.BlackBoard;
-
-namespace UFramework.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree {
     public class ActionNode : BaseNode {
 
         private ActionStatus m_actionStauts = ActionStatus.ACTION_READY;
@@ -57,4 +53,3 @@ namespace UFramework.AI.BehaviourTree.Node {
         }
     }
 }
-

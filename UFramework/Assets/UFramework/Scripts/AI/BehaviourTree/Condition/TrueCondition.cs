@@ -4,13 +4,12 @@
  * @Description: 真条件 
  */
 
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Condition;
+namespace UFramework.AI.BehaviourTree {
+    public class TrueCondition : BaseCondition {
 
-public class TrueCondition : BaseCondition {
+        public override bool isTrue (IAgent agent) {
+            return true;
+        }
 
-    public override bool isTrue (IAgent agent) {
-        return true;
     }
-
 }

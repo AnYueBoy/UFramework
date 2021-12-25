@@ -3,12 +3,9 @@
  * @Date: 2021-01-16 15:23:26 
  * @Description: 重复节点
  */
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Node;
-using UFramework.AI.BlackBoard;
 using UnityEngine;
 
-namespace UFramework.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree {
     public class RepeatNode : DecoratorNode {
 
         private int m_repeatCount;

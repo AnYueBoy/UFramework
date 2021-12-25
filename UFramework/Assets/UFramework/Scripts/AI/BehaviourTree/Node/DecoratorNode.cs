@@ -4,9 +4,7 @@
  * @Description: 装饰节点(控制流节点)
  */
 
-using UFramework.AI.BehaviourTree.Node;
-
-namespace UFramework.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree {
     public class DecoratorNode : BaseNode {
 
         public BaseNode child {

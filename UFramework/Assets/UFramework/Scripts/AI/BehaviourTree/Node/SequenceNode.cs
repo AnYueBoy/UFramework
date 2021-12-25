@@ -4,11 +4,7 @@
  * @Description: 队列节点（控制流节点）
  */
 
-using UFramework.AI.BehaviourTree.Agent;
-using UFramework.AI.BehaviourTree.Node;
-using UFramework.AI.BlackBoard;
-
-namespace UFramework.AI.BehaviourTree.Node {
+namespace UFramework.AI.BehaviourTree {
     public class SequenceNode : BaseNode {
 
         private int m_currentNodeIndex = -1;

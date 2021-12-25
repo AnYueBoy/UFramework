@@ -3,9 +3,7 @@
  * @Date: 2021-01-16 13:35:34 
  * @Description: 条件基类
  */
-using UFramework.AI.BehaviourTree.Agent;
-
-namespace UFramework.AI.BehaviourTree.Condition {
+namespace UFramework.AI.BehaviourTree {
     public class BaseCondition {
 
         public virtual bool isTrue (IAgent agent) {

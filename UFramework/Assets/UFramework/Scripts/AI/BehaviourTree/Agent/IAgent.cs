@@ -4,7 +4,7 @@
  * @Description: 代理 
  */
 
-namespace UFramework.AI.BehaviourTree.Agent {
+namespace UFramework.AI.BehaviourTree {
     public interface IAgent {
 
     }
