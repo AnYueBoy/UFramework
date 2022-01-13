@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 /*
  * @Author: l hy 
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
- * @Last Modified time: 2021-05-11 17:11:33
+ * @Last Modified time: 2022-01-13 19:35:56
  */
+ using SException = System.Exception;
 namespace UFramework.GameCommon {
 
     using System.Collections.Generic;
@@ -306,7 +305,7 @@ namespace UFramework.GameCommon {
             this.loadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
-                promiseList.Add (new Promise ((Action reslove, Action<Exception> reject) => {
+                promiseList.Add (new Promise ((Action reslove, Action<SException> reject) => {
                     string bundleUrl = CommonUtil.getBundleUrl () + bundleName;
                     this.loadTargetBundleAsync (bundleUrl).then (
                         (AssetBundle assetBundle) => {
@@ -369,7 +368,7 @@ namespace UFramework.GameCommon {
                 return this.bundleMap[bundleUrl];
             }
 
-            this.bundleMap.Add (bundleUrl, new Promise<AssetBundle> ((Action<AssetBundle> resolve, Action<Exception> reject) => {
+            this.bundleMap.Add (bundleUrl, new Promise<AssetBundle> ((Action<AssetBundle> resolve, Action<SException> reject) => {
                 AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync (bundleUrl);
                 bundleCreateRequest.completed += (AsyncOperation operation) => {
                     AssetBundle assetBundle = bundleCreateRequest.assetBundle;
@@ -386,7 +385,7 @@ namespace UFramework.GameCommon {
         private Promise<T> loadTargetBundleAssetAsync<T> (AssetBundle targetBundle, string assetName) where T : Object {
             AssetBundleRequest assetBundleRequest = targetBundle.LoadAssetAsync<T> (assetName);
             return new Promise<T> (
-                (Action<T> resolve, Action<Exception> reject) => {
+                (Action<T> resolve, Action<SException> reject) => {
                     assetBundleRequest.completed += bundleOperation => {
                         T nativeAsset = assetBundleRequest.asset as T;
                         string assetUrl = targetBundle.name + ":" + assetName;
@@ -406,7 +405,7 @@ namespace UFramework.GameCommon {
         private Promise<List<PackAsset>> loadTargetBundleAllAssetAsync<T> (AssetBundle targetBundle) where T : Object {
             AssetBundleRequest assetBundleRequest = targetBundle.LoadAllAssetsAsync<T> ();
             return new Promise<List<PackAsset>> (
-                (Action<List<PackAsset>> resolve, Action<Exception> reject) => {
+                (Action<List<PackAsset>> resolve, Action<SException> reject) => {
                     assetBundleRequest.completed += bundleOperation => {
                         Object[] allAssets = assetBundleRequest.allAssets;
                         List<PackAsset> nativeAssetList = new List<PackAsset> ();
