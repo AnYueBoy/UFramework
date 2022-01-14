@@ -34,7 +34,7 @@ namespace UFramework.EventDispatcher {
         }
 
         public void Raise (string eventName, object sender, EventArgs e = null) {
-            Guard.Requires<LogicException> ((sender is not EventArgs), $"Passed event args for the parameter {sender},Did you make a wrong method call?");
+            Guard.Requires<LogicException> (!(sender is EventArgs), $"Passed event args for the parameter {sender},Did you make a wrong method call?");
 
             e = e?? EventArgs.Empty;
             if (!listeners.TryGetValue (eventName, out IList<EventHandler> handlers)) {
