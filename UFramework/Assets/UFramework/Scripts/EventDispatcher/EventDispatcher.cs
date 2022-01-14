@@ -41,7 +41,7 @@ namespace UFramework.EventDispatcher {
                 return;
             }
 
-            foreach (var listener in handlers) {
+            foreach (EventHandler listener in handlers) {
                 if (e is IStoppableEvent stoppableEvent && stoppableEvent.IsPropagationStopped) {
                     break;
                 }

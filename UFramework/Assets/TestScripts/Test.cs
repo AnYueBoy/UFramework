@@ -5,19 +5,22 @@ using System.Collections.Generic;
  * @Date: 2021-01-21 22:15:59 
  * @Description: 用于各类测试项目
  * @Last Modified by: l hy
- * @Last Modified time: 2021-03-01 23:17:35
+ * @Last Modified time: 2022-01-14 14:22:29
  */
 
 using System.Threading.Tasks;
+using UFramework;
+using UFramework.EventDispatcher;
 using UFramework.FrameUtil;
 using UFramework.GameCommon;
 using UFramework.Promise;
-using UFramework;
 using UnityEngine;
 
 public class Test : MonoBehaviour {
 
     private AssetsManager assetManager = new AssetsManager ();
+
+    private EventDispatcher eventDispatcher = new EventDispatcher ();
 
     public Transform nodeParent;
 
@@ -35,14 +38,22 @@ public class Test : MonoBehaviour {
 
         ListenerManager.getInstance ().add ("event1", this, this.testListener);
         ListenerManager.getInstance ().add ("event2", this, this.testListener);
+        eventDispatcher.AddListener ("eventDispatcher", newTestListener);
     }
 
     private void testListener () {
         Debug.Log ("xxxx");
     }
 
+    private void newTestListener (object sender, EventArgs generalEventArgs) {
+        GeneralEventArgs args = (GeneralEventArgs) generalEventArgs;
+        Debug.Log ($"what fuck {args.Data}");
+    }
+
     public void event1 () {
         ListenerManager.getInstance ().trigger ("event1");
+        eventDispatcher.Raise ("eventDispatcher", new GeneralEventArgs ("test"));
+        eventDispatcher.RemoveListener ("eventDispatcher", newTestListener);
     }
 
     public void event2 () {
@@ -58,7 +69,7 @@ public class Test : MonoBehaviour {
     }
 
     private async void loadCube () {
-        // FIXME: unity 不允许，在unity中我们使用多线程时。用子线程调用主线程时。用到unity的东西时就会报如下的错误。
+        // 不允许在非主线程中调用unity的api
         GameObject cubePrefab = await assetManager.getAssetByUrlAsyncOb<GameObject> ("Shape/Cube");
         GameObject cubeNode = Instantiate<GameObject> (cubePrefab);
         cubeNode.transform.SetParent (this.gameObject.transform);
