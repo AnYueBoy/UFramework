@@ -47,6 +47,29 @@ namespace UFramework.Util {
             throw CreateExceptionInstance (exception, message, innerException, state);
         }
 
+        /// <summary>
+        /// The verification parameter is not Null.
+        /// </summary>
+        public static void ParameterNotNull (
+            object argumentValue,
+            string argumentName,
+            string message = null,
+            SException innerException = null) {
+
+            if (argumentValue != null) {
+                return;
+            }
+
+            message = message??$"Parameter {argumentName} not allowed for null. please check the function input.";
+            ArgumentNullException exception = new ArgumentNullException (argumentName, message);
+
+            if (innerException != null) {
+                SetField (exception, "_innerException", innerException);
+            }
+
+            throw exception;
+        }
+
         private static SException CreateExceptionInstance (
             Type exceptionType,
             string message,
