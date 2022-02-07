@@ -23,7 +23,7 @@ namespace UFramework.Core {
         /// <summary>
         /// Register a service provider with the application.
         /// </summary>
-        void Register (IServiceProvider provider);
+        void Register (IServiceProvider provider, bool force = false);
 
         /// <summary>
         /// Checks whether the given service provider is registered.
