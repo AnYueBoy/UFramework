@@ -50,7 +50,7 @@ namespace UFramework.Container {
         }
 
         public IBindData OnRelease (Action<IBindData, object> closure) {
-            if (IsStatic) {
+            if (!IsStatic) {
                 throw new LogicException (
                     $"Service [{Service}] is not Singleton(Static) Bind , Can not call{nameof(OnRelease)}().");
             }
