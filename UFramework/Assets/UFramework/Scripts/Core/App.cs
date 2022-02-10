@@ -73,16 +73,6 @@ namespace UFramework.Core {
             return That.GetRuntimeId ();
         }
 
-        /// <inheritdoc cref="IContainer.UnbindMethod(object)"/>
-        public static void UnbindMethod (object target) {
-            That.UnbindMethod (target);
-        }
-
-        /// <inheritdoc cref="IContainer.Invoke(string, object[])"/>
-        public static object Invoke (string method, params object[] userParams) {
-            return That.Invoke (method, userParams);
-        }
-
         /// <inheritdoc cref="IContainer.OnFindType(Func{string, Type}, int)"/>
         public static IContainer OnFindType (Func<string, Type> func, int priority = int.MaxValue) {
             return That.OnFindType (func, priority);
@@ -347,42 +337,6 @@ namespace UFramework.Core {
             return That.SingletonIf (service, concrete, out bindData);
         }
 
-        /// <inheritdoc cref="IContainer.BindMethod(string, object, MethodInfo)"/>
-        public static IMethodBind BindMethod (string method, object target, MethodInfo call) {
-            return That.BindMethod (method, target, call);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindMethod(IContainer, string, object, string)"/>
-        public static IMethodBind BindMethod (string method, object target,
-            string call = null) {
-            return That.BindMethod (method, target, call);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindMethod(IContainer, string, Func{object})"/>
-        public static IMethodBind BindMethod (string method, Func<object> callback) {
-            return That.BindMethod (method, callback);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindMethod{T1}(IContainer, string, Func{T1, object})"/>
-        public static IMethodBind BindMethod<T1> (string method, Func<T1, object> callback) {
-            return That.BindMethod (method, callback);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindMethod{T1, T2}(IContainer, string, Func{T1, T2, object})"/>
-        public static IMethodBind BindMethod<T1, T2> (string method, Func<T1, T2, object> callback) {
-            return That.BindMethod (method, callback);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindMethod{T1, T2, T3}(IContainer, string, Func{T1, T2, T3, object})"/>
-        public static IMethodBind BindMethod<T1, T2, T3> (string method, Func<T1, T2, T3, object> callback) {
-            return That.BindMethod (method, callback);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindMethod{T1, T2, T3, T4}(IContainer, string, Func{T1, T2, T3, T4, object})"/>
-        public static IMethodBind BindMethod<T1, T2, T3, T4> (string method, Func<T1, T2, T3, T4, object> callback) {
-            return That.BindMethod (method, callback);
-        }
-
         /// <inheritdoc cref="IContainer.Unbind(string)"/>
         public static void Unbind (string service) {
             That.Unbind (service);
@@ -431,56 +385,6 @@ namespace UFramework.Core {
         /// <inheritdoc cref="ExtendContainer.Release(IContainer, ref object[], bool)"/>
         public static bool Release (ref object[] instances, bool reverse = true) {
             return That.Release (ref instances, reverse);
-        }
-
-        /// <inheritdoc cref="IContainer.Call(object, MethodInfo, object[])"/>
-        public static object Call (object instance, MethodInfo methodInfo, params object[] userParams) {
-            return That.Call (instance, methodInfo, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Call(IContainer, object, string, object[])"/>
-        public static object Call (object instance, string method, params object[] userParams) {
-            return That.Call (instance, method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Call{T1}(IContainer, Action{T1}, object[])"/>
-        public static void Call<T1> (Action<T1> method, params object[] userParams) {
-            That.Call (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Call{T1, T2}(IContainer, Action{T1, T2}, object[])"/>
-        public static void Call<T1, T2> (Action<T1, T2> method, params object[] userParams) {
-            That.Call (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Call{T1, T2, T3}(IContainer, Action{T1, T2, T3}, object[])"/>
-        public static void Call<T1, T2, T3> (Action<T1, T2, T3> method, params object[] userParams) {
-            That.Call (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Call{T1, T2, T3, T4}(IContainer, Action{T1, T2, T3, T4}, object[])"/>
-        public static void Call<T1, T2, T3, T4> (Action<T1, T2, T3, T4> method, params object[] userParams) {
-            That.Call (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Wrap{T1}(IContainer, Action{T1}, object[])"/>
-        public static Action Wrap<T1> (Action<T1> method, params object[] userParams) {
-            return That.Wrap (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Wrap{T1, T2}(IContainer, Action{T1, T2}, object[])"/>
-        public static Action Wrap<T1, T2> (Action<T1, T2> method, params object[] userParams) {
-            return That.Wrap (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Wrap{T1, T2, T3}(IContainer, Action{T1, T2, T3}, object[])"/>
-        public static Action Wrap<T1, T2, T3> (Action<T1, T2, T3> method, params object[] userParams) {
-            return That.Wrap (method, userParams);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Wrap{T1, T2, T3, T4}(IContainer, Action{T1, T2, T3, T4}, object[])"/>
-        public static Action Wrap<T1, T2, T3, T4> (Action<T1, T2, T3, T4> method, params object[] userParams) {
-            return That.Wrap (method, userParams);
         }
 
         /// <inheritdoc cref="IContainer.Make(string, object[])"/>

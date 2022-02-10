@@ -65,16 +65,6 @@ namespace UFramework.Container {
         bool BindIf (string service, Type concrete, bool isStatic, out IBindData bindData);
 
         /// <summary>
-        /// Register a method with the container.
-        /// </summary>
-        IMethodBind BindMethod (string method, object target, MethodInfo called);
-
-        /// <summary>
-        /// Unbinds a method from the container.
-        /// </summary>
-        void UnbindMethod (object target);
-
-        /// <summary>
         /// Unbinds a service from the container.
         /// </summary>
         void Unbind (string service);
@@ -103,16 +93,6 @@ namespace UFramework.Container {
         /// Flush the container of all bindings and resolved instances.
         /// </summary>
         void Flush ();
-
-        /// <summary>
-        /// Call the method in bonded container and inject its dependencies.
-        /// </summary>
-        object Invoke (string method, params object[] userParams);
-
-        /// <summary>
-        /// Call the given method and inject its dependencied.
-        /// </summary>
-        object Call (object target, MethodInfo methodInfo, params object[] userParams);
 
         /// <summary>
         /// Resolve the given service or alias from the container.

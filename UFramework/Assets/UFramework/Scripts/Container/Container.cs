@@ -92,11 +92,6 @@ namespace UFramework.Container {
         private readonly Dictionary<string, List<Action<object>>> rebound;
 
         /// <summary>
-        /// The method ioc container.
-        /// </summary>
-        private readonly MethodContainer methodContainer;
-
-        /// <summary>
         /// Represents a skipped object to skip some dependency injection.
         /// </summary>
         private readonly object skipped;
@@ -141,7 +136,6 @@ namespace UFramework.Container {
 
             BuildStack = new Stack<string> (32);
             UserParamsStack = new Stack<object[]> (32);
-            methodContainer = new MethodContainer (this);
             flushing = false;
             instanceId = 0;
         }
@@ -330,35 +324,6 @@ namespace UFramework.Container {
             }
 
             return bindData;
-        }
-
-        public IMethodBind BindMethod (string method, object target, MethodInfo called) {
-            GuardFlushing ();
-            GuardMethodName (method);
-            return methodContainer.Bind (method, target, called);
-        }
-
-        public void UnbindMethod (object target) {
-            methodContainer.Unbind (target);
-        }
-
-        public object Invoke (string method, params object[] userParams) {
-            GuardConstruct (nameof (Invoke));
-            return methodContainer.Invoke (method, userParams);
-        }
-
-        public object Call (object target, MethodInfo methodInfo, params object[] userParams) {
-            Guard.Requires<ArgumentException> (methodInfo != null);
-            if (!methodInfo.IsStatic) {
-                Guard.Requires<ArgumentException> (target != null);
-            }
-
-            GuardConstruct (nameof (Call));
-
-            ParameterInfo[] parameter = methodInfo.GetParameters ();
-            BindData bindData = GetBindFillable (target != null?Type2Service (target.GetType ()) : null);
-            userParams = GetDependencies (bindData, parameter, userParams) ?? Array.Empty<object> ();
-            return methodInfo.Invoke (target, userParams);
         }
 
         public object Make (string service, params object[] userParams) {
@@ -564,7 +529,6 @@ namespace UFramework.Container {
                 BuildStack.Clear ();
                 UserParamsStack.Clear ();
                 rebound.Clear ();
-                methodContainer.Flush ();
                 instanceTiming.Clear ();
                 instanceId = 0;
 
