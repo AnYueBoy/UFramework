@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
 using System.Text;
 using UFramework.Exception;
 using UFramework.Util;
@@ -569,67 +567,8 @@ namespace UFramework.Container {
             bindings.Remove (bindable.Service);
         }
 
-        protected internal virtual object[] GetDependencies (Bindable makeServiceBindData, ParameterInfo[] baseParams, object[] userParams) {
-            if (baseParams.Length <= 0) {
-                return Array.Empty<object> ();
-            }
-
-            object[] results = new object[baseParams.Length];
-
-            Func<ParameterInfo, object> matcher = GetParamsMatcher (ref userParams);
-
-            for (int i = 0; i < baseParams.Length; i++) {
-                ParameterInfo baseParam = baseParams[i];
-
-                // Parameter metching is used to match the parameters.
-                // The parameter matchers are the first to perform because their
-                // matching accuracy is the most accurate.
-                object param = matcher?.Invoke (baseParam);
-
-                // When the container finds that the developer users object or object[] as
-                // the dependency parameter type, we try to compact inject the user parameters.
-                param = param??GetCompactInjectUserParams (baseParam, ref userParams);
-
-                // Select the appropriate parameters from the user parameters and inject
-                // them in the relative order
-                param = param??GetDependenciesFromUserParams (baseParam, ref userParams);
-
-                string needService = null;
-
-                if (param == null) {
-                    // Try to generate the required parameters through the dependency 
-                    // injection container.
-                    needService = GetParamNeedsService (baseParam);
-
-                    if (baseParam.ParameterType.IsClass ||
-                        baseParam.ParameterType.IsInterface) {
-                        param = ResloveClass (makeServiceBindData, needService, baseParam);
-                    } else {
-                        param = ResolvePrimitive (makeServiceBindData, needService, baseParam);
-                    }
-                }
-
-                // Perfrom dependency injection checking on the obtained injection instance.
-                if (!CanInject (baseParam.ParameterType, param)) {
-                    string error = $"[{makeServiceBindData.Service}] Params inject type must be [{baseParam.ParameterType}], But instance is [{param?.GetType()}]";
-
-                    if (needService == null) {
-                        error += " Inject params from user incoming parameters.";
-                    } else {
-                        error += $" Make service is [{needService}].";
-                    }
-
-                    throw new UnresolvableException (error);
-                }
-
-                results[i] = param;
-            }
-
-            return results;
-        }
-
         protected virtual bool IsBasicType (Type type) {
-            // IsPrimitive 判断是否为基本类型
+            // IsPrimitive 判断是否为基元类型
             return type == null || type.IsPrimitive || type == typeof (string);
         }
 
@@ -640,27 +579,6 @@ namespace UFramework.Container {
 
         protected virtual Func<IContainer, object[], object> WrapperTypeBuilder (string service, Type concrete) {
             return (container, userParams) => ((Container) container).CreateInstance (GetBindFillable (service), concrete, userParams);
-        }
-
-        protected virtual object GetDependenciesFromUserParams (ParameterInfo baseParam, ref object[] userParams) {
-            if (userParams == null) {
-                return null;
-            }
-
-            GuardUserParamsCount (userParams.Length);
-
-            for (int i = 0; i < userParams.Length; i++) {
-                object userParam = userParams[i];
-
-                if (!ChangeType (ref userParam, baseParam.ParameterType)) {
-                    continue;
-                }
-
-                Arr.RemoveAt (ref userParams, i);
-                return userParam;
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -964,37 +882,6 @@ namespace UFramework.Container {
             }
         }
 
-        protected virtual Func<ParameterInfo, object> GetParamsMatcher (ref object[] userParams) {
-            if (userParams == null || userParams.Length <= 0) {
-                return null;
-            }
-
-            IParams[] tables = GetParamsTypeInUserParams (ref userParams);
-            return tables.Length <= 0 ? null : MakeParamsMatcher (tables);
-
-        }
-
-        protected virtual object[] GetConstructorsInjectParams (Bindable makeServiceBindData, Type makeServiceType, object[] userParams) {
-            ConstructorInfo[] constructors = makeServiceType.GetConstructors ();
-            if (constructors.Length <= 0) {
-                return Array.Empty<object> ();
-            }
-
-            ExceptionDispatchInfo exceptionDispatchInfo = null;
-            foreach (ConstructorInfo constructor in constructors) {
-                try {
-                    return GetDependencies (makeServiceBindData, constructor.GetParameters (), userParams);
-                } catch (SException ex) {
-                    if (exceptionDispatchInfo == null) {
-                        exceptionDispatchInfo = ExceptionDispatchInfo.Capture (ex);
-                    }
-                }
-            }
-
-            exceptionDispatchInfo?.Throw ();
-            throw new AssertException ("Exception dispatch info is null.");
-        }
-
         protected string GetServiceWithInstanceObject (object instance) {
             return instancesReverse.TryGetValue (instance, out string origin) ? origin : null;
         }
@@ -1011,10 +898,6 @@ namespace UFramework.Container {
                     );
                 }
             }
-        }
-
-        protected virtual void GuardMethodName (string method) {
-
         }
 
         protected virtual BindData MakeEmptyBindData (string service) {
@@ -1177,40 +1060,6 @@ namespace UFramework.Container {
 
             AttributeInject (bindable, instance);
             return instance;
-        }
-
-        /// <summary>
-        /// Get the variable of type IParams from userParams.
-        /// </summary>
-        private IParams[] GetParamsTypeInUserParams (ref object[] userParams) {
-            // Filter is used here without using Remove because
-            // the IParams is also one of the types that you might want to inject.
-            object[] elements = Arr.Filter (userParams, value => value is IParams);
-            IParams[] results = new IParams[elements.Length];
-
-            for (int i = 0; i < elements.Length; i++) {
-                results[i] = (IParams) elements[i];
-            }
-
-            return results;
-        }
-
-        /// <summary>
-        /// Gets the parameter matcher.
-        /// </summary>
-        private Func<ParameterInfo, object> MakeParamsMatcher (IParams[] tables) {
-            return parameterInfo => {
-                foreach (IParams table in tables) {
-                    if (!table.TryGetValue (parameterInfo.Name, out object result)) {
-                        continue;
-                    }
-
-                    if (ChangeType (ref result, parameterInfo.ParameterType)) {
-                        return result;
-                    }
-                }
-                return null;
-            };
         }
 
         private void AddClosure (Action<IBindData, object> closure, List<Action<IBindData, object>> list) {
