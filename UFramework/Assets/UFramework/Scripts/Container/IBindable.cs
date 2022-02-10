@@ -27,12 +27,6 @@ namespace UFramework.Container {
     }
 
     public interface IBindable<TReturn> : IBindable where TReturn : IBindable {
-
-        /// <summary>
-        /// When the service specified by the demand.
-        /// </summary>
-        IGivenData<TReturn> Needs (string service);
-
-        IGivenData<TReturn> Needs<TService> ();
+      
     }
 }

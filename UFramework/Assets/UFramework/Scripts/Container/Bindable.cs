@@ -92,26 +92,6 @@ namespace UFramework.Container {
     public abstract class Bindable<TReturn> : Bindable, IBindable<TReturn>
         where TReturn : class, IBindable<TReturn> {
 
-            private GivenData<TReturn> given;
-
             protected Bindable (Container container, string service) : base (container, service) { }
-
-            public IGivenData<TReturn> Needs (string service) {
-
-                Guard.ParameterNotNull (service, nameof (service));
-
-                AssertDestroyed ();
-
-                if (given == null) {
-                    given = new GivenData<TReturn> ((Container) Container, this);
-                }
-
-                given.Needs (service);
-                return given;
-            }
-
-            public IGivenData<TReturn> Needs<TService> () {
-                return Needs (Container.Type2Service (typeof (TService)));
-            }
         }
 }
