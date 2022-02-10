@@ -1,7 +1,7 @@
 using System;
 namespace UFramework.Container {
 
-    public interface IBindData : IBindable<IBindData> {
+    public interface IBindData : IBindable {
 
         /// <summary>
         /// Gets the delegate return service concrete.

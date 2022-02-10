@@ -5,7 +5,7 @@ using UFramework.Util;
 using UFrameworkContainer = UFramework.Container.Container;
 
 namespace UFramework.Container {
-    public sealed class BindData : Bindable<IBindData>, IBindData {
+    public sealed class BindData : Bindable, IBindData {
 
         private List<Action<IBindData, object>> resolving;
         private List<Action<IBindData, object>> afterResolving;

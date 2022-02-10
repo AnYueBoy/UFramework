@@ -25,8 +25,4 @@ namespace UFramework.Container {
         /// </remarks>
         void Unbind ();
     }
-
-    public interface IBindable<TReturn> : IBindable where TReturn : IBindable {
-      
-    }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UFramework.Exception;
-using UFramework.Util;
 
 namespace UFramework.Container {
 
@@ -88,10 +87,4 @@ namespace UFramework.Container {
             }
         }
     }
-
-    public abstract class Bindable<TReturn> : Bindable, IBindable<TReturn>
-        where TReturn : class, IBindable<TReturn> {
-
-            protected Bindable (Container container, string service) : base (container, service) { }
-        }
 }
