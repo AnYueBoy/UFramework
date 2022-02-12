@@ -104,11 +104,6 @@ namespace UFramework.Container {
         IContainer Alias (string alias, string service);
 
         /// <summary>
-        /// Allow configuration or replacement of services during service resolving.
-        /// </summary>
-        void Extend (string service, Func<object, IContainer, object> closure);
-
-        /// <summary>
         /// Register a new resolving callback.
         /// </summary>
         IContainer OnResolving (Action<IBindData, object> closure);

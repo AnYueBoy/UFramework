@@ -60,11 +60,6 @@ namespace UFramework.Container {
         private readonly List<Action<IBindData, object>> release;
 
         /// <summary>
-        /// The extension closure for services.
-        /// </summary>
-        private readonly Dictionary<string, List<Func<object, IContainer, object>>> extenders;
-
-        /// <summary>
         /// The type finder convert a string to a service type.
         /// </summary>
         private readonly SortSet<Func<string, Type>, int> findType;
@@ -125,7 +120,6 @@ namespace UFramework.Container {
             resolving = new List<Action<IBindData, object>> ((int) (prime * 0.25));
             afterResloving = new List<Action<IBindData, object>> ((int) (prime * 0.25));
             release = new List<Action<IBindData, object>> ((int) (prime * 0.25));
-            extenders = new Dictionary<string, List<Func<object, IContainer, object>>> ((int) (prime * 0.25));
             resolved = new HashSet<string> ();
             findType = new SortSet<Func<string, Type>, int> ();
             findTypeCache = new Dictionary<string, Type> (prime * 4);
@@ -329,52 +323,6 @@ namespace UFramework.Container {
             return Resolve (service, userParams);
         }
 
-        public void Extend (string service, Func<object, IContainer, object> closure) {
-            Guard.Requires<ArgumentNullException> (closure != null);
-            GuardFlushing ();
-
-            service = string.IsNullOrEmpty (service) ? string.Empty : AliasToService (service);
-
-            if (!string.IsNullOrEmpty (service) && instances.TryGetValue (service, out object instance)) {
-
-                // If the instance already exists then apply the extension.
-                // Extensions will no longer be added to the permanent extension list.
-                object old = instance;
-                instances[service] = instance = closure (instance, this);
-
-                if (!old.Equals (instance)) {
-                    instancesReverse.Remove (old);
-                    instancesReverse.Add (instance, service);
-                }
-
-                TriggerOnRebound (service, instance);
-                return;
-            }
-
-            if (!extenders.TryGetValue (service, out List<Func<object, IContainer, object>> extender)) {
-                extenders[service] = extender = new List<Func<object, IContainer, object>> ();
-            }
-
-            extender.Add (closure);
-
-            if (!string.IsNullOrEmpty (service) && IsResolved (service)) {
-                TriggerOnRebound (service);
-            }
-        }
-
-        public void ClearExtenders (string service) {
-            GuardFlushing ();
-            service = AliasToService (service);
-            extenders.Remove (service);
-
-            if (!IsResolved (service)) {
-                return;
-            }
-
-            Release (service);
-            TriggerOnRebound (service);
-        }
-
         public object Instance (string service, object instance) {
             Guard.ParameterNotNull (service, nameof (service));
             GuardFlushing ();
@@ -520,7 +468,6 @@ namespace UFramework.Container {
                 bindings.Clear ();
                 resolving.Clear ();
                 release.Clear ();
-                extenders.Clear ();
                 resolved.Clear ();
                 findType.Clear ();
                 findTypeCache.Clear ();
@@ -834,11 +781,6 @@ namespace UFramework.Container {
                 // For the built service we will try to do dependency injection.
                 instance = Build (bindData, userParams);
 
-                // If we define an extender for the specified service, then we need
-                // to execute the expander in turn, And allow the extender to modify
-                // or overwrite the original service.
-                instance = Extend (service, instance);
-
                 instance = bindData.IsStatic?
                 Instance (bindData.Service, instance):
                     TriggerOnResolving (bindData, instance);
@@ -944,24 +886,6 @@ namespace UFramework.Container {
         private bool HasOnReboundCallbacks (string service) {
             IList<Action<object>> result = GetOnReboundCallbacks (service);
             return result != null && result.Count > 0;
-        }
-
-        private object Extend (string service, object instance) {
-            if (extenders.TryGetValue (service, out List<Func<object, IContainer, object>> list)) {
-                foreach (Func<object, IContainer, object> extender in list) {
-                    instance = extender (instance, this);
-                }
-            }
-
-            if (!extenders.TryGetValue (string.Empty, out list)) {
-                return instance;
-            }
-
-            foreach (Func<object, IContainer, object> extender in list) {
-                instance = extender (instance, this);
-            }
-
-            return instance;
         }
 
         private object Inject (Bindable bindable, object instance) {

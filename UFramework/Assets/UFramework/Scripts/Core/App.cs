@@ -166,36 +166,6 @@ namespace UFramework.Core {
             return That.Alias<TAlias, TService> ();
         }
 
-        /// <inheritdoc cref="IContainer.Extend(string, Func{object, IContainer, object})"/>
-        public static void Extend (string service, Func<object, IContainer, object> closure) {
-            That.Extend (service, closure);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Extend(IContainer, string, Func{object, object})"/>
-        public static void Extend (string service, Func<object, object> closure) {
-            That.Extend (service, closure);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Extend{TConcrete}(IContainer, Func{TConcrete, object})"/>
-        public static void Extend<TService, TConcrete> (Func<TConcrete, object> closure) {
-            That.Extend<TService, TConcrete> (closure);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Extend{TConcrete}(IContainer, Func{TConcrete, IContainer, object})"/>
-        public static void Extend<TService, TConcrete> (Func<TConcrete, IContainer, object> closure) {
-            That.Extend<TService, TConcrete> (closure);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Extend{TService, TConcrete}(IContainer, Func{TConcrete, IContainer, object})"/>
-        public static void Extend<TConcrete> (Func<TConcrete, IContainer, object> closure) {
-            That.Extend (closure);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.Extend{TService, TConcrete}(IContainer, Func{TConcrete, object})"/>
-        public static void Extend<TConcrete> (Func<TConcrete, object> closure) {
-            That.Extend (closure);
-        }
-
         /// <inheritdoc cref="ExtendContainer.Bind{TService}(IContainer)"/>
         public static IBindData Bind<TService> () {
             return That.Bind<TService> ();
