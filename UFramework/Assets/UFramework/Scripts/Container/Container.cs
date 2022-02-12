@@ -561,36 +561,6 @@ namespace UFramework.Container {
             return Type2Service (baseParam.ParameterType);
         }
 
-        protected virtual Func<object> GetContextualClosure (Bindable makeServiceBindData, string service, string paramName) {
-            return makeServiceBindData.GetContextualClosure (service) ?? makeServiceBindData.GetContextualClosure ($"{GetVariableTag()}{paramName}");
-        }
-
-        protected virtual string GetContextualService (Bindable makeServiceBindData, string service, string paramName) {
-            return makeServiceBindData.GetContextual (service) ??
-                makeServiceBindData.GetContextual ($"{GetVariableTag()}{paramName}") ??
-                service;
-        }
-
-        protected virtual bool MakeFromContextualClosure (Func<object> closure, Type needType, out object output) {
-            output = null;
-            if (closure == null) {
-                return false;
-            }
-
-            output = closure ();
-            return ChangeType (ref output, needType);
-        }
-
-        protected virtual bool MakeFromContextualService (string service, Type needType, out object output) {
-            output = null;
-            if (!CanMake (service)) {
-                return false;
-            }
-
-            output = Make (service);
-            return ChangeType (ref output, needType);
-        }
-
         protected virtual object ResolveAttrPrimitive (Bindable makeServiceBindData, string service, PropertyInfo baseParam) {
             if (ResloveFromContextual (makeServiceBindData, service, baseParam.Name, baseParam.PropertyType, out object instance)) {
                 return instance;
@@ -984,6 +954,36 @@ namespace UFramework.Container {
                 GetContextualService (makeServiceBindData, service, paramName),
                 paramType,
                 out output);
+        }
+
+        protected virtual bool MakeFromContextualClosure (Func<object> closure, Type needType, out object output) {
+            output = null;
+            if (closure == null) {
+                return false;
+            }
+
+            output = closure ();
+            return ChangeType (ref output, needType);
+        }
+
+        protected virtual bool MakeFromContextualService (string service, Type needType, out object output) {
+            output = null;
+            if (!CanMake (service)) {
+                return false;
+            }
+
+            output = Make (service);
+            return ChangeType (ref output, needType);
+        }
+        
+        protected virtual Func<object> GetContextualClosure (Bindable makeServiceBindData, string service, string paramName) {
+            return makeServiceBindData.GetContextualClosure (service) ?? makeServiceBindData.GetContextualClosure ($"{GetVariableTag()}{paramName}");
+        }
+
+        protected virtual string GetContextualService (Bindable makeServiceBindData, string service, string paramName) {
+            return makeServiceBindData.GetContextual (service) ??
+                makeServiceBindData.GetContextual ($"{GetVariableTag()}{paramName}") ??
+                service;
         }
 
         private void AddClosure (Action<IBindData, object> closure, List<Action<IBindData, object>> list) {

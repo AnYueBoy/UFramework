@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 /*
  * @Author: l hy 
  * @Date: 2021-01-21 22:15:59 
@@ -39,6 +40,14 @@ public class Test : MonoBehaviour {
         ListenerManager.getInstance ().add ("event1", this, this.testListener);
         ListenerManager.getInstance ().add ("event2", this, this.testListener);
         eventDispatcher.AddListener ("eventDispatcher", newTestListener);
+
+        InjectTest injectTest = new InjectTest ();
+
+        foreach (var property in injectTest.GetType ().GetProperties (BindingFlags.Public | BindingFlags.Instance)) {
+            Debug.Log ($"{property.PropertyType}");
+            Debug.Log("");
+        }
+
     }
 
     private void testListener () {
@@ -169,5 +178,33 @@ public class Test : MonoBehaviour {
             .then (() => {
                 Debug.Log ("over");
             });
+    }
+}
+
+public class InjectTest {
+    public int intValue;
+
+    public string stringValue;
+
+    private int priIntValue;
+
+    private string priStrValue;
+
+    public int intProperty {
+        get {
+            return 1;
+        }
+        set {
+            intValue = value;
+        }
+    }
+
+    private string strProperty {
+        get {
+            return "1";
+        }
+        set {
+            stringValue = value;
+        }
     }
 }
