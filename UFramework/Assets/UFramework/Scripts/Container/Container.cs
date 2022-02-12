@@ -528,72 +528,8 @@ namespace UFramework.Container {
             return (container, userParams) => ((Container) container).CreateInstance (GetBindFillable (service), concrete, userParams);
         }
 
-        /// <summary>
-        /// Convert instance to specified type.
-        /// </summary>
-        protected virtual bool ChangeType (ref object result, Type conversionType) {
-            try {
-                if (result == null || conversionType.IsInstanceOfType (result)) {
-                    return true;
-                }
-                if (IsBasicType (result.GetType ()) && conversionType.IsDefined (typeof (VariantAttribute), false)) {
-                    try {
-                        result = Make (Type2Service (conversionType), result);
-                        return true;
-                    } catch (SException) {
-                        // ignored
-                        // when throw exception then stop inject.
-                    }
-                }
-
-                if (result is IConvertible && typeof (IConvertible).IsAssignableFrom (conversionType)) {
-                    result = Convert.ChangeType (result, conversionType);
-                    return true;
-                }
-            } catch (SException) {
-                // ignored
-                // when throw exception then stop inject.
-            }
-            return false;
-        }
-
         protected virtual string GetParamNeedsService (ParameterInfo baseParam) {
             return Type2Service (baseParam.ParameterType);
-        }
-
-        protected virtual object ResolveAttrPrimitive (Bindable makeServiceBindData, string service, PropertyInfo baseParam) {
-            if (ResloveFromContextual (makeServiceBindData, service, baseParam.Name, baseParam.PropertyType, out object instance)) {
-                return instance;
-            }
-
-            if (baseParam.PropertyType.IsGenericType &&
-                baseParam.PropertyType.GetGenericTypeDefinition () == typeof (Nullable<>)) {
-                return null;
-            }
-
-            InjectAttribute inject = (InjectAttribute) baseParam.GetCustomAttribute (typeof (InjectAttribute));
-            if (inject != null && !inject.Required) {
-                return skipped;
-            }
-
-            throw MakeUnresolvableException (baseParam.Name, baseParam.DeclaringType);
-        }
-
-        protected virtual object ResloveClass (Bindable makeServiceBindData, string service, ParameterInfo baseParam) {
-            if (ResloveFromContextual (makeServiceBindData, service, baseParam.Name, baseParam.ParameterType, out object instance)) {
-                return instance;
-            }
-
-            if (baseParam.IsOptional) {
-                return baseParam.DefaultValue;
-            }
-
-            // baseParam.Member maybe empty and may occur when some underlying
-            // development overwrites ParameterInfo class.
-            throw MakeUnresolvableException (
-                baseParam.Name,
-                baseParam.Member?.DeclaringType
-            );
         }
 
         protected virtual char GetVariableTag () {
@@ -768,7 +704,7 @@ namespace UFramework.Container {
                 makeServiceBindData.Concrete (this, userParams) :
                 CreateInstance (makeServiceBindData, SpeculatedServiceType (makeServiceBindData.Service), userParams);
 
-            return Inject (makeServiceBindData, instance);
+            return instance;
         }
 
         protected virtual object CreateInstance (Bindable makeServiceBindData, Type makeServiceType, object[] userParams) {
@@ -856,134 +792,6 @@ namespace UFramework.Container {
         private bool HasOnReboundCallbacks (string service) {
             IList<Action<object>> result = GetOnReboundCallbacks (service);
             return result != null && result.Count > 0;
-        }
-
-        private object Inject (Bindable bindable, object instance) {
-            GuardResolveInstance (instance, bindable.Service);
-
-            AttributeInject (bindable, instance);
-            return instance;
-        }
-
-        protected virtual void AttributeInject (Bindable makeServiceBindData, object makeServiceInstance) {
-            if (makeServiceInstance == null) {
-                return;
-            }
-
-            foreach (PropertyInfo property in makeServiceInstance.GetType ().GetProperties (BindingFlags.Public | BindingFlags.Instance)) {
-                if (!property.CanWrite ||
-                    !property.IsDefined (typeof (InjectAttribute), false)) {
-                    continue;
-                }
-
-                string needService = GetPropertyNeedsService (property);
-
-                object instance;
-                if (property.PropertyType.IsClass ||
-                    property.PropertyType.IsInterface) {
-                    instance = ResloveAttrClass (makeServiceBindData, needService, property);
-                } else {
-                    instance = ResolveAttrPrimitive (makeServiceBindData, needService, property);
-                }
-
-                if (ReferenceEquals (instance, skipped)) {
-                    continue;
-                }
-
-                if (!CanInject (property.PropertyType, instance)) {
-                    throw new UnresolvableException (
-                        $"[{makeServiceBindData.Service}]({makeServiceInstance.GetType()}) Attr inject type must be [{property.PropertyType}] , But instance is [{instance?.GetType()}], Make service is [{needService}]."
-                    );
-                }
-
-                property.SetValue (makeServiceInstance, instance, null);
-            }
-        }
-
-        protected virtual string GetPropertyNeedsService (PropertyInfo propertyInfo) {
-            return Type2Service (propertyInfo.PropertyType);
-        }
-
-        protected virtual object ResloveAttrClass (Bindable makeServiceBindData, string service, PropertyInfo baseParam) {
-            if (ResloveFromContextual (makeServiceBindData, service, baseParam.Name, baseParam.PropertyType, out object instance)) {
-                return instance;
-            }
-
-            InjectAttribute inject = (InjectAttribute) baseParam.GetCustomAttribute (typeof (InjectAttribute));
-            if (inject != null && !inject.Required) {
-                return skipped;
-            }
-
-            throw MakeUnresolvableException (baseParam.Name, baseParam.DeclaringType);
-        }
-
-        protected virtual object ResolvePrimitive (Bindable makeServiceBindData, string service, ParameterInfo baseParam) {
-            if (ResloveFromContextual (makeServiceBindData, service, baseParam.Name, baseParam.ParameterType, out object instance)) {
-                return instance;
-            }
-
-            if (baseParam.IsOptional) {
-                return baseParam.DefaultValue;
-            }
-
-            if (baseParam.ParameterType.IsGenericType && baseParam.ParameterType.GetGenericTypeDefinition () == typeof (Nullable<>)) {
-                return null;
-            }
-
-            throw MakeUnresolvableException (
-                baseParam.Name,
-                baseParam.Member?.DeclaringType
-            );
-        }
-
-        protected virtual bool ResloveFromContextual (
-            Bindable makeServiceBindData,
-            string service,
-            string paramName,
-            Type paramType,
-            out object output) {
-            if (MakeFromContextualClosure (
-                    GetContextualClosure (makeServiceBindData, service, paramName),
-                    paramType,
-                    out output)) {
-
-                return true;
-            }
-
-            return MakeFromContextualService (
-                GetContextualService (makeServiceBindData, service, paramName),
-                paramType,
-                out output);
-        }
-
-        protected virtual bool MakeFromContextualClosure (Func<object> closure, Type needType, out object output) {
-            output = null;
-            if (closure == null) {
-                return false;
-            }
-
-            output = closure ();
-            return ChangeType (ref output, needType);
-        }
-
-        protected virtual bool MakeFromContextualService (string service, Type needType, out object output) {
-            output = null;
-            if (!CanMake (service)) {
-                return false;
-            }
-
-            output = Make (service);
-            return ChangeType (ref output, needType);
-        }
-        
-        protected virtual Func<object> GetContextualClosure (Bindable makeServiceBindData, string service, string paramName) {
-            return makeServiceBindData.GetContextualClosure (service) ?? makeServiceBindData.GetContextualClosure ($"{GetVariableTag()}{paramName}");
-        }
-
-        protected virtual string GetContextualService (Bindable makeServiceBindData, string service, string paramName) {
-            return makeServiceBindData.GetContextual (service) ??
-                makeServiceBindData.GetContextual ($"{GetVariableTag()}{paramName}") ??
-                service;
         }
 
         private void AddClosure (Action<IBindData, object> closure, List<Action<IBindData, object>> list) {
