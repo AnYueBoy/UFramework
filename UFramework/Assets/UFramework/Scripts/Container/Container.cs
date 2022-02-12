@@ -557,12 +557,6 @@ namespace UFramework.Container {
             return $" InnerException mesage stack: [{stack}]";
         }
 
-        protected virtual UnresolvableException MakeUnresolvableException (string name, Type declaringClass) {
-            return new UnresolvableException (
-                $"Unresolvable dependency, resolving [{name?? "Unknown"}] in class [{declaringClass?.ToString()??"Unkown"}]"
-            );
-        }
-
         protected virtual LogicException MakeCircularDependencyException (string service) {
             string message = $"Circular dependency detected while for [{service}].";
             message += GetBuildStackDebugMessage ();
@@ -689,7 +683,6 @@ namespace UFramework.Container {
             return service != null && bindings.TryGetValue (service, out BindData bindData) ?
                 bindData :
                 MakeEmptyBindData (service);
-
         }
 
         private void GuardFlushing () {
