@@ -85,11 +85,6 @@ namespace UFramework.Container {
         private readonly Dictionary<string, List<Action<object>>> rebound;
 
         /// <summary>
-        /// Represents a skipped object to skip some dependency injection.
-        /// </summary>
-        private readonly object skipped;
-
-        /// <summary>
         /// Whether the container is flushing.
         /// </summary>
         private bool flushing;
@@ -532,10 +527,6 @@ namespace UFramework.Container {
             return Type2Service (baseParam.ParameterType);
         }
 
-        protected virtual char GetVariableTag () {
-            return '$';
-        }
-
         protected virtual string GetBuildStackDebugMessage () {
             string previous = string.Join (",", BuildStack.ToArray ());
             return $"While building stack [{previous}]";
@@ -582,10 +573,6 @@ namespace UFramework.Container {
             return service.Trim ();
         }
 
-        protected virtual bool CanInject (Type type, object instance) {
-            return instance == null || type.IsInstanceOfType (instance);
-        }
-
         protected virtual void GuardUserParamsCount (int count) {
             if (count > 255) {
                 throw new LogicException ($"Too many parameters, must be less or equal than 255 or override the {nameof(GuardUserParamsCount)} method.");
@@ -613,35 +600,6 @@ namespace UFramework.Container {
                 }
             }
             return findTypeCache[service] = null;
-        }
-
-        protected virtual bool CheckCompactInjectUserParams (ParameterInfo baseParam, object[] userParams) {
-            if (userParams == null || userParams.Length <= 0) {
-                return false;
-            }
-
-            return baseParam.ParameterType == typeof (object[]) ||
-                baseParam.ParameterType == typeof (object);
-        }
-
-        protected virtual object GetCompactInjectUserParams (ParameterInfo baseParam, ref object[] userParams) {
-            if (!CheckCompactInjectUserParams (baseParam, userParams)) {
-                return null;
-            }
-
-            try {
-
-                if (baseParam.ParameterType == typeof (object) &&
-                    userParams != null &&
-                    userParams.Length == 1) {
-                    return userParams[0];
-                }
-
-                return userParams;
-
-            } finally {
-                userParams = null;
-            }
         }
 
         protected string GetServiceWithInstanceObject (object instance) {
