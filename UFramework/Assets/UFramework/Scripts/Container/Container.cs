@@ -495,17 +495,17 @@ namespace UFramework.Container {
             return instance;
         }
 
-        internal void Unbind (IBindable bindable) {
+        internal void Unbind (IBindData bindData) {
             GuardFlushing ();
-            Release (bindable.Service);
-            if (aliasesReverse.TryGetValue (bindable.Service, out List<string> serviceList)) {
+            Release (bindData.Service);
+            if (aliasesReverse.TryGetValue (bindData.Service, out List<string> serviceList)) {
                 foreach (string alias in serviceList) {
                     aliases.Remove (alias);
                 }
-                aliasesReverse.Remove (bindable.Service);
+                aliasesReverse.Remove (bindData.Service);
             }
 
-            bindings.Remove (bindable.Service);
+            bindings.Remove (bindData.Service);
         }
 
         protected virtual bool IsBasicType (Type type) {
@@ -658,7 +658,7 @@ namespace UFramework.Container {
             return instance;
         }
 
-        protected virtual object CreateInstance (Bindable makeServiceBindData, Type makeServiceType, object[] userParams) {
+        protected virtual object CreateInstance (BindData makeServiceBindData, Type makeServiceType, object[] userParams) {
             if (IsUnableType (makeServiceType)) {
                 return null;
             }

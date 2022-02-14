@@ -1,22 +1,34 @@
 using System;
+using UFramework.Exception;
 using UFramework.Util;
 using UFrameworkContainer = UFramework.Container.Container;
 
 namespace UFramework.Container {
-    public sealed class BindData : Bindable, IBindData {
+    public sealed class BindData : IBindData {
+
+        private readonly Container container;
+        private bool isDestroy;
+        public string Service { get; }
+
+        public Func<IContainer, object[], object> Concrete { get; }
+
+        public bool IsStatic { get; }
+
+        public IContainer Container => this.container;
 
         public BindData (
             Container container,
             string service,
             Func<IContainer, object[], object> concrete,
-            bool isStatic) : base (container, service) {
+            bool isStatic) {
+
+            this.container = container;
+            Service = service;
+            this.isDestroy = false;
+
             Concrete = concrete;
             IsStatic = isStatic;
         }
-
-        public Func<IContainer, object[], object> Concrete { get; }
-
-        public bool IsStatic { get; }
 
         public IBindData Alias (string alias) {
             AssertDestroyed ();
@@ -36,8 +48,15 @@ namespace UFramework.Container {
             return this;
         }
 
-        protected override void ReleaseBind () {
+        public void Unbind () {
+            isDestroy = true;
             ((UFrameworkContainer) Container).Unbind (this);
+        }
+
+        private void AssertDestroyed () {
+            if (isDestroy) {
+                throw new LogicException ("The current instance is destroyed.");
+            }
         }
     }
 }

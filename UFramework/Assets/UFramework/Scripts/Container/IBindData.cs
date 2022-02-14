@@ -1,7 +1,26 @@
 using System;
 namespace UFramework.Container {
 
-    public interface IBindData : IBindable {
+    public interface IBindData {
+
+        /// <summary>
+        /// Gets the service name.
+        /// </summary>
+        string Service { get; }
+
+        /// <summary>
+        /// Gets the container to which the service belongs.
+        /// </summary>
+        IContainer Container { get; }
+
+        /// <summary>
+        ///  Unbind the service from the container.
+        /// </summary>
+        /// <remarks>
+        /// If the service is a singletoned instance, then the singleton instance
+        /// that has been built will be automatically released.
+        /// </remarks>
+        void Unbind ();
 
         /// <summary>
         /// Gets the delegate return service concrete.
