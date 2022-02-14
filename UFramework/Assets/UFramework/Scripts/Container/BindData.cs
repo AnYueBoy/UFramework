@@ -38,13 +38,6 @@ namespace UFramework.Container {
             return this.Alias (this.Container.Type2Service (typeof (TAlias)));
         }
 
-        public IBindData Tag (string tag) {
-            AssertDestroyed ();
-            Guard.ParameterNotNull (tag, nameof (tag));
-            Container.Tag (tag, Service);
-            return this;
-        }
-
         public void Unbind () {
             isDestroy = true;
             ((UFrameworkContainer) Container).Unbind (this);

@@ -38,10 +38,5 @@ namespace UFramework.Container {
         IBindData Alias (string alias);
 
         IBindData Alias<TAlias> ();
-
-        /// <summary>
-        /// Assign a tag to a given service.
-        /// </summary>
-        IBindData Tag (string tag);
     }
 }
