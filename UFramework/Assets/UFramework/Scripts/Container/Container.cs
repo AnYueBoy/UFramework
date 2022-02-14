@@ -386,7 +386,6 @@ namespace UFramework.Container {
             }
 
             BindData bindData = GetBindFillable (service);
-            bindData.TriggerRelease (instance);
             TriggerOnRelease (bindData, instance);
 
             if (instance != null) {
@@ -697,13 +696,11 @@ namespace UFramework.Container {
         }
 
         private object TriggerOnResolving (BindData bindData, object instance) {
-            instance = bindData.TriggerResolving (instance);
             instance = Trigger (bindData, instance, resolving);
             return TriggerOnAfterResolving (bindData, instance);
         }
 
         private object TriggerOnAfterResolving (BindData bindData, object instance) {
-            instance = bindData.TriggerAfterResolving (instance);
             return Trigger (bindData, instance, afterResloving);
         }
 

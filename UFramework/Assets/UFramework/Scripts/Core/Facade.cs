@@ -102,10 +102,6 @@ namespace UFramework.Core {
         /// </summary>
         /// <param name="newBinder">The new binder.</param>
         private static void Rebind (IBindData newBinder) {
-            if (newBinder != null && binder != newBinder && newBinder.IsStatic) {
-                newBinder.OnRelease (OnRelease);
-            }
-
             binder = newBinder;
         }
 
