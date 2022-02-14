@@ -9,11 +9,8 @@ namespace UFramework.Container {
         private readonly Container container;
         private bool isDestroy;
         public string Service { get; }
-
         public Func<IContainer, object[], object> Concrete { get; }
-
         public bool IsStatic { get; }
-
         public IContainer Container => this.container;
 
         public BindData (
