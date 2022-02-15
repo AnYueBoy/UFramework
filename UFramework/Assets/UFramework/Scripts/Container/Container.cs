@@ -142,7 +142,11 @@ namespace UFramework.Container {
                 tags[tag] = collection = new List<string> ();
             }
 
-            foreach (string service in services?? Array.Empty<string> ()) {
+            if (services == null || services.Length <= 0) {
+                return;
+            }
+
+            foreach (string service in services) {
                 if (string.IsNullOrEmpty (service)) {
                     continue;
                 }
@@ -242,27 +246,6 @@ namespace UFramework.Container {
             }
             collection.Add (alias);
             return this;
-        }
-
-        public bool BindIf (string service, Func<IContainer, object[], object> concrete, bool isStatic, out IBindData bindData) {
-            IBindData bind = GetBind (service);
-            if (bind == null && (HasInstance (service) || IsAlias (service))) {
-                bindData = null;
-                return false;
-            }
-
-            bindData = bind??Bind (service, concrete, isStatic);
-            return bind == null;
-        }
-
-        public bool BindIf (string service, Type concrete, bool isStatic, out IBindData bindData) {
-            if (!IsUnableType (concrete)) {
-                service = FormatService (service);
-                return BindIf (service, WrapperTypeBuilder (service, concrete), isStatic, out bindData);
-            }
-
-            bindData = null;
-            return false;
         }
 
         public IBindData Bind (string service, Type concrete, bool isStatic) {

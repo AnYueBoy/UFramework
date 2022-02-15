@@ -206,46 +206,6 @@ namespace UFramework.Core {
             return That.Bind (service, concrete);
         }
 
-        /// <inheritdoc cref="IContainer.BindIf(string, Func{IContainer, object[], object}, bool, out IBindData)"/>
-        public static bool BindIf (string service, Func<IContainer, object[], object> concrete, bool isStatic, out IBindData bindData) {
-            return That.BindIf (service, concrete, isStatic, out bindData);
-        }
-
-        /// <inheritdoc cref="IContainer.BindIf(string, Type, bool, out IBindData)"/>
-        public static bool BindIf (string service, Type concrete, bool isStatic, out IBindData bindData) {
-            return That.BindIf (service, concrete, isStatic, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindIf{TService, TConcrete}(IContainer, out IBindData)"/>
-        public static bool BindIf<TService, TConcrete> (out IBindData bindData) {
-            return That.BindIf<TService, TConcrete> (out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindIf{TService}(IContainer, out IBindData)"/>
-        public static bool BindIf<TService> (out IBindData bindData) {
-            return That.BindIf<TService> (out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindIf{TService}(IContainer, Func{IContainer, object[], object}, out IBindData)"/>
-        public static bool BindIf<TService> (Func<IContainer, object[], object> concrete, out IBindData bindData) {
-            return That.BindIf<TService> (concrete, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindIf{TService}(IContainer, Func{object[], object}, out IBindData)"/>
-        public static bool BindIf<TService> (Func<object[], object> concrete, out IBindData bindData) {
-            return That.BindIf<TService> (concrete, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindIf{TService}(IContainer, Func{object}, out IBindData)"/>
-        public static bool BindIf<TService> (Func<object> concrete, out IBindData bindData) {
-            return That.BindIf<TService> (concrete, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.BindIf(IContainer, string, Func{IContainer, object[], object}, out IBindData)"/>
-        public static bool BindIf (string service, Func<IContainer, object[], object> concrete, out IBindData bindData) {
-            return That.BindIf (service, concrete, out bindData);
-        }
-
         /// <inheritdoc cref="ExtendContainer.Singleton{TService, TConcrete}(IContainer)"/>
         public static IBindData Singleton<TService, TConcrete> () {
             return That.Singleton<TService, TConcrete> ();
@@ -274,36 +234,6 @@ namespace UFramework.Core {
         /// <inheritdoc cref="ExtendContainer.Singleton(IContainer, string, Func{IContainer, object[], object})"/>
         public static IBindData Singleton (string service, Func<IContainer, object[], object> concrete) {
             return That.Singleton (service, concrete);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.SingletonIf{TService, TConcrete}(IContainer, out IBindData)"/>
-        public static bool SingletonIf<TService, TConcrete> (out IBindData bindData) {
-            return That.SingletonIf<TService, TConcrete> (out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.SingletonIf{TService}(IContainer, out IBindData)"/>
-        public static bool SingletonIf<TService> (out IBindData bindData) {
-            return That.SingletonIf<TService> (out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.SingletonIf{TService}(IContainer, Func{IContainer, object[], object}, out IBindData)"/>
-        public static bool SingletonIf<TService> (Func<IContainer, object[], object> concrete, out IBindData bindData) {
-            return That.SingletonIf<TService> (concrete, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.SingletonIf{TService}(IContainer, Func{object[], object}, out IBindData)"/>
-        public static bool SingletonIf<TService> (Func<object[], object> concrete, out IBindData bindData) {
-            return That.SingletonIf<TService> (concrete, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.SingletonIf{TService}(IContainer, Func{object}, out IBindData)"/>
-        public static bool SingletonIf<TService> (Func<object> concrete, out IBindData bindData) {
-            return That.SingletonIf<TService> (concrete, out bindData);
-        }
-
-        /// <inheritdoc cref="ExtendContainer.SingletonIf(IContainer, string, Func{IContainer, object[], object}, out IBindData)"/>
-        public static bool SingletonIf (string service, Func<IContainer, object[], object> concrete, out IBindData bindData) {
-            return That.SingletonIf (service, concrete, out bindData);
         }
 
         /// <inheritdoc cref="IContainer.Unbind(string)"/>

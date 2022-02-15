@@ -54,16 +54,6 @@ namespace UFramework.Container {
         IBindData Bind (string service, Func<IContainer, object[], object> concrete, bool isStatic);
 
         /// <summary>
-        /// Register a binding with the container if the service not exists.
-        /// </summary>
-        bool BindIf (string service, Func<IContainer, object[], object> concrete, bool isStatic, out IBindData bindData);
-
-        /// <summary>
-        /// Register a binding with the container if the service not exists.
-        /// </summary>
-        bool BindIf (string service, Type concrete, bool isStatic, out IBindData bindData);
-
-        /// <summary>
         /// Unbinds a service from the container.
         /// </summary>
         void Unbind (string service);
