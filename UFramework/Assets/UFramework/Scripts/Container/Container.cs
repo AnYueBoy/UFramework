@@ -259,6 +259,20 @@ namespace UFramework.Container {
             return Bind (service, WrapperTypeBuilder (service, concrete), isStatic);
         }
 
+        protected virtual Func<IContainer, object[], object> WrapperTypeBuilder (string service, Type concrete) {
+            return (container, userParams) => ((Container) container).CreateInstance (GetBindFillable (service), concrete, userParams);
+        }
+
+        protected BindData GetBindFillable (string service) {
+            return service != null && bindings.TryGetValue (service, out BindData bindData) ?
+                bindData :
+                MakeEmptyBindData (service);
+        }
+
+        protected virtual BindData MakeEmptyBindData (string service) {
+            return new BindData (this, service, null, false);
+        }
+
         public IBindData Bind (string service, Func<IContainer, object[], object> concrete, bool isStatic) {
             Guard.ParameterNotNull (service, nameof (service));
             Guard.ParameterNotNull (concrete, nameof (concrete));
@@ -278,6 +292,7 @@ namespace UFramework.Container {
                 throw new SException ($"Aliases [{service}] is already exists.");
             }
 
+            // concrete 根据类型用反射创建实例
             BindData bindData = new BindData (this, service, concrete, isStatic);
             bindings.Add (service, bindData);
 
@@ -299,6 +314,69 @@ namespace UFramework.Container {
         public object Make (string service, params object[] userParams) {
             GuardConstruct (nameof (Make));
             return Resolve (service, userParams);
+        }
+
+        protected object Resolve (string service, params object[] userParams) {
+            Guard.ParameterNotNull (service, nameof (service));
+
+            service = AliasToService (service);
+            // 如果单例池中有对应服务则直接返回否则进入构建过程
+            if (instances.TryGetValue (service, out object instance)) {
+                return instance;
+            }
+
+            if (BuildStack.Contains (service)) {
+                throw MakeCircularDependencyException (service);
+            }
+
+            BuildStack.Push (service);
+            UserParamsStack.Push (userParams);
+            try {
+                BindData bindData = GetBindFillable (service);
+
+                // We will start building a service instance.
+                // For the built service we will try to do dependency injection.
+                // FIXME: 阅读截止
+                instance = Build (bindData, userParams);
+
+                instance = bindData.IsStatic?
+                Instance (bindData.Service, instance):
+                    TriggerOnResolving (bindData, instance);
+
+                resolved.Add (bindData.Service);
+                return instance;
+            } finally {
+                UserParamsStack.Pop ();
+                BuildStack.Pop ();
+            }
+        }
+
+        protected virtual object Build (BindData makeServiceBindData, object[] userParams) {
+            object instance = makeServiceBindData.Concrete != null ?
+                makeServiceBindData.Concrete (this, userParams) :
+                CreateInstance (makeServiceBindData, SpeculatedServiceType (makeServiceBindData.Service), userParams);
+
+            return instance;
+        }
+
+        protected virtual object CreateInstance (BindData makeServiceBindData, Type makeServiceType, object[] userParams) {
+            if (IsUnableType (makeServiceType)) {
+                return null;
+            }
+
+            try {
+                return CreateInstance (makeServiceType, userParams);
+            } catch (SException ex) {
+                throw MakeBuildFailedException (makeServiceBindData.Service, makeServiceType, ex);
+            }
+        }
+
+        protected virtual object CreateInstance (Type makeService, object[] userParams) {
+            if (userParams == null || userParams.Length <= 0) {
+                return Activator.CreateInstance (makeService);
+            }
+
+            return Activator.CreateInstance (makeService, userParams);
         }
 
         public object Instance (string service, object instance) {
@@ -501,10 +579,6 @@ namespace UFramework.Container {
                 (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>));
         }
 
-        protected virtual Func<IContainer, object[], object> WrapperTypeBuilder (string service, Type concrete) {
-            return (container, userParams) => ((Container) container).CreateInstance (GetBindFillable (service), concrete, userParams);
-        }
-
         protected virtual string GetParamNeedsService (ParameterInfo baseParam) {
             return Type2Service (baseParam.ParameterType);
         }
@@ -594,77 +668,6 @@ namespace UFramework.Container {
                     );
                 }
             }
-        }
-
-        protected virtual BindData MakeEmptyBindData (string service) {
-            return new BindData (this, service, null, false);
-        }
-
-        protected object Resolve (string service, params object[] userParams) {
-            Guard.ParameterNotNull (service, nameof (service));
-
-            service = AliasToService (service);
-            if (instances.TryGetValue (service, out object instance)) {
-                return instance;
-            }
-
-            if (BuildStack.Contains (service)) {
-                throw MakeCircularDependencyException (service);
-            }
-
-            BuildStack.Push (service);
-            UserParamsStack.Push (userParams);
-            try {
-                BindData bindData = GetBindFillable (service);
-
-                // We will start building a service instance.
-                // For the built service we will try to do dependency injection.
-                instance = Build (bindData, userParams);
-
-                instance = bindData.IsStatic?
-                Instance (bindData.Service, instance):
-                    TriggerOnResolving (bindData, instance);
-
-                resolved.Add (bindData.Service);
-                return instance;
-            } finally {
-                UserParamsStack.Pop ();
-                BuildStack.Pop ();
-            }
-        }
-
-        protected virtual object Build (BindData makeServiceBindData, object[] userParams) {
-            object instance = makeServiceBindData.Concrete != null ?
-                makeServiceBindData.Concrete (this, userParams) :
-                CreateInstance (makeServiceBindData, SpeculatedServiceType (makeServiceBindData.Service), userParams);
-
-            return instance;
-        }
-
-        protected virtual object CreateInstance (BindData makeServiceBindData, Type makeServiceType, object[] userParams) {
-            if (IsUnableType (makeServiceType)) {
-                return null;
-            }
-
-            try {
-                return CreateInstance (makeServiceType, userParams);
-            } catch (SException ex) {
-                throw MakeBuildFailedException (makeServiceBindData.Service, makeServiceType, ex);
-            }
-        }
-
-        protected virtual object CreateInstance (Type makeService, object[] userParams) {
-            if (userParams == null || userParams.Length <= 0) {
-                return Activator.CreateInstance (makeService);
-            }
-
-            return Activator.CreateInstance (makeService, userParams);
-        }
-
-        protected BindData GetBindFillable (string service) {
-            return service != null && bindings.TryGetValue (service, out BindData bindData) ?
-                bindData :
-                MakeEmptyBindData (service);
         }
 
         private void GuardFlushing () {
