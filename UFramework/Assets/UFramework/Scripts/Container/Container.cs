@@ -336,7 +336,8 @@ namespace UFramework.Container {
 
                 // We will start building a service instance.
                 // For the built service we will try to do dependency injection.
-                // FIXME: 阅读截止
+
+                // 构建实例
                 instance = Build (bindData, userParams);
 
                 instance = bindData.IsStatic?
@@ -441,6 +442,7 @@ namespace UFramework.Container {
                 }
             }
 
+            // 阅读截止
             if (instance == null &&
                 (string.IsNullOrEmpty (service) || !instances.TryGetValue (service, out instance))) {
                 return false;
