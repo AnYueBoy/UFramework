@@ -4,40 +4,40 @@ namespace UFramewrok.Core {
     /// </summary>
     public enum StartProcess {
         /// <summary>
-        /// When you create a new <see cref="Application"/>,
-        /// you are in the <see cref="Construct"/> phase.
+        /// When you create a new Application,
+        /// you are in the Construct phase.
         /// </summary>
         Construct = 0,
 
         /// <summary>
-        /// Before the <see cref="Application.Bootstrap"/> call.
+        /// Before the Application.Bootstrap call.
         /// </summary>
         Bootstrap = 1,
 
         /// <summary>
-        /// When during <see cref="Application.Bootstrap"/> execution,
-        /// you are in the <see cref="Bootstrapping"/> phase.
+        /// When during Application.Bootstrap execution,
+        /// you are in the Bootstrapping phase.
         /// </summary>
         Bootstrapping = 2,
 
         /// <summary>
-        /// After the <see cref="Application.Bootstrap"/> called.
+        /// After the Application.Bootstrap called.
         /// </summary>
         Bootstraped = 3,
 
         /// <summary>
-        /// Before the <see cref="Application.Init"/> call.
+        /// Before the Application.Init call.
         /// </summary>
         Init = 4,
 
         /// <summary>
-        /// When during <see cref="Application.Init"/> execution,
-        /// you are in the <see cref="Initing"/> phase.
+        /// When during Application.Init execution,
+        /// you are in the Initing phase.
         /// </summary>
         Initing = 5,
 
         /// <summary>
-        /// After the <see cref="Application.Init"/> called.
+        /// After the Application.Init called.
         /// </summary>
         Inited = 6,
 
@@ -47,18 +47,18 @@ namespace UFramewrok.Core {
         Running = 7,
 
         /// <summary>
-        /// Before the <see cref="Application.Terminate"/> call.
+        /// Before the Application.Terminate call.
         /// </summary>
         Terminate = 8,
 
         /// <summary>
-        /// When during <see cref="Application.Terminate"/> execution,
-        /// you are in the <see cref="Terminating"/> phase.
+        /// When during Application.Terminate execution,
+        /// you are in the Terminating phase.
         /// </summary>
         Terminating = 9,
 
         /// <summary>
-        /// After the <see cref="Application.Terminate"/> called.
+        /// After the Application.Terminate called.
         /// All resources are destroyed.
         /// </summary>
         Terminated = 10,
