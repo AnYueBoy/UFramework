@@ -1,13 +1,6 @@
 using UFramework.Container;
 
 namespace UFramework.Core {
-    /// <summary>
-    /// <see cref="Facade{TService}"/> is the abstract implemented by all facade classes.
-    /// </summary>
-    /// <typeparam name="TService">The service type.</typeparam>
-    /// <remarks>
-    /// <code>public class FileSystem : Facade&gt;IFileSystem&lt;{ }</code>
-    /// </remarks>
     public abstract class Facade<TService> {
         private static readonly string Service;
         private static TService that;
@@ -16,12 +9,9 @@ namespace UFramework.Core {
         private static bool released;
 
         /// <summary>
-        /// Initializes static members of the <see cref="Facade{TService}"/> class.
+        /// Initializes static members of the Facade class.
         /// </summary>
-#pragma warning disable S3963
-        static Facade ()
-#pragma warning restore S3963
-        {
+        static Facade () {
             Service = App.Type2Service (typeof (TService));
             App.OnNewApplication += app => {
                 that = default;
@@ -31,7 +21,6 @@ namespace UFramework.Core {
             };
         }
 
-        /// <inheritdoc cref="that"/>
         public static TService That => HasInstance ? that : Resolve ();
 
         /// <summary>
@@ -49,7 +38,6 @@ namespace UFramework.Core {
             return HasInstance ? that : Resolve (userParams);
         }
 
-        /// <inheritdoc cref="Make"/>
         private static TService Resolve (params object[] userParams) {
             released = false;
 
