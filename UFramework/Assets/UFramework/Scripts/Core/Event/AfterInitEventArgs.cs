@@ -1,18 +1,11 @@
-﻿
-namespace UFramework.Core
-{
+﻿namespace UFramework.Core {
     /// <summary>
-    /// Indicates that all the <see cref="IServiceProvider.Init"/> has been called.
+    /// Indicates that all the IServiceProvider.Init has been called.
     /// </summary>
-    public class AfterInitEventArgs : ApplicationEventArgs
-    {
+    public class AfterInitEventArgs : ApplicationEventArgs {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AfterInitEventArgs"/> class.
+        /// Initializes a new instance of the IServiceProvider.Init class.
         /// </summary>
-        /// <param name="application">The application instance.</param>
-        public AfterInitEventArgs(IApplication application)
-            : base(application)
-        {
-        }
+        public AfterInitEventArgs (IApplication application) : base (application) { }
     }
 }

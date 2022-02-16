@@ -1,18 +1,14 @@
 ﻿using System;
 
-namespace UFramework.Core
-{
+namespace UFramework.Core {
     /// <summary>
     /// Represents an application event.
     /// </summary>
-    public class ApplicationEventArgs : EventArgs
-    {
+    public class ApplicationEventArgs : EventArgs {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ApplicationEventArgs"/> class.
+        /// Initializes a new instance of the ApplicationEventArgs class.
         /// </summary>
-        /// <param name="application">The application instance.</param>
-        public ApplicationEventArgs(IApplication application)
-        {
+        public ApplicationEventArgs (IApplication application) {
             Application = application;
         }
 
