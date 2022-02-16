@@ -44,7 +44,7 @@ namespace UFramework.Core {
                  { typeof (StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
             };
 
-            // dispatchMapping = new Dictionary<Type, string> () {
+             // dispatchMapping = new Dictionary<Type, string> () {
             //      { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot },
             //      { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit },
             //      { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate },
@@ -263,8 +263,7 @@ namespace UFramework.Core {
             SetDispatcher (new EventDispatcher.EventDispatcher ());
         }
 
-        private T Raise<T> (T args)
-        where T : EventArgs {
+        private T Raise<T> (T args) where T : EventArgs {
             if (!dispatchMapping.TryGetValue (args.GetType (), out string eventName)) {
                 throw new AssertException ($"Assertion error: Undefined event {args}");
             }
