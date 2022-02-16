@@ -32,8 +32,6 @@ namespace UFramework.Core {
         /// <summary>
         /// Resolve the object instance.
         /// </summary>
-        /// <param name="userParams">The user parameters.</param>
-        /// <returns>The resolved object.</returns>
         internal static TService Make (params object[] userParams) {
             return HasInstance ? that : Resolve (userParams);
         }
@@ -64,8 +62,6 @@ namespace UFramework.Core {
         /// <summary>
         /// When the resolved object is released.
         /// </summary>
-        /// <param name="oldBinder">The old bind data with resolved object.</param>
-        /// <param name="instance">The ignored parameter.</param>
         private static void OnRelease (IBindData oldBinder, object instance) {
             if (oldBinder != binder) {
                 return;
@@ -78,7 +74,6 @@ namespace UFramework.Core {
         /// <summary>
         /// When the resolved object is rebound.
         /// </summary>
-        /// <param name="newService">The new resolved object.</param>
         private static void ServiceRebound (TService newService) {
             var newBinder = App.GetBind (Service);
             Rebind (newBinder);
@@ -88,7 +83,6 @@ namespace UFramework.Core {
         /// <summary>
         /// Rebinding the bound data to given binder.
         /// </summary>
-        /// <param name="newBinder">The new binder.</param>
         private static void Rebind (IBindData newBinder) {
             binder = newBinder;
         }
@@ -96,7 +90,6 @@ namespace UFramework.Core {
         /// <summary>
         /// Resolve facade object from the container.
         /// </summary>
-        /// <param name="userParams">The user parameters.</param>
         /// <returns>The resolved object.</returns>
         private static TService Build (params object[] userParams) {
             return (TService) App.Make (Service, userParams);

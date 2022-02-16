@@ -1,6 +1,6 @@
 namespace UFramework.Core {
     /// <summary>
-    /// <see cref="ServiceProvider"/> is default service provider class
+    /// ServiceProvider is default service provider class
     /// for all concrete ServiceProvider classes.
     /// </summary>
     public abstract class ServiceProvider : IServiceProvider {
