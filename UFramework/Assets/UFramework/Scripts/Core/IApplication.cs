@@ -36,7 +36,7 @@ namespace UFramework.Core {
         long GetRuntimeId ();
 
         /// <summary>
-        /// Terminates the <see cref="IApplication"/>
+        /// Terminates the IApplication
         /// </summary>
         void Terminate ();
     }

@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,9 +10,6 @@ using UFramework.Util;
 using UFramewrok.Core;
 
 namespace UFramework.Core {
-    /// <summary>
-    /// The CatLib <see cref="Application"/> instance.
-    /// </summary>
     public class Application : Container.Container, IApplication {
         private static string version;
         private readonly IList<IServiceProvider> loadedProviders;
@@ -27,17 +23,39 @@ namespace UFramework.Core {
         private IEventDispatcher dispatcher;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Application"/> class.
+        /// Initializes a new instance of the Application class.
         /// </summary>
-        /// <param name="global">True if sets the instance to <see cref="App"/> facade.</param>
         public Application () {
             loadedProviders = new List<IServiceProvider> ();
 
             mainThreadId = Thread.CurrentThread.ManagedThreadId;
             RegisterBaseBindings ();
 
-            dispatchMapping = new Dictionary<Type, string> () { { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot }, { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit }, { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate }, { typeof (BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot }, { typeof (BeforeInitEventArgs), ApplicationEvents.OnBeforeInit }, { typeof (BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate }, { typeof (BootingEventArgs), ApplicationEvents.OnBooting }, { typeof (InitProviderEventArgs), ApplicationEvents.OnInitProvider }, { typeof (RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider }, { typeof (StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
+            dispatchMapping = new Dictionary<Type, string> () {
+                 { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot },
+                 { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit },
+                 { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate },
+                 { typeof (BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot },
+                 { typeof (BeforeInitEventArgs), ApplicationEvents.OnBeforeInit }, 
+                 { typeof (BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate },
+                 { typeof (BootingEventArgs), ApplicationEvents.OnBooting },
+                 { typeof (InitProviderEventArgs), ApplicationEvents.OnInitProvider },
+                 { typeof (RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider }, 
+                 { typeof (StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
             };
+
+            // dispatchMapping = new Dictionary<Type, string> () {
+            //      { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot },
+            //      { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit },
+            //      { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate },
+            //      { typeof (BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot },
+            //      { typeof (BeforeInitEventArgs), ApplicationEvents.OnBeforeInit }, 
+            //      { typeof (BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate },
+            //      { typeof (BootingEventArgs), ApplicationEvents.OnBooting },
+            //      { typeof (InitProviderEventArgs), ApplicationEvents.OnInitProvider },
+            //      { typeof (RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider }, 
+            //      { typeof (StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
+            // };
 
             // We use closures to save the current context state
             // Do not change to: OnFindType(Type.GetType) This
@@ -49,7 +67,7 @@ namespace UFramework.Core {
         }
 
         /// <summary>
-        /// Gets the CatLib <see cref="Application"/> version.
+        /// Gets the UFramework Application version.
         /// </summary>
         public static string Version => version ?? (version = FileVersionInfo
             .GetVersionInfo (Assembly.GetExecutingAssembly ().Location).FileVersion);
@@ -59,10 +77,8 @@ namespace UFramework.Core {
         /// </summary>
         public StartProcess Process { get; private set; }
 
-        /// <inheritdoc />
         public bool IsMainThread => mainThreadId == Thread.CurrentThread.ManagedThreadId;
 
-        /// <inheritdoc />
         public DebugLevel DebugLevel {
             get => debugLevel;
             set {
@@ -71,8 +87,6 @@ namespace UFramework.Core {
             }
         }
 
-        /// <inheritdoc cref="Application(bool)"/>
-        /// <returns>The CatLib <see cref="Application"/> instance.</returns>
         public static Application New (bool global = true) {
             var application = new Application ();
             if (global) {
@@ -85,18 +99,15 @@ namespace UFramework.Core {
         /// <summary>
         /// Sets the event dispatcher.
         /// </summary>
-        /// <param name="dispatcher">The event dispatcher instance.</param>
         public void SetDispatcher (IEventDispatcher dispatcher) {
             this.dispatcher = dispatcher;
             this.Instance<IEventDispatcher> (dispatcher);
         }
 
-        /// <inheritdoc />
         public IEventDispatcher GetDispatcher () {
             return dispatcher;
         }
 
-        /// <inheritdoc />
         public virtual void Terminate () {
             Process = StartProcess.Terminate;
             Raise (new BeforeTerminateEventArgs (this));
@@ -113,7 +124,6 @@ namespace UFramework.Core {
         /// <summary>
         /// Bootstrap the given array of bootstrap classes.
         /// </summary>
-        /// <param name="bootstraps">The given bootstrap classes.</param>
         public virtual void Bootstrap (params IBootstrap[] bootstraps) {
             Guard.Requires<ArgumentNullException> (bootstraps != null);
 
@@ -179,7 +189,6 @@ namespace UFramework.Core {
             Raise (new StartCompletedEventArgs (this));
         }
 
-        /// <inheritdoc />
         public virtual void Register (IServiceProvider provider, bool force = false) {
             Guard.Requires<ArgumentNullException> (provider != null, $"Parameter \"{nameof(provider)}\" can not be null.");
 
@@ -223,13 +232,11 @@ namespace UFramework.Core {
             }
         }
 
-        /// <inheritdoc />
         public bool IsRegistered (IServiceProvider provider) {
             Guard.Requires<ArgumentNullException> (provider != null);
             return loadedProviders.Contains (provider);
         }
 
-        /// <inheritdoc />
         public long GetRuntimeId () {
             return Interlocked.Increment (ref incrementId);
         }
@@ -237,13 +244,11 @@ namespace UFramework.Core {
         /// <summary>
         /// Initialize the specified service provider.
         /// </summary>
-        /// <param name="provider">The specified service provider.</param>
         protected virtual void InitProvider (IServiceProvider provider) {
             Raise (new InitProviderEventArgs (provider, this));
             provider.Init ();
         }
 
-        /// <inheritdoc />
         protected override void GuardConstruct (string method) {
             if (registering) {
                 throw new LogicException (
