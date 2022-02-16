@@ -442,7 +442,6 @@ namespace UFramework.Container {
                 }
             }
 
-            // 阅读截止
             if (instance == null &&
                 (string.IsNullOrEmpty (service) || !instances.TryGetValue (service, out instance))) {
                 return false;
@@ -628,12 +627,6 @@ namespace UFramework.Container {
         protected virtual void GuardUserParamsCount (int count) {
             if (count > 255) {
                 throw new LogicException ($"Too many parameters, must be less or equal than 255 or override the {nameof(GuardUserParamsCount)} method.");
-            }
-        }
-
-        protected virtual void GuardResolveInstance (object instance, string makeService) {
-            if (instance == null) {
-                throw MakeBuildFailedException (makeService, SpeculatedServiceType (makeService), null);
             }
         }
 
