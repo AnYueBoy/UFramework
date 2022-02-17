@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatLib.Exception;
+using UFramework.Exception;
 
 namespace UFramework.Util {
     /// <summary>

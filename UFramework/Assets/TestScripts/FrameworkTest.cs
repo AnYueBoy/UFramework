@@ -11,6 +11,8 @@ public class FrameworkTest : MonoBehaviour {
         application.Init ();
 
         App.Make<ILogManager> ().printLog ();
+
+        Debug.Log ($"id: {    UFramework.Core.Application.Version}");
     }
 
 }

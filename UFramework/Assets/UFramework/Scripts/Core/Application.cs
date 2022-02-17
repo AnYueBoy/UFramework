@@ -31,20 +31,10 @@ namespace UFramework.Core {
             mainThreadId = Thread.CurrentThread.ManagedThreadId;
             RegisterBaseBindings ();
 
-            dispatchMapping = new Dictionary<Type, string> () {
-                 { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot },
-                 { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit },
-                 { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate },
-                 { typeof (BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot },
-                 { typeof (BeforeInitEventArgs), ApplicationEvents.OnBeforeInit }, 
-                 { typeof (BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate },
-                 { typeof (BootingEventArgs), ApplicationEvents.OnBooting },
-                 { typeof (InitProviderEventArgs), ApplicationEvents.OnInitProvider },
-                 { typeof (RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider }, 
-                 { typeof (StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
+            dispatchMapping = new Dictionary<Type, string> () { { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot }, { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit }, { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate }, { typeof (BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot }, { typeof (BeforeInitEventArgs), ApplicationEvents.OnBeforeInit }, { typeof (BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate }, { typeof (BootingEventArgs), ApplicationEvents.OnBooting }, { typeof (InitProviderEventArgs), ApplicationEvents.OnInitProvider }, { typeof (RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider }, { typeof (StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
             };
 
-             // dispatchMapping = new Dictionary<Type, string> () {
+            // dispatchMapping = new Dictionary<Type, string> () {
             //      { typeof (AfterBootEventArgs), ApplicationEvents.OnAfterBoot },
             //      { typeof (AfterInitEventArgs), ApplicationEvents.OnAfterInit },
             //      { typeof (AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate },
@@ -69,8 +59,18 @@ namespace UFramework.Core {
         /// <summary>
         /// Gets the UFramework Application version.
         /// </summary>
-        public static string Version => version ?? (version = FileVersionInfo
-            .GetVersionInfo (Assembly.GetExecutingAssembly ().Location).FileVersion);
+        /// 
+
+        public static string Version {
+            get {
+                string filePath = Assembly.GetExecutingAssembly ().Location;
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo (filePath);
+                var value = fileVersionInfo.FileVersion;
+                return value;
+            }
+        }
+        // public static string Version => version ?? (version = FileVersionInfo
+        //     .GetVersionInfo (Assembly.GetExecutingAssembly ().Location).FileVersion);
 
         /// <summary>
         /// Gets indicates the application startup process.
