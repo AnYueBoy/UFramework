@@ -11,7 +11,7 @@ using UFramewrok.Core;
 
 namespace UFramework.Core {
     public class Application : Container.Container, IApplication {
-        private static string version;
+        private const string version = "1.0.0";
         private readonly IList<IServiceProvider> loadedProviders;
         private readonly int mainThreadId;
         private readonly IDictionary<Type, string> dispatchMapping;
@@ -61,16 +61,7 @@ namespace UFramework.Core {
         /// </summary>
         /// 
 
-        public static string Version {
-            get {
-                string filePath = Assembly.GetExecutingAssembly ().Location;
-                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo (filePath);
-                var value = fileVersionInfo.FileVersion;
-                return value;
-            }
-        }
-        // public static string Version => version ?? (version = FileVersionInfo
-        //     .GetVersionInfo (Assembly.GetExecutingAssembly ().Location).FileVersion);
+        public static string Version => version;
 
         /// <summary>
         /// Gets indicates the application startup process.
