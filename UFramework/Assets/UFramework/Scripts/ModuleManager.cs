@@ -7,13 +7,10 @@
  */
 
 namespace UFramework {
-    using UFramework.Promise;
-    using UFramework.Const;
     using UFramework.Develop;
+    using UFramework.Promise;
     using UnityEngine;
     public class ModuleManager : MonoBehaviour {
-        public AppMode appMode = AppMode.Developing;
-
         private static ModuleManager _instance;
 
         public static ModuleManager instance {
@@ -34,9 +31,7 @@ namespace UFramework {
         #region  程序生命周期函数 
         private void Awake () {
             _instance = this;
-            if (this.appMode != AppMode.Release) {
-                this.guiConsole.init ();
-            }
+            this.guiConsole.init ();
         }
 
         private void Start () {
