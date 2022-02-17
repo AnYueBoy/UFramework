@@ -1,10 +1,6 @@
-using UFramework.Core;
-public class LogManager : IServiceProvider {
-    public void Init () {
-    }
-
-    public void Register () {
-        App.Singleton<>
-        
+using UnityEngine;
+public class LogManager : ILogManager {
+    public void printLog () {
+        Debug.Log ("Log Manager Test");
     }
 }
