@@ -11,7 +11,13 @@ public class FrameworkTest : MonoBehaviour {
     private void Start () {
         application.Init ();
 
-        App.Make<ILogManager> ().printLog ();
+        var log1 = App.Make<LogManager> ("Are you ready?");
+        var log2 = App.Make<LogManager> ("Log2");
+        if (log1 == log2) {
+            Debug.Log ("same instance");
+        } else {
+            Debug.Log ("not same instacne");
+        }
 
         Debug.Log ($"id: {    UFramework.Core.Application.Version}");
     }
