@@ -4,11 +4,11 @@
  * @Description: 音效管理
  */
 
+using System.Collections.Generic;
+using UFramework.FrameUtil;
+using UnityEngine;
 namespace UFramework.GameCommon {
 
-    using System.Collections.Generic;
-    using UFramework.FrameUtil;
-    using UnityEngine;
     public class AudioManager : MonoBehaviour {
         private static AudioManager instance = null;
 

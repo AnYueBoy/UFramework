@@ -5,8 +5,8 @@
  * @Last Modified by: l hy
  * @Last Modified time: 2021-01-21 22:26:24
  */
+using UnityEngine;
 namespace UFramework.GameCommon {
-    using UnityEngine;
     public class PackAsset {
 
         public string assetUrl;

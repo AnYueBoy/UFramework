@@ -1,21 +1,20 @@
-﻿using System;
-
-/*
+﻿/*
  * @Author: l hy 
  * @Date: 2020-10-10 06:56:04 
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
  * @Last Modified time: 2022-01-13 19:35:56
  */
- using SException = System.Exception;
+using System;
+using SException = System.Exception;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using UFramework.FrameUtil;
 namespace UFramework.GameCommon {
-
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using UFramework.FrameUtil;
     using UFramework.Promise;
     using UnityEngine;
+
     public class AssetsManager {
 
         private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();

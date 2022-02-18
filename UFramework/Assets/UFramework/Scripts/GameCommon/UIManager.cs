@@ -5,12 +5,10 @@
  * @Last Modified by: l hy
  * @Last Modified time: 2021-05-05 10:30:58
  */
+using System.Collections.Generic;
+using UFramework.Const;
+using UnityEngine;
 namespace UFramework.GameCommon {
-
-    using System.Collections.Generic;
-    using System;
-    using UFramework.Const;
-    using UnityEngine;
 
     public class UIManager {
 
