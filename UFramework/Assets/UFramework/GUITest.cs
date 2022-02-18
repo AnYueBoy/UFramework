@@ -17,7 +17,7 @@ public class GUITest : MonoBehaviour {
         GUILayout.EndHorizontal ();
 
         var eventDispatcher = new EventDispatcher ();
-        eventDispatcher.Raise ("", this, new GeneralArgs (1));
+        // eventDispatcher.Raise ("", this, new GeneralArgs (1));
 
         // eventDispatcher.AddListener ("", listener);
     }

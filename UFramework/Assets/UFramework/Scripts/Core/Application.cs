@@ -254,7 +254,7 @@ namespace UFramework.Core {
             SetDispatcher (new EventDispatcher.EventDispatcher ());
         }
 
-        private T Raise<T> (T args) where T : EventArgs {
+        private T Raise<T> (T args) where T : EventParam {
             if (!dispatchMapping.TryGetValue (args.GetType (), out string eventName)) {
                 throw new AssertException ($"Assertion error: Undefined event {args}");
             }

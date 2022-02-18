@@ -6,14 +6,14 @@
 
 using System;
 namespace UFramework.EventDispatcher {
-    public class GeneralEventArgs : EventArgs {
-        private object _data;
+    public class EventParam {
+        private object[] _data;
 
-        public GeneralEventArgs (object data = null) {
+        public EventParam (params object[] data) {
             _data = data;
         }
 
-        public object Data {
+        public object[] value {
             get {
                 return _data;
             }

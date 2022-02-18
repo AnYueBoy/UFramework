@@ -39,7 +39,6 @@ public class Test : MonoBehaviour {
 
         ListenerManager.getInstance ().add ("event1", this, this.testListener);
         ListenerManager.getInstance ().add ("event2", this, this.testListener);
-        eventDispatcher.AddListener ("eventDispatcher", newTestListener);
 
         InjectTest injectTest = new InjectTest ();
 
@@ -55,14 +54,10 @@ public class Test : MonoBehaviour {
     }
 
     private void newTestListener (object sender, EventArgs generalEventArgs) {
-        GeneralEventArgs args = (GeneralEventArgs) generalEventArgs;
-        Debug.Log ($"what fuck {args.Data}");
     }
 
     public void event1 () {
         ListenerManager.getInstance ().trigger ("event1");
-        eventDispatcher.Raise ("eventDispatcher", new GeneralEventArgs ("test"));
-        eventDispatcher.RemoveListener ("eventDispatcher", newTestListener);
     }
 
     public void event2 () {

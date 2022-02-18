@@ -12,19 +12,19 @@ using UFramework.Util;
 namespace UFramework.EventDispatcher {
     public class EventDispatcher : IEventDispatcher {
 
-        private readonly Dictionary<string, IList<EventHandler>> listeners;
+        private readonly Dictionary<string, IList<EventHandler<EventParam>>> listeners;
 
         public EventDispatcher () {
-            listeners = new Dictionary<string, IList<EventHandler>> ();
+            listeners = new Dictionary<string, IList<EventHandler<EventParam>>> ();
         }
 
-        public virtual bool AddListener (string eventName, EventHandler handler) {
+        public virtual bool AddListener (string eventName, EventHandler<EventParam> handler) {
             if (string.IsNullOrEmpty (eventName) || handler == null) {
                 return false;
             }
 
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler> handlers)) {
-                listeners[eventName] = handlers = new List<EventHandler> ();
+            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
+                listeners[eventName] = handlers = new List<EventHandler<EventParam>> ();
             } else if (handlers.Contains (handler)) {
                 return false;
             }
@@ -33,15 +33,14 @@ namespace UFramework.EventDispatcher {
             return true;
         }
 
-        public void Raise (string eventName, object sender, EventArgs e = null) {
+        public void Raise (string eventName, object sender, EventParam e = null) {
             Guard.Requires<LogicException> (!(sender is EventArgs), $"Passed event args for the parameter {sender},Did you make a wrong method call?");
-
-            e = e?? EventArgs.Empty;
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler> handlers)) {
+            e = e??new EventParam ();
+            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
                 return;
             }
 
-            foreach (EventHandler listener in handlers) {
+            foreach (EventHandler<EventParam> listener in handlers) {
                 if (e is IStoppableEvent stoppableEvent && stoppableEvent.IsPropagationStopped) {
                     break;
                 }
@@ -51,9 +50,9 @@ namespace UFramework.EventDispatcher {
 
         }
 
-        public virtual EventHandler[] GetListeners (string eventName) {
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler> handlers)) {
-                return Array.Empty<EventHandler> ();
+        public virtual EventHandler<EventParam>[] GetListeners (string eventName) {
+            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
+                return Array.Empty<EventHandler<EventParam>> ();
             }
 
             return handlers.ToArray ();
@@ -63,12 +62,12 @@ namespace UFramework.EventDispatcher {
             return listeners.ContainsKey (eventName);
         }
 
-        public bool RemoveListener (string eventName, EventHandler handler = null) {
+        public bool RemoveListener (string eventName, EventHandler<EventParam> handler = null) {
             if (handler == null) {
                 return listeners.Remove (eventName);
             }
 
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler> handlers)) {
+            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
                 return false;
             }
 
