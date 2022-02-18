@@ -1,4 +1,4 @@
-namespace UFramewrok.Core {
+namespace UFramework.Core {
     /// <summary>
     /// The framework start process type.
     /// </summary>

@@ -4,10 +4,11 @@
  * @Description: 
  */
 
+using System.Collections.Generic;
+using UFramework.Tween.Core;
+using UnityEngine;
 namespace UFramework.Tween {
-    using System.Collections.Generic;
-    using UFramework.Tween.Core;
-    using UnityEngine;
+
     public class TweenerTransform<T> : Tweener<T> {
 
         public void pathTween (float dt, TweenerCore<Vector3> tweenerCore) {

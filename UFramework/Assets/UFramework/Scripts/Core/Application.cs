@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using System.Threading;
 using UFramework.Container;
 using UFramework.EventDispatcher;
 using UFramework.Exception;
 using UFramework.Util;
-using UFramewrok.Core;
 
 namespace UFramework.Core {
     public class Application : Container.Container, IApplication {

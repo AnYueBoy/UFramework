@@ -3,17 +3,15 @@
  * @Date: 2021-12-10 18:19:54 
  * @Description: 缓动函数管理
  */
+
+using System;
+using System.Collections.Generic;
 namespace UFramework.Tween {
-    using System.Collections.Generic;
-    using System;
+
     public class EaseManager {
 
         private static Dictionary<EaseType, Func<float, float, float>> easeDic =
-            new Dictionary<EaseType, Func<float, float, float>> () {
-                 { EaseType.LINER, liner },
-                 { EaseType.InQuad, inQuad },
-                 { EaseType.InCubic, inCubic },
-                 { EaseType.OutCubic, outCubic }
+            new Dictionary<EaseType, Func<float, float, float>> () { { EaseType.LINER, liner }, { EaseType.InQuad, inQuad }, { EaseType.InCubic, inCubic }, { EaseType.OutCubic, outCubic }
             };
 
         private static float liner (float time, float duration) {

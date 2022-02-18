@@ -4,18 +4,18 @@
  * @Description: Tween管理
  */
 
+using System;
+using System.Collections.Generic;
 namespace UFramework.Tween {
-    using System.Collections.Generic;
-    using System;
 
-    public static class TweenManager {
+    public class TweenManager : ITweenManager {
 
-        private static HashSet<ITweener> tweeners = new HashSet<ITweener> ();
+        private HashSet<ITweener> tweeners = new HashSet<ITweener> ();
 
-        private static HashSet<ITweener> removeList = new HashSet<ITweener> ();
+        private HashSet<ITweener> removeList = new HashSet<ITweener> ();
 
-        private static Dictionary<Type, List<ITweener>> tweenerPool = new Dictionary<Type, List<ITweener>> ();
-        public static void localUpdate (float dt) {
+        private Dictionary<Type, List<ITweener>> tweenerPool = new Dictionary<Type, List<ITweener>> ();
+        public void localUpdate (float dt) {
             foreach (ITweener tweener in tweeners) {
                 tweener.localUpdate (dt);
             }
@@ -27,7 +27,7 @@ namespace UFramework.Tween {
             removeList.Clear ();
         }
 
-        public static T2 spawnTweener<T1, T2> () where T2 : Tweener<T1>, new () {
+        public T2 spawnTweener<T1, T2> () where T2 : Tweener<T1>, new () {
             Type type = typeof (T2);
             T2 tweener = null;
             if (!tweenerPool.ContainsKey (type)) {
@@ -52,7 +52,7 @@ namespace UFramework.Tween {
             return tweener;
         }
 
-        private static void removeTween<T> (ITweener tweener) {
+        private void removeTween<T> (ITweener tweener) {
             removeList.Add (tweener);
             Type poolType = typeof (T);
             List<ITweener> tweenerList = tweenerPool[poolType];

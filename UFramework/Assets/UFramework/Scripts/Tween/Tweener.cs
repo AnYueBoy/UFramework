@@ -3,9 +3,11 @@
  * @Date: 2021-12-08 18:24:38 
  * @Description: Tweener
  */
+
+using System;
+using UFramework.Tween.Core;
 namespace UFramework.Tween {
-    using System;
-    using UFramework.Tween.Core;
+
     public class Tweener<T> : ITweener {
 
         protected TweenerCore<T> tweenerCore;
