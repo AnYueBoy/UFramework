@@ -31,11 +31,11 @@ public class Test : MonoBehaviour {
         this.loadAllRes ();
         Debug.Log ("继续下一步");
 
-        ModuleManager.instance.promiseTimer.waitFor (3).then (
-            () => {
-                Debug.Log ("时间等待结束");
-            }
-        );
+        // ModuleManager.instance.promiseTimer.waitFor (3).then (
+        //     () => {
+        //         Debug.Log ("时间等待结束");
+        //     }
+        // );
 
         ListenerManager.getInstance ().add ("event1", this, this.testListener);
         ListenerManager.getInstance ().add ("event2", this, this.testListener);

@@ -1,13 +1,14 @@
-namespace UFramework.Promise {
     using System;
-    public class ExceptionEventArgs {
+    using SException = System.Exception;
+    namespace UFramework.Promise {
+        public class ExceptionEventArgs {
 
-        public Exception exception {
-            get;
-            private set;
-        }
-        internal ExceptionEventArgs (Exception exception) {
-            this.exception = exception;
+            public SException exception {
+                get;
+                private set;
+            }
+            internal ExceptionEventArgs (SException exception) {
+                this.exception = exception;
+            }
         }
     }
-}
