@@ -1,4 +1,5 @@
 using UFramework.Core;
+using UFramework.GameCommon;
 using UFramework.Promise;
 using UFramework.Tween;
 namespace UFramework.Bootstarp {
@@ -9,6 +10,7 @@ namespace UFramework.Bootstarp {
             IServiceProvider[] providerArray = new IServiceProvider[] {
                 new ProviderPromise (),
                 new ProviderTweener (),
+                new ProviderGameCommon ()
             };
 
             foreach (IServiceProvider provider in providerArray) {

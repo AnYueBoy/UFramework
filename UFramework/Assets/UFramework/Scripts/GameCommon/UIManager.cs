@@ -10,15 +10,15 @@ using UFramework.Const;
 using UnityEngine;
 namespace UFramework.GameCommon {
 
-    public class UIManager {
+    public class UIManager : IUIManager {
 
         private Dictionary<string, BaseUI> uiDic = new Dictionary<string, BaseUI> ();
 
         private BaseUI currentBoard = null;
 
-        private GameObject uiRoot;
+        private Transform uiRoot;
 
-        public void init (GameObject uiRoot) {
+        public void init (Transform uiRoot) {
             this.uiRoot = uiRoot;
             this.currentBoard = null;
         }
@@ -79,7 +79,7 @@ namespace UFramework.GameCommon {
                 GameObject prefab = Resources.Load<GameObject> (url);
 
                 GameObject uiNode = GameObject.Instantiate (prefab);
-                uiNode.transform.SetParent (this.uiRoot.transform);
+                uiNode.transform.SetParent (this.uiRoot);
                 uiNode.transform.localPosition = Vector3.zero;
                 targetUI = uiNode.GetComponent<BaseUI> ();
                 this.uiDic.Add (uiName, targetUI);
@@ -90,5 +90,6 @@ namespace UFramework.GameCommon {
 
             return targetUI;
         }
+
     }
 }

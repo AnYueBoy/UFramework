@@ -9,107 +9,91 @@ using UFramework.FrameUtil;
 using UnityEngine;
 namespace UFramework.GameCommon {
 
-    public class AudioManager : MonoBehaviour {
-        private static AudioManager instance = null;
-
-        public static AudioManager getInstance () {
-            return instance;
-        }
+    public class AudioManager : IAudioManager {
 
         private Dictionary<string, AudioClip> clipDic = new Dictionary<string, AudioClip> ();
 
-        private void Awake () {
-            instance = this;
+        private AudioSource audioSource = null;
 
-            gameObject.AddComponent<AudioListener> ();
+        public void init (GameObject attach) {
+            this.audioSource = attach.AddComponent<AudioSource> ();
         }
-
-        private AudioSource soundSource = null;
 
         /// <summary>
         /// 播放音效
         /// </summary>
         /// <param name="soundName">音效名</param>
         public void playSound (string soundName) {
-            if (!this.soundSource) {
-                this.soundSource = gameObject.AddComponent<AudioSource> ();
-            }
 
             AudioClip targetClip = this.getAudioClipByName (soundName);
 
-            this.soundSource.PlayOneShot (targetClip);
+            this.audioSource.PlayOneShot (targetClip);
         }
-
-        private AudioSource musicSource = null;
 
         public void playMusic (string musicName, bool isLoop = true) {
             if (!CommonUtil.isVialid (musicName)) {
                 return;
             }
 
-            if (!this.musicSource) {
-                this.musicSource = this.gameObject.AddComponent<AudioSource> ();
-            }
-
-            if (this.musicSource.clip) {
-                if (this.musicSource.clip.name == musicName) {
+            if (this.audioSource.clip) {
+                if (this.audioSource.clip.name == musicName) {
                     return;
                 }
             }
 
             AudioClip targetClip = this.getAudioClipByName (musicName);
-            this.musicSource.clip = targetClip;
-            this.musicSource.loop = isLoop;
-            this.musicSource.Play ();
+            this.audioSource.clip = targetClip;
+            this.audioSource.loop = isLoop;
+            this.audioSource.Play ();
         }
 
         public void pauseMusic () {
-            if (!this.musicSource) {
+            if (!this.audioSource) {
                 return;
             }
 
-            if (!this.musicSource.clip) {
+            if (!this.audioSource.clip) {
                 return;
             }
 
-            if (!this.musicSource.isPlaying) {
+            if (!this.audioSource.isPlaying) {
                 return;
             }
 
-            this.musicSource.Pause ();
+            this.audioSource.Pause ();
         }
 
         public void stopMusic () {
-            if (!this.musicSource) {
+            if (!this.audioSource) {
                 return;
             }
 
-            if (!this.musicSource.clip) {
+            if (!this.audioSource.clip) {
                 return;
             }
 
-            if (!this.musicSource.isPlaying) {
+            if (!this.audioSource.isPlaying) {
                 return;
             }
 
-            this.musicSource.Stop ();
-            this.musicSource.clip = null;
+            this.audioSource.Stop ();
+            this.audioSource.clip = null;
         }
 
         public void resumeMusic () {
-            if (!this.musicSource) {
+            if (!this.audioSource) {
                 return;
             }
 
-            if (!this.musicSource.clip) {
+            if (!this.audioSource.clip) {
                 return;
             }
 
-            if (this.musicSource.isPlaying) {
+            if (this.audioSource.isPlaying) {
                 return;
             }
 
-            this.musicSource.Play ();
+            this.audioSource.Play ();
         }
 
         private AudioClip getAudioClipByName (string clipName) {
@@ -130,5 +114,6 @@ namespace UFramework.GameCommon {
             AudioClip clip = Resources.Load<AudioClip> (url);
             return clip;
         }
+
     }
 }

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UFramework;
+using UFramework.Core;
 using UFramework.GameCommon;
 using UnityEngine;
 
 public class HallBoard : MonoBehaviour {
     // Start is called before the first frame update
     void Start () {
-        AudioManager.getInstance ().playSound ("test");
+        App.Make<IAudioManager> ().playSound ("test");
     }
 
     // Update is called once per frame
@@ -21,18 +21,18 @@ public class HallBoard : MonoBehaviour {
     }
 
     public void playBGM () {
-        AudioManager.getInstance ().playMusic ("BGM");
+        App.Make<IAudioManager> ().playMusic ("BGM");
     }
 
     public void pauseBGM () {
-        AudioManager.getInstance ().pauseMusic ();
+        App.Make<IAudioManager> ().pauseMusic ();
     }
 
     public void stopBGM () {
-        AudioManager.getInstance ().stopMusic ();
+        App.Make<IAudioManager> ().stopMusic ();
     }
 
-     public void resumeBGM () {
-        AudioManager.getInstance ().resumeMusic ();
+    public void resumeBGM () {
+        App.Make<IAudioManager> ().resumeMusic ();
     }
 }

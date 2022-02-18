@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-/*
+﻿/*
  * @Author: l hy 
  * @Date: 2021-01-21 22:15:59 
  * @Description: 用于各类测试项目
@@ -9,8 +6,11 @@ using System.Reflection;
  * @Last Modified time: 2022-01-14 14:22:29
  */
 
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
-using UFramework;
+using UFramework.Core;
 using UFramework.EventDispatcher;
 using UFramework.FrameUtil;
 using UFramework.GameCommon;
@@ -44,7 +44,7 @@ public class Test : MonoBehaviour {
 
         foreach (var property in injectTest.GetType ().GetProperties (BindingFlags.Public | BindingFlags.Instance)) {
             Debug.Log ($"{property.PropertyType}");
-            Debug.Log("");
+            Debug.Log ("");
         }
 
     }
@@ -53,8 +53,7 @@ public class Test : MonoBehaviour {
         Debug.Log ("xxxx");
     }
 
-    private void newTestListener (object sender, EventArgs generalEventArgs) {
-    }
+    private void newTestListener (object sender, EventArgs generalEventArgs) { }
 
     public void event1 () {
         ListenerManager.getInstance ().trigger ("event1");
@@ -130,13 +129,13 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        AssetsManager.instance.getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
+        App.Make<IAssetsManager> ().getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
             GameObject cube = Instantiate<GameObject> (cubeAsset);
             cube.transform.SetParent (nodeParent);
             cube.transform.localPosition = Vector3.zero;
         });
 
-        AssetsManager.instance.getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
+        App.Make<IAssetsManager> ().getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
             GameObject cube = Instantiate<GameObject> (cubeAsset);
             cube.transform.SetParent (nodeParent);
             cube.transform.localPosition = Vector3.zero;
@@ -153,9 +152,9 @@ public class Test : MonoBehaviour {
         // Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
 
         // 使用bundle异步加载文件夹资源
-        AssetsManager.instance.getAllAssetsByBundleASync<Sprite> ("texturesbundle", (List<PackAsset> assetsArray) => {
+        App.Make<IAssetsManager> ().getAllAssetsByBundleASync<Sprite> ("texturesbundle", (List<PackAsset> assetsArray) => {
             List<PackAsset> assets = assetsArray;
-            Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
+            Sprite attackSprite = App.Make<IAssetsManager> ().getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
         });
 
     }

@@ -9,23 +9,12 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace UFramework.GameCommon {
 
-    public class ObjectPool {
-
-        private static ObjectPool _instance = null;
+    public class ObjectPool : IObjectPool {
 
         private Dictionary<GameObject, List<GameObject>> pool = new Dictionary<GameObject, List<GameObject>> ();
 
         // 存放预制与实例的关系
         private Dictionary<GameObject, GameObject> relationShip = new Dictionary<GameObject, GameObject> ();
-
-        public static ObjectPool instance {
-            get {
-                if (_instance == null) {
-                    _instance = new ObjectPool ();
-                }
-                return _instance;
-            }
-        }
 
         public GameObject requestInstance (GameObject prefab) {
             if (pool.ContainsKey (prefab)) {

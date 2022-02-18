@@ -15,7 +15,7 @@ namespace UFramework.GameCommon {
     using UFramework.Promise;
     using UnityEngine;
 
-    public class AssetsManager {
+    public class AssetsManager : IAssetsManager {
 
         private Dictionary<string, PackAsset> assetPool = new Dictionary<string, PackAsset> ();
 
@@ -26,21 +26,7 @@ namespace UFramework.GameCommon {
 
         private AssetBundleManifest assetBundleManifest = null;
 
-        private static AssetsManager _instance;
-        public static AssetsManager instance {
-            get {
-                if (_instance == null) {
-                    _instance = new AssetsManager ();
-                }
-                return _instance;
-            }
-        }
-
-        public void init () {
-            this.loadManifestFile ();
-        }
-
-        private void loadManifestFile () {
+        public void loadManifestFile () {
             if (this.assetBundleManifest != null) {
                 return;
             }
