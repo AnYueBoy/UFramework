@@ -7,7 +7,6 @@
  */
 
 namespace UFramework {
-    using UFramework.Develop;
     using UFramework.Promise;
     using UnityEngine;
     public class ModuleManager : MonoBehaviour {
@@ -24,14 +23,12 @@ namespace UFramework {
         #endregion
 
         #region 非mono模块
-        private GUIConsole guiConsole = new GUIConsole ();
         public PromiseTimer promiseTimer = new PromiseTimer ();
         #endregion
 
         #region  程序生命周期函数 
         private void Awake () {
             _instance = this;
-            this.guiConsole.init ();
         }
 
         private void Start () {
@@ -40,7 +37,6 @@ namespace UFramework {
 
         private void Update () {
             float dt = Time.deltaTime;
-            this.guiConsole?.localUpdate (dt);
             this.promiseTimer?.localUpdate (dt);
         }
 
@@ -49,11 +45,9 @@ namespace UFramework {
         }
 
         private void OnGUI () {
-            this.guiConsole?.drawGUI ();
         }
 
         private void OnDisable () {
-            this.guiConsole?.quit ();
         }
         #endregion 
 
