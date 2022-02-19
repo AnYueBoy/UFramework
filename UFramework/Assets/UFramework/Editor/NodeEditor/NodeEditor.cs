@@ -44,17 +44,17 @@ public class NodeEditor : EditorWindow {
     }
 
     private void OnGUI () {
-        this.drawGrid (20, 0.2f, Color.gray);
-        this.drawGrid (100, 0.4f, Color.gray);
-        this.drawNodes ();
-        this.drawConnections ();
-        this.drawConnectionLine (Event.current);
-        this.processNodesEvents (Event.current);
-        this.processEvents (Event.current);
+        this.DrawGrid (20, 0.2f, Color.gray);
+        this.DrawGrid (100, 0.4f, Color.gray);
+        this.DrawNodes ();
+        this.DrawConnections ();
+        this.DrawConnectionLine (Event.current);
+        this.ProcessNodesEvents (Event.current);
+        this.ProcessEvents (Event.current);
         if (GUI.changed) Repaint ();
     }
 
-    private void drawGrid (float gridSpacing, float gridOpacity, Color gridColor) {
+    private void DrawGrid (float gridSpacing, float gridOpacity, Color gridColor) {
         int widthDivs = Mathf.CeilToInt (position.width / gridSpacing);
         int heightDivs = Mathf.CeilToInt (position.height / gridSpacing);
         Handles.BeginGUI ();
@@ -72,27 +72,27 @@ public class NodeEditor : EditorWindow {
         Handles.EndGUI ();
     }
 
-    private void drawNodes () {
+    private void DrawNodes () {
         if (this.nodes == null) {
             return;
         }
 
         for (int i = 0; i < nodes.Count; i++) {
-            nodes[i].draw ();
+            nodes[i].Draw ();
         }
     }
 
-    private void drawConnections () {
+    private void DrawConnections () {
         if (connections == null) {
             return;
         }
 
         for (int i = 0; i < connections.Count; i++) {
-            connections[i].draw ();
+            connections[i].Draw ();
         }
     }
 
-    private void drawConnectionLine (Event e) {
+    private void DrawConnectionLine (Event e) {
         if (selectedInPoint != null && selectedOutPoint == null) {
             Handles.DrawBezier (
                 selectedInPoint.rect.center,
@@ -122,101 +122,101 @@ public class NodeEditor : EditorWindow {
         }
     }
 
-    private void processEvents (Event e) {
+    private void ProcessEvents (Event e) {
         drag = Vector2.zero;
         switch (e.type) {
             case EventType.MouseDown:
                 if (e.button == 0) {
-                    clearConnectionSelection ();
+                    ClearConnectionSelection ();
                 }
                 if (e.button == 1) {
-                    this.processContextMenu (e.mousePosition);
+                    this.ProcessContextMenu (e.mousePosition);
                 }
                 break;
 
             case EventType.MouseDrag:
                 if (e.button == 0) {
-                    onDrag (e.delta);
+                    OnDrag (e.delta);
                 }
                 break;
         }
     }
 
-    private void onDrag (Vector2 delta) {
+    private void OnDrag (Vector2 delta) {
         drag = delta;
         if (nodes != null) {
             for (int i = 0; i < nodes.Count; i++) {
-                nodes[i].drag (delta);
+                nodes[i].Drag (delta);
             }
         }
         GUI.changed = true;
     }
 
-    private void processNodesEvents (Event e) {
+    private void ProcessNodesEvents (Event e) {
         if (nodes == null) {
             return;
         }
 
         for (int i = nodes.Count - 1; i >= 0; i--) {
-            bool guiChanged = nodes[i].processEvents (e);
+            bool guiChanged = nodes[i].ProcessEvents (e);
             if (guiChanged) {
                 GUI.changed = true;
             }
         }
     }
 
-    private void processContextMenu (Vector2 mousePosition) {
+    private void ProcessContextMenu (Vector2 mousePosition) {
         GenericMenu genericMenu = new GenericMenu ();
-        genericMenu.AddItem (new GUIContent ("Add Item"), false, () => onClickAddNode (mousePosition));
+        genericMenu.AddItem (new GUIContent ("Add Item"), false, () => OClickAddNode (mousePosition));
         genericMenu.ShowAsContext ();
     }
 
-    private void onClickAddNode (Vector2 mousePosition) {
+    private void OClickAddNode (Vector2 mousePosition) {
         if (nodes == null) {
             nodes = new List<Node> ();
         }
-        nodes.Add (new Node (mousePosition, 100, 120, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, onClickInPoint, onClickOutPoint, onClickRemoveNode));
+        nodes.Add (new Node (mousePosition, 100, 120, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickInPoint, OnClickOutPoint, OnClickRemoveNode));
     }
 
-    private void onClickInPoint (ConnectionPoint inPoint) {
+    private void OnClickInPoint (ConnectionPoint inPoint) {
         selectedInPoint = inPoint;
         if (selectedOutPoint == null) {
             return;
         }
 
         if (selectedOutPoint.node != selectedInPoint.node) {
-            this.createConnection ();
+            this.CreateConnection ();
         }
-        this.clearConnectionSelection ();
+        this.ClearConnectionSelection ();
     }
-    private void onClickOutPoint (ConnectionPoint outPoint) {
+    private void OnClickOutPoint (ConnectionPoint outPoint) {
         selectedOutPoint = outPoint;
         if (selectedInPoint == null) {
             return;
         }
         if (selectedOutPoint.node != selectedInPoint.node) {
-            this.createConnection ();
+            this.CreateConnection ();
         }
-        this.clearConnectionSelection ();
+        this.ClearConnectionSelection ();
     }
 
-    private void onClickRemoveConnection (Connection connection) {
+    private void OnClickRemoveConnection (Connection connection) {
         connections.Remove (connection);
     }
 
-    private void createConnection () {
+    private void CreateConnection () {
         if (connections == null) {
             connections = new List<Connection> ();
         }
 
-        connections.Add (new Connection (selectedInPoint, selectedOutPoint, onClickRemoveConnection));
+        connections.Add (new Connection (selectedInPoint, selectedOutPoint, OnClickRemoveConnection));
     }
 
-    private void clearConnectionSelection () {
+    private void ClearConnectionSelection () {
         selectedInPoint = selectedOutPoint = null;
     }
 
-    private void onClickRemoveNode (Node node) {
+    private void OnClickRemoveNode (Node node) {
         nodes.Remove (node);
 
         if (connections == null) {

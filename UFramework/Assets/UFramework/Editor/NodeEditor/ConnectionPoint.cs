@@ -22,7 +22,7 @@ public class ConnectionPoint {
         this.rect = new Rect (0, 0, 10f, 20f);
     }
 
-    public void draw () {
+    public void Draw () {
         rect.y = node.rect.y + node.rect.height / 2 - rect.height / 2;
 
         switch (type) {

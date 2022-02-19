@@ -19,7 +19,7 @@ public class Connection {
         this.onClickRemoveConnection = onClickRemoveConnection;
     }
 
-    public void draw () {
+    public void Draw () {
         Handles.DrawBezier (
             inPoint.rect.center,
             outPoint.rect.center,

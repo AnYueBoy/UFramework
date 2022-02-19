@@ -39,16 +39,16 @@ public class Node {
         this.onRemoveNode = onRemoveNode;
     }
 
-    public void drag (Vector2 delta) {
+    public void Drag (Vector2 delta) {
         rect.position += delta;
     }
-    public void draw () {
-        inPoint.draw ();
-        outPoint.draw ();
+    public void Draw () {
+        inPoint.Draw ();
+        outPoint.Draw ();
         GUI.Box (rect, title, style);
     }
 
-    public bool processEvents (Event e) {
+    public bool ProcessEvents (Event e) {
         switch (e.type) {
             case EventType.MouseDown:
                 if (e.button == 0) {
@@ -65,7 +65,7 @@ public class Node {
                 }
 
                 if (e.button == 1 && isSelected && rect.Contains (e.mousePosition)) {
-                    processContextMenu ();
+                    ProcessContextMenu ();
                     e.Use ();
                 }
                 break;
@@ -76,7 +76,7 @@ public class Node {
 
             case EventType.MouseDrag:
                 if (e.button == 0 && this.isDragged) {
-                    this.drag (e.delta);
+                    this.Drag (e.delta);
                     e.Use ();
                     return true;
                 }
@@ -85,13 +85,13 @@ public class Node {
         return false;
     }
 
-    private void processContextMenu () {
+    private void ProcessContextMenu () {
         GenericMenu genericMenu = new GenericMenu ();
-        genericMenu.AddItem (new GUIContent ("Remove Node"), false, onClickRemoveNode);
+        genericMenu.AddItem (new GUIContent ("Remove Node"), false, OnClickRemoveNode);
         genericMenu.ShowAsContext ();
     }
 
-    private void onClickRemoveNode () {
+    private void OnClickRemoveNode () {
         onRemoveNode?.Invoke (this);
     }
 }
