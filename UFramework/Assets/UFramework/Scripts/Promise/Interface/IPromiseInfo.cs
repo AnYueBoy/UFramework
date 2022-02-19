@@ -1,8 +1,8 @@
 namespace UFramework.Promise {
 
     public interface IPromiseInfo {
-        int id { get; }
+        int Id { get; }
 
-        string name { get; }
+        string Name { get; }
     }
 }

@@ -17,12 +17,12 @@
 
            public PromiseState curState { get; private set; }
 
-           public int id { get; private set; }
+           public int Id { get; private set; }
 
-           public string name { get; private set; }
+           public string Name { get; private set; }
 
            public Promise () {
-               this.id = ++Promise.nextPromiseId;
+               this.Id = ++Promise.nextPromiseId;
                this.curState = PromiseState.Pending;
                if (enablePromiseTracking) {
                    pendingPromises.Add (this);
@@ -30,68 +30,68 @@
            }
 
            public Promise (Action<Action, Action<SException>> resolver) {
-               this.id = ++Promise.nextPromiseId;
+               this.Id = ++Promise.nextPromiseId;
                this.curState = PromiseState.Pending;
                if (enablePromiseTracking) {
                    pendingPromises.Add (this);
                }
 
                try {
-                   Action resolveHandler = () => this.resolve ();
-                   Action<SException> rejectHandler = ex => this.reject (ex);
+                   Action resolveHandler = () => this.Resolve ();
+                   Action<SException> rejectHandler = ex => this.Reject (ex);
 
                    // 创建后执行resolver
                    resolver (resolveHandler, rejectHandler);
                } catch (SException exception) {
-                   this.reject (exception);
+                   this.Reject (exception);
                }
            }
 
            #region promise handler execute
-           private void actionHandlers (IRejectable resultPromise, Action resolveHandler, Action<SException> rejectHandler) {
+           private void ActionHandlers (IRejectable resultPromise, Action resolveHandler, Action<SException> rejectHandler) {
                if (this.curState == PromiseState.Resolved) {
-                   this.executeResolveHandler (resolveHandler, resultPromise);
+                   this.ExecuteResolveHandler (resolveHandler, resultPromise);
                } else if (this.curState == PromiseState.Rejected) {
-                   this.executeRejectHandler (rejectHandler, resultPromise, this.rejectionException);
+                   this.ExecuteRejectHandler (rejectHandler, resultPromise, this.rejectionException);
                } else {
-                   this.addResolveHandler (resolveHandler, resultPromise);
-                   this.addRejectHandler (rejectHandler, resultPromise);
+                   this.AddResolveHandler (resolveHandler, resultPromise);
+                   this.AddRejectHandler (rejectHandler, resultPromise);
                }
            }
 
-           private void executeResolveHandler (Action callback, IRejectable rejectable) {
+           private void ExecuteResolveHandler (Action callback, IRejectable rejectable) {
                try {
                    callback ();
                } catch (SException exception) {
-                   rejectable.reject (exception);
+                   rejectable.Reject (exception);
                }
            }
 
-           private void executeRejectHandler (Action<SException> callback, IRejectable rejectable, SException value) {
+           private void ExecuteRejectHandler (Action<SException> callback, IRejectable rejectable, SException value) {
                try {
                    callback (value);
                } catch (SException exception) {
-                   rejectable.reject (exception);
+                   rejectable.Reject (exception);
                }
            }
 
-           private void invokeRejectHandlers (SException exception) {
+           private void InvokeRejectHandlers (SException exception) {
                foreach (RejectHandler rejectHandler in this.rejectHandlers) {
-                   this.executeRejectHandler (rejectHandler.callback, rejectHandler.rejectable, exception);
+                   this.ExecuteRejectHandler (rejectHandler.callback, rejectHandler.rejectable, exception);
                }
 
-               this.clearHandlers ();
+               this.ClearHandlers ();
            }
 
-           private void invokeResolveHandlers () {
+           private void InvokeResolveHandlers () {
                foreach (ResolveHandler resolveHandler in this.resolveHandlers) {
-                   this.executeResolveHandler (resolveHandler.callback, resolveHandler.rejectable);
+                   this.ExecuteResolveHandler (resolveHandler.callback, resolveHandler.rejectable);
                }
 
-               this.clearHandlers ();
+               this.ClearHandlers ();
            }
 
-           private void addResolveHandler (Action onResolved, IRejectable rejectable) {
+           private void AddResolveHandler (Action onResolved, IRejectable rejectable) {
                ResolveHandler item = new ResolveHandler {
                    callback = onResolved,
                    rejectable = rejectable
@@ -100,7 +100,7 @@
                this.resolveHandlers.Add (item);
            }
 
-           private void addRejectHandler (Action<SException> onRejected, IRejectable rejectable) {
+           private void AddRejectHandler (Action<SException> onRejected, IRejectable rejectable) {
                RejectHandler item = new RejectHandler {
                    callback = onRejected,
                    rejectable = rejectable
@@ -108,7 +108,7 @@
                this.rejectHandlers.Add (item);
            }
 
-           private void clearHandlers () {
+           private void ClearHandlers () {
                this.rejectHandlers = null;
                this.resolveHandlers = null;
            }
@@ -116,86 +116,86 @@
            #endregion
 
            /* 仅允许在本程序集内访问 */
-           internal static void propagateUnhandledException (object sender, SException exception) {
+           internal static void PropagateUnhandledException (object sender, SException exception) {
                // C# 6.0 null 空值操作符
                unHandledException?.Invoke (sender, new ExceptionEventArgs (exception));
            }
 
            #region  public methond
-           public static Promise all (params IPromise[] promises) {
+           public static Promise All (params IPromise[] promises) {
                if (promises.Length == 0) {
-                   return resolved ();
+                   return Resolved ();
                }
 
                int remainingCount = promises.Length;
                Promise resultPromise = new Promise ();
                foreach (IPromise promise in promises) {
                    promise
-                       .catchs ((SException exception) => {
+                       .Catchs ((SException exception) => {
                            if (resultPromise.curState == PromiseState.Pending) {
-                               resultPromise.reject (exception);
+                               resultPromise.Reject (exception);
                            }
                        })
-                       .then (() => {
+                       .Then (() => {
                            remainingCount--;
                            if (remainingCount <= 0) {
-                               resultPromise.resolve ();
+                               resultPromise.Resolve ();
                            }
                        })
-                       .done ();
+                       .Done ();
                }
                return resultPromise;
            }
 
-           public IPromise catchs (Action<SException> onRejected) {
+           public IPromise Catchs (Action<SException> onRejected) {
                Promise resultPromise = new Promise ();
 
                Action resolveHandler = () => {
-                   resultPromise.resolve ();
+                   resultPromise.Resolve ();
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
                return resultPromise;
 
            }
 
-           public void done () {
-               this.catchs (
+           public void Done () {
+               this.Catchs (
                    (SException exception) => {
-                       propagateUnhandledException (this, exception);
+                       PropagateUnhandledException (this, exception);
                    }
                );
            }
 
-           public void done (Action onResolved) {
-               this.then (onResolved)
-                   .catchs (
+           public void Done (Action onResolved) {
+               this.Then (onResolved)
+                   .Catchs (
                        (SException exception) => {
-                           propagateUnhandledException (this, exception);
+                           PropagateUnhandledException (this, exception);
                        }
                    );
            }
 
-           public void done (Action onResolved, Action<SException> onRejected) {
-               this.then (onResolved, onRejected)
-                   .catchs (
+           public void Done (Action onResolved, Action<SException> onRejected) {
+               this.Then (onResolved, onRejected)
+                   .Catchs (
                        (SException exception) => {
-                           propagateUnhandledException (this, exception);
+                           PropagateUnhandledException (this, exception);
                        }
                    );
            }
 
            /* 返回未处理异常的迭代器 */
-           public static IEnumerable<IPromiseInfo> getPendingPromise () {
+           public static IEnumerable<IPromiseInfo> GetPendingPromise () {
                return pendingPromises;
            }
 
-           public void reject (SException exception) {
+           public void Reject (SException exception) {
                if (this.curState != PromiseState.Pending) {
                    throw new ApplicationException (
                        string.Concat (
@@ -212,16 +212,16 @@
                if (enablePromiseTracking) {
                    pendingPromises.Remove (this);
                }
-               this.invokeRejectHandlers (exception);
+               this.InvokeRejectHandlers (exception);
            }
 
-           public static IPromise rejected (SException exception) {
+           public static IPromise Rejected (SException exception) {
                Promise promise = new Promise ();
-               promise.reject (exception);
+               promise.Reject (exception);
                return promise;
            }
 
-           public void resolve () {
+           public void Resolve () {
                if (this.curState != PromiseState.Pending) {
                    throw new ApplicationException (
                        string.Concat (
@@ -237,93 +237,93 @@
                if (enablePromiseTracking) {
                    pendingPromises.Remove (this);
                }
-               this.invokeResolveHandlers ();
+               this.InvokeResolveHandlers ();
            }
 
-           public static Promise resolved () {
+           public static Promise Resolved () {
                Promise promise = new Promise ();
-               promise.resolve ();
+               promise.Resolve ();
                return promise;
            }
 
-           public IPromise then (Action onResolved) {
-               return this.then (onResolved, null);
+           public IPromise Then (Action onResolved) {
+               return this.Then (onResolved, null);
            }
 
-           public IPromise then (Func<IPromise> onResolved) {
-               return this.then (onResolved, null);
+           public IPromise Then (Func<IPromise> onResolved) {
+               return this.Then (onResolved, null);
            }
 
-           public IPromise<ConvertedT> then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved) {
-               return this.then<ConvertedT> (onResolved, null);
+           public IPromise<ConvertedT> Then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved) {
+               return this.Then<ConvertedT> (onResolved, null);
            }
 
-           public IPromise then (Action onResolved, Action<SException> onRejected) {
+           public IPromise Then (Action onResolved, Action<SException> onRejected) {
                Promise resultPromise = new Promise ();
                Action resolveHandler = () => {
                    onResolved?.Invoke ();
-                   resultPromise.resolve ();
+                   resultPromise.Resolve ();
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected?.Invoke (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
                return resultPromise;
            }
 
            /* 此then方法的onResolved回调会携带返回值，但要到的地方较少 */
-           public IPromise then (Func<IPromise> onResolved, Action<SException> onRejected) {
+           public IPromise Then (Func<IPromise> onResolved, Action<SException> onRejected) {
                Promise resultPromise = new Promise ();
                Action resolverHandler = () => {
                    if (onResolved != null) {
                        Action nextResolveHandler = () => {
-                           resultPromise.resolve ();
+                           resultPromise.Resolve ();
                        };
 
                        Action<SException> nextRejectHandler = (SException exception) => {
-                           resultPromise.reject (exception);
+                           resultPromise.Reject (exception);
                        };
 
-                       onResolved ().then (nextResolveHandler, nextRejectHandler);
+                       onResolved ().Then (nextResolveHandler, nextRejectHandler);
                    } else {
-                       resultPromise.resolve ();
+                       resultPromise.Resolve ();
                    }
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected?.Invoke (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolverHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolverHandler, rejectHandler);
                return resultPromise;
            }
 
-           public IPromise<ConvertedT> then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved, Action<SException> onRejected) {
+           public IPromise<ConvertedT> Then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved, Action<SException> onRejected) {
                Promise<ConvertedT> resultPromise = new Promise<ConvertedT> ();
                Action resolveHandler = () => {
                    onResolved ()
-                       .then ((ConvertedT chainedValue) => {
-                           resultPromise.resolve (chainedValue);
+                       .Then ((ConvertedT chainedValue) => {
+                           resultPromise.Resolve (chainedValue);
                        }, (SException exception) => {
-                           resultPromise.reject (exception);
+                           resultPromise.Reject (exception);
                        });
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected?.Invoke (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
                return resultPromise;
            }
 
            /* 竞态状态 */
-           public static IPromise race (params IPromise[] promises) {
+           public static IPromise Race (params IPromise[] promises) {
                if (promises.Length == 0) {
                    throw new ApplicationException ("at least 1 input promise must be provided for race");
                }
@@ -331,17 +331,17 @@
                Promise resultPromise = new Promise ();
                foreach (IPromise promise in promises) {
                    promise
-                       .catchs ((SException exception) => {
+                       .Catchs ((SException exception) => {
                            if (resultPromise.curState == PromiseState.Pending) {
-                               resultPromise.reject (exception);
+                               resultPromise.Reject (exception);
                            }
                        })
-                       .then (() => {
+                       .Then (() => {
                            if (resultPromise.curState == PromiseState.Pending) {
-                               resultPromise.resolve ();
+                               resultPromise.Resolve ();
                            }
                        })
-                       .done ();
+                       .Done ();
                }
                return resultPromise;
            }
@@ -351,8 +351,8 @@
 
        public class Promise<PromisedT> : IPromise<PromisedT>, IPendingPromise<PromisedT>, IRejectable, IPromiseInfo {
 
-           public int id { get; private set; }
-           public string name { get; private set; }
+           public int Id { get; private set; }
+           public string Name { get; private set; }
            public PromiseState curState { get; private set; }
 
            private SException rejectionException;
@@ -362,7 +362,7 @@
 
            public Promise () {
                this.curState = PromiseState.Pending;
-               this.id = ++Promise.nextPromiseId;
+               this.Id = ++Promise.nextPromiseId;
                if (Promise.enablePromiseTracking) {
                    Promise.pendingPromises.Add (this);
                }
@@ -370,50 +370,50 @@
 
            public Promise (Action<Action<PromisedT>, Action<SException>> resolver) {
                this.curState = PromiseState.Pending;
-               this.id = ++Promise.nextPromiseId;
+               this.Id = ++Promise.nextPromiseId;
                if (Promise.enablePromiseTracking) {
                    Promise.pendingPromises.Add (this);
                }
 
                try {
                    Action<PromisedT> resolveHandler = (PromisedT value) => {
-                       resolve (value);
+                       Resolve (value);
                    };
 
                    Action<SException> rejectHandler = (SException exception) => {
-                       reject (exception);
+                       Reject (exception);
                    };
 
                    resolver (resolveHandler, rejectHandler);
                } catch (SException exception) {
-                   this.reject (exception);
+                   this.Reject (exception);
                }
            }
 
-           private void executeHandler<T> (Action<T> callback, IRejectable rejectable, T value) {
+           private void ExecuteHandler<T> (Action<T> callback, IRejectable rejectable, T value) {
                try {
                    callback (value);
                } catch (SException exception) {
-                   rejectable.reject (exception);
+                   rejectable.Reject (exception);
                }
            }
 
-           private void invokeRejectHandlers (SException exception) {
+           private void InvokeRejectHandlers (SException exception) {
                foreach (RejectHandler handler in this.rejectHandlers) {
-                   this.executeHandler<SException> (handler.callback, handler.rejectable, exception);
+                   this.ExecuteHandler<SException> (handler.callback, handler.rejectable, exception);
                }
 
-               this.clearHandlers ();
+               this.ClearHandlers ();
            }
 
-           private void invokeResolveHandlers (PromisedT value) {
+           private void InvokeResolveHandlers (PromisedT value) {
                foreach (ResolveHandler<PromisedT> handler in this.resolveHandlers) {
-                   this.executeHandler<PromisedT> (handler.callback, handler.rejectable, value);
+                   this.ExecuteHandler<PromisedT> (handler.callback, handler.rejectable, value);
                }
-               this.clearHandlers ();
+               this.ClearHandlers ();
            }
 
-           private void addRejectHandler (Action<SException> onRejected, IRejectable rejectable) {
+           private void AddRejectHandler (Action<SException> onRejected, IRejectable rejectable) {
                if (this.rejectHandlers == null) {
                    this.rejectHandlers = new List<RejectHandler> ();
                }
@@ -425,7 +425,7 @@
                this.rejectHandlers.Add (item);
            }
 
-           private void addResolveHandler (Action<PromisedT> onResolved, IRejectable rejectable) {
+           private void AddResolveHandler (Action<PromisedT> onResolved, IRejectable rejectable) {
                ResolveHandler<PromisedT> item = new ResolveHandler<PromisedT> {
                    callback = onResolved,
                    rejectable = rejectable
@@ -434,29 +434,29 @@
                this.resolveHandlers.Add (item);
            }
 
-           private void clearHandlers () {
+           private void ClearHandlers () {
                this.rejectHandlers = null;
                this.resolveHandlers = null;
            }
 
-           private void actionHandlers (IRejectable resultPromise, Action<PromisedT> resolveHandler, Action<SException> rejectHandler) {
+           private void ActionHandlers (IRejectable resultPromise, Action<PromisedT> resolveHandler, Action<SException> rejectHandler) {
                if (this.curState == PromiseState.Resolved) {
-                   this.executeHandler<PromisedT> (resolveHandler, resultPromise, this.resolveValue);
+                   this.ExecuteHandler<PromisedT> (resolveHandler, resultPromise, this.resolveValue);
                } else if (this.curState == PromiseState.Rejected) {
-                   this.executeHandler<SException> (rejectHandler, resultPromise, this.rejectionException);
+                   this.ExecuteHandler<SException> (rejectHandler, resultPromise, this.rejectionException);
                } else {
-                   this.addResolveHandler (resolveHandler, resultPromise);
-                   this.addRejectHandler (rejectHandler, resultPromise);
+                   this.AddResolveHandler (resolveHandler, resultPromise);
+                   this.AddRejectHandler (rejectHandler, resultPromise);
                }
            }
 
-           public static Promise<PromisedT> resolved (PromisedT promisedValue) {
+           public static Promise<PromisedT> Resolved (PromisedT promisedValue) {
                Promise<PromisedT> promise = new Promise<PromisedT> ();
-               promise.resolve (promisedValue);
+               promise.Resolve (promisedValue);
                return promise;
            }
 
-           public void resolve (PromisedT value) {
+           public void Resolve (PromisedT value) {
                if (this.curState != PromiseState.Pending) {
                    throw new ApplicationException (
                        string.Concat (
@@ -473,16 +473,16 @@
                if (Promise.enablePromiseTracking) {
                    Promise.pendingPromises.Remove (this);
                }
-               this.invokeResolveHandlers (value);
+               this.InvokeResolveHandlers (value);
            }
 
-           public static IPromise<PromisedT> rejected (SException exception) {
+           public static IPromise<PromisedT> Rejected (SException exception) {
                Promise<PromisedT> promise = new Promise<PromisedT> ();
-               promise.reject (exception);
+               promise.Reject (exception);
                return promise;
            }
 
-           public void reject (SException exception) {
+           public void Reject (SException exception) {
                if (this.curState != PromiseState.Pending) {
                    throw new ApplicationException (
                        string.Concat (
@@ -499,12 +499,12 @@
                if (Promise.enablePromiseTracking) {
                    Promise.pendingPromises.Remove (this);
                }
-               this.invokeRejectHandlers (exception);
+               this.InvokeRejectHandlers (exception);
            }
 
-           public static Promise<IEnumerable<PromisedT>> all (params IPromise<PromisedT>[] promises) {
+           public static Promise<IEnumerable<PromisedT>> All (params IPromise<PromisedT>[] promises) {
                if (promises.Length == 0) {
-                   return Promise<IEnumerable<PromisedT>>.resolved (Enumerable.Empty<PromisedT> ());
+                   return Promise<IEnumerable<PromisedT>>.Resolved (Enumerable.Empty<PromisedT> ());
                }
 
                int remainingCount = promises.Length;
@@ -514,66 +514,66 @@
                for (var index = 0; index < promises.Length; index++) {
                    IPromise<PromisedT> promise = promises[index];
                    promise
-                       .catchs ((SException exception) => {
+                       .Catchs ((SException exception) => {
                            if (resultPromise.curState == PromiseState.Pending) {
-                               resultPromise.reject (exception);
+                               resultPromise.Reject (exception);
                            }
                        })
-                       .then ((PromisedT result) => {
+                       .Then ((PromisedT result) => {
                            results[index] = result;
                            remainingCount--;
                            if (remainingCount <= 0) {
-                               resultPromise.resolve (results);
+                               resultPromise.Resolve (results);
                            }
                        })
-                       .done ();
+                       .Done ();
                }
                return resultPromise;
            }
 
-           public IPromise<PromisedT> catchs (Action<SException> onRejected) {
+           public IPromise<PromisedT> Catchs (Action<SException> onRejected) {
                Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
 
                Action<PromisedT> resolveHandler = (PromisedT value) => {
-                   resultPromise.resolve (value);
+                   resultPromise.Resolve (value);
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
                return resultPromise;
            }
 
-           public void done () {
-               this.catchs (
+           public void Done () {
+               this.Catchs (
                    (SException exception) => {
-                       Promise.propagateUnhandledException (this, exception);
+                       Promise.PropagateUnhandledException (this, exception);
                    }
                );
            }
 
-           public void done (Action<PromisedT> onResolved) {
-               this.then (onResolved)
-                   .catchs (
+           public void Done (Action<PromisedT> onResolved) {
+               this.Then (onResolved)
+                   .Catchs (
                        (SException exception) => {
-                           Promise.propagateUnhandledException (this, exception);
+                           Promise.PropagateUnhandledException (this, exception);
                        }
                    );
            }
 
-           public void done (Action<PromisedT> onResolved, Action<SException> onRejected) {
-               this.then (onResolved, onRejected)
-                   .catchs (
+           public void Done (Action<PromisedT> onResolved, Action<SException> onRejected) {
+               this.Then (onResolved, onRejected)
+                   .Catchs (
                        (SException exception) => {
-                           Promise.propagateUnhandledException (this, exception);
+                           Promise.PropagateUnhandledException (this, exception);
                        }
                    );
            }
 
-           public static IPromise<PromisedT> race (params IPromise<PromisedT>[] promises) {
+           public static IPromise<PromisedT> Race (params IPromise<PromisedT>[] promises) {
                if (promises.Length == 0) {
                    throw new ApplicationException ("At least 1 input promise must be provided for Race");
                }
@@ -581,97 +581,97 @@
                Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
                foreach (IPromise<PromisedT> promise in promises) {
                    promise
-                       .catchs ((SException exception) => {
+                       .Catchs ((SException exception) => {
                            if (resultPromise.curState == PromiseState.Pending) {
-                               resultPromise.reject (exception);
+                               resultPromise.Reject (exception);
                            }
                        })
-                       .then (
+                       .Then (
                            (PromisedT result) => {
                                if (resultPromise.curState == PromiseState.Pending) {
-                                   resultPromise.resolve (result);
+                                   resultPromise.Resolve (result);
                                }
                            }
                        )
-                       .done ();
+                       .Done ();
                }
 
                return resultPromise;
            }
 
-           public IPromise<PromisedT> then (Action<PromisedT> onResolved) {
-               return this.then (onResolved, null);
+           public IPromise<PromisedT> Then (Action<PromisedT> onResolved) {
+               return this.Then (onResolved, null);
            }
 
-           public IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved) {
-               return this.then<ConvertedT> (onResolved, null);
+           public IPromise<ConvertedT> Then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved) {
+               return this.Then<ConvertedT> (onResolved, null);
            }
 
-           public IPromise then (Func<PromisedT, IPromise> onResolved) {
-               return this.then (onResolved, null);
+           public IPromise Then (Func<PromisedT, IPromise> onResolved) {
+               return this.Then (onResolved, null);
            }
 
-           public IPromise<PromisedT> then (Action<PromisedT> onResolved, Action<SException> onRejected) {
+           public IPromise<PromisedT> Then (Action<PromisedT> onResolved, Action<SException> onRejected) {
                Promise<PromisedT> resultPromise = new Promise<PromisedT> ();
 
                Action<PromisedT> resolveHandler = (PromisedT value) => {
                    onResolved?.Invoke (value);
-                   resultPromise.resolve (value);
+                   resultPromise.Resolve (value);
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected?.Invoke (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
                return resultPromise;
            }
 
-           public IPromise then (Func<PromisedT, IPromise> onResolved, Action<SException> onRejected) {
+           public IPromise Then (Func<PromisedT, IPromise> onResolved, Action<SException> onRejected) {
                Promise resultPromise = new Promise ();
 
                Action<PromisedT> resolveHandler = (PromisedT value) => {
                    if (onResolved != null) {
                        Action nextResolveHandler = () => {
-                           resultPromise.resolve ();
+                           resultPromise.Resolve ();
                        };
 
                        Action<SException> nextRejectHandler = (SException exception) => {
-                           resultPromise.reject (exception);
+                           resultPromise.Reject (exception);
                        };
 
-                       onResolved (value).then (nextResolveHandler, nextRejectHandler);
+                       onResolved (value).Then (nextResolveHandler, nextRejectHandler);
                    } else {
-                       resultPromise.resolve ();
+                       resultPromise.Resolve ();
                    }
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected?.Invoke (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
                return resultPromise;
            }
 
-           public IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved, Action<SException> onRejected) {
+           public IPromise<ConvertedT> Then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved, Action<SException> onRejected) {
                Promise<ConvertedT> resultPromise = new Promise<ConvertedT> ();
 
                Action<PromisedT> resolveHandler = (PromisedT value) => {
                    onResolved (value)
-                       .then ((ConvertedT chainedValue) => {
-                           resultPromise.resolve (chainedValue);
+                       .Then ((ConvertedT chainedValue) => {
+                           resultPromise.Resolve (chainedValue);
                        });
                };
 
                Action<SException> rejectHandler = (SException exception) => {
                    onRejected?.Invoke (exception);
-                   resultPromise.reject (exception);
+                   resultPromise.Reject (exception);
                };
 
-               this.actionHandlers (resultPromise, resolveHandler, rejectHandler);
+               this.ActionHandlers (resultPromise, resolveHandler, rejectHandler);
 
                return resultPromise;
            }

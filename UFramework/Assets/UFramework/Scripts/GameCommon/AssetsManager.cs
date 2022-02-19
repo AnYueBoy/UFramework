@@ -207,13 +207,13 @@ namespace UFramework.GameCommon {
 
             // 异步依赖检查
             this.checkDependenciesAsync (bundleName)
-                .then (() => {
+                .Then (() => {
                     string bundleUrl = CommonUtil.getBundleUrl ();
                     string targetBundleUrl = bundleUrl + bundleName;
                     this.loadTargetBundleAsync (targetBundleUrl)
-                        .then ((AssetBundle targetBundle) => {
+                        .Then ((AssetBundle targetBundle) => {
                             this.loadTargetBundleAssetAsync<T> (targetBundle, assetName)
-                                .then ((T targetAsset) => {
+                                .Then ((T targetAsset) => {
                                     callback (targetAsset);
                                 });
                         });
@@ -236,13 +236,13 @@ namespace UFramework.GameCommon {
 
             // 异步依赖检查
             this.checkDependenciesAsync (bundleName)
-                .then (() => {
+                .Then (() => {
                     string bundleUrl = CommonUtil.getBundleUrl ();
                     string targetBundleUrl = bundleUrl + bundleName;
                     this.loadTargetBundleAsync (targetBundleUrl)
-                        .then ((AssetBundle targetBundle) => {
+                        .Then ((AssetBundle targetBundle) => {
                             this.loadTargetBundleAllAssetAsync<T> (targetBundle)
-                                .then ((List<PackAsset> targetAssets) => {
+                                .Then ((List<PackAsset> targetAssets) => {
                                     callback (targetAssets);
                                 });
                         });
@@ -292,7 +292,7 @@ namespace UFramework.GameCommon {
             if (allDependencies.Length <= 0) {
                 promiseList.Add (new Promise ((Action reslove, Action<SException> reject) => {
                     string bundleUrl = CommonUtil.getBundleUrl () + bundleName;
-                    this.loadTargetBundleAsync (bundleUrl).then (
+                    this.loadTargetBundleAsync (bundleUrl).Then (
                         (AssetBundle assetBundle) => {
                             reslove ();
                         }

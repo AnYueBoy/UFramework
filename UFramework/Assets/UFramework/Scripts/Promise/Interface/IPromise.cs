@@ -14,32 +14,32 @@ namespace UFramework.Promise {
 
         IPromise<PromisedT> catchs (Action<SException> onRejected);
 
-        void done ();
-        void done (Action<PromisedT> onResolved);
-        void done (Action<PromisedT> onResolved, Action<SException> onRejected);
+        void Done ();
+        void Done (Action<PromisedT> onResolved);
+        void Done (Action<PromisedT> onResolved, Action<SException> onRejected);
 
-        IPromise then (Func<PromisedT, IPromise> onResolved, Action<SException> onRejected);
-        IPromise then (Func<PromisedT, IPromise> onResolved);
-        IPromise<PromisedT> then (Action<PromisedT> onResolved, Action<SException> onRejected);
-        IPromise<PromisedT> then (Action<PromisedT> onResolved);
-        IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved, Action<SException> onRejected);
-        IPromise<ConvertedT> then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved);
+        IPromise Then (Func<PromisedT, IPromise> onResolved, Action<SException> onRejected);
+        IPromise Then (Func<PromisedT, IPromise> onResolved);
+        IPromise<PromisedT> Then (Action<PromisedT> onResolved, Action<SException> onRejected);
+        IPromise<PromisedT> Then (Action<PromisedT> onResolved);
+        IPromise<ConvertedT> Then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved, Action<SException> onRejected);
+        IPromise<ConvertedT> Then<ConvertedT> (Func<PromisedT, IPromise<ConvertedT>> onResolved);
     }
 
     public interface IPromise {
 
-        IPromise catchs (Action<SException> onRejected);
+        IPromise Catchs (Action<SException> onRejected);
 
-        void done ();
-        void done (Action onResolved);
-        void done (Action onResolved, Action<SException> onRejected);
+        void Done ();
+        void Done (Action onResolved);
+        void Done (Action onResolved, Action<SException> onRejected);
 
-        IPromise then (Func<IPromise> onResolved);
-        IPromise then (Action onResolved);
-        IPromise then (Action onResolved, Action<SException> onRejected);
-        IPromise then (Func<IPromise> onResolved, Action<SException> onRejected);
-        IPromise<ConvertedT> then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved);
-        IPromise<ConvertedT> then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved, Action<SException> onRejected);
+        IPromise Then (Func<IPromise> onResolved);
+        IPromise Then (Action onResolved);
+        IPromise Then (Action onResolved, Action<SException> onRejected);
+        IPromise Then (Func<IPromise> onResolved, Action<SException> onRejected);
+        IPromise<ConvertedT> Then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved);
+        IPromise<ConvertedT> Then<ConvertedT> (Func<IPromise<ConvertedT>> onResolved, Action<SException> onRejected);
     }
 
 }

@@ -2,6 +2,6 @@
     namespace UFramework.Promise {
 
         public interface IRejectable {
-            void reject (SException exception);
+            void Reject (SException exception);
         }
     }

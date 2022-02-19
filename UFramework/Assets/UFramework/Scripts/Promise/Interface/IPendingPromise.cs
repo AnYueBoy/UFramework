@@ -1,10 +1,10 @@
 namespace UFramework.Promise {
 
     public interface IPendingPromise : IRejectable {
-        void resolve ();
+        void Resolve ();
     }
 
     public interface IPendingPromise<PromisedT> : IRejectable {
-        void resolve (PromisedT value);
+        void Resolve (PromisedT value);
     }
 }

@@ -169,7 +169,7 @@ public class Test : MonoBehaviour {
 
     private void test () {
         this.loadPromise ()
-            .then (() => {
+            .Then (() => {
                 Debug.Log ("over");
             });
     }

@@ -7,7 +7,7 @@
             private float curTime;
             private List<PredicateWait> waitingList = new List<PredicateWait> ();
 
-            public void localUpdate (float deltaTime) {
+            public void LocalUpdate (float deltaTime) {
                 this.curTime += deltaTime;
                 int index = 0;
                 while (index < this.waitingList.Count) {
@@ -22,14 +22,14 @@
                         // 达成条件
                         flag = wait.predicate (wait.alreadyWaitTime);
                     } catch (SException exception) {
-                        wait.pendingPromise.reject (exception);
+                        wait.pendingPromise.Reject (exception);
                         this.waitingList.Remove (wait);
                         index = 0;
                         continue;
                     }
 
                     if (flag) {
-                        wait.pendingPromise.resolve ();
+                        wait.pendingPromise.Resolve ();
                         this.waitingList.Remove (wait);
                         index = 0;
                     }
@@ -38,13 +38,13 @@
                 }
             }
 
-            public IPromise waitFor (float seconds) {
-                return this.waitUtil ((float alreadyTime) => {
+            public IPromise WaitFor (float seconds) {
+                return this.WaitUtil ((float alreadyTime) => {
                     return alreadyTime >= seconds;
                 });
             }
 
-            public IPromise waitUtil (Func<float, bool> predicate) {
+            public IPromise WaitUtil (Func<float, bool> predicate) {
                 Promise promise = new Promise ();
                 PredicateWait item = new PredicateWait {
                     createTime = this.curTime,
