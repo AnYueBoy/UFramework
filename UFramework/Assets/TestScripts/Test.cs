@@ -71,13 +71,6 @@ public class Test : MonoBehaviour {
         ListenerManager.GetInstance ().RemoveAt ("event1", this);
     }
 
-    private async void loadCube () {
-        // 不允许在非主线程中调用unity的api
-        // GameObject cubePrefab = await assetManager.GetAssetByUrlAsyncOb<GameObject> ("Shape/Cube");
-        // GameObject cubeNode = Instantiate<GameObject> (cubePrefab);
-        // cubeNode.transform.SetParent (this.gameObject.transform);
-    }
-
     private void loadCubeCallback () {
         assetManager.GetAssetByUrlAsync<GameObject> ("Shape/Cube", (res) => {
             GameObject cubeNode = Instantiate<GameObject> (res);
