@@ -73,13 +73,13 @@ public class Test : MonoBehaviour {
 
     private async void loadCube () {
         // 不允许在非主线程中调用unity的api
-        GameObject cubePrefab = await assetManager.getAssetByUrlAsyncOb<GameObject> ("Shape/Cube");
+        GameObject cubePrefab = await assetManager.GetAssetByUrlAsyncOb<GameObject> ("Shape/Cube");
         GameObject cubeNode = Instantiate<GameObject> (cubePrefab);
         cubeNode.transform.SetParent (this.gameObject.transform);
     }
 
     private void loadCubeCallback () {
-        assetManager.getAssetByUrlAsync<GameObject> ("Shape/Cube", (res) => {
+        assetManager.GetAssetByUrlAsync<GameObject> ("Shape/Cube", (res) => {
             GameObject cubeNode = Instantiate<GameObject> (res);
             cubeNode.transform.SetParent (this.gameObject.transform);
         });
@@ -101,7 +101,7 @@ public class Test : MonoBehaviour {
         releaseCompleted = true;
         Debug.Log ("releaseComplete : " + releaseCompleted);
 
-        bool result = assetManager.tryReleaseAsset ("Shape/Cube");
+        bool result = assetManager.TryReleaseAsset ("Shape/Cube");
         if (result) {
             Debug.Log ("卸载成功");
         }
@@ -129,13 +129,13 @@ public class Test : MonoBehaviour {
     }
 
     public void loadBundle () {
-        App.Make<IAssetsManager> ().getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
+        App.Make<IAssetsManager> ().GetAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
             GameObject cube = Instantiate<GameObject> (cubeAsset);
             cube.transform.SetParent (nodeParent);
             cube.transform.localPosition = Vector3.zero;
         });
 
-        App.Make<IAssetsManager> ().getAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
+        App.Make<IAssetsManager> ().GetAssetByBundleAsync<GameObject> ("resbundle", "Cube", (GameObject cubeAsset) => {
             GameObject cube = Instantiate<GameObject> (cubeAsset);
             cube.transform.SetParent (nodeParent);
             cube.transform.localPosition = Vector3.zero;
@@ -152,9 +152,9 @@ public class Test : MonoBehaviour {
         // Sprite attackSprite = AssetsManager.instance.getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
 
         // 使用bundle异步加载文件夹资源
-        App.Make<IAssetsManager> ().getAllAssetsByBundleASync<Sprite> ("texturesbundle", (List<PackAsset> assetsArray) => {
+        App.Make<IAssetsManager> ().GetAllAssetsByBundleASync<Sprite> ("texturesbundle", (List<PackAsset> assetsArray) => {
             List<PackAsset> assets = assetsArray;
-            Sprite attackSprite = App.Make<IAssetsManager> ().getAssetByBundleSync<Sprite> ("texturesbundle", "attack");
+            Sprite attackSprite = App.Make<IAssetsManager> ().GetAssetByBundleSync<Sprite> ("texturesbundle", "attack");
         });
 
     }

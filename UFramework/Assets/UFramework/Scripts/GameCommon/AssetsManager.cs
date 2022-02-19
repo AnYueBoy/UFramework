@@ -26,7 +26,7 @@ namespace UFramework.GameCommon {
 
         private AssetBundleManifest assetBundleManifest = null;
 
-        public void loadManifestFile () {
+        public void LoadManifestFile () {
             if (this.assetBundleManifest != null) {
                 return;
             }
@@ -42,7 +42,7 @@ namespace UFramework.GameCommon {
         /// <param name="assetUrl"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T getAssetByUrlSync<T> (string assetUrl) where T : Object {
+        public T GetAssetByUrlSync<T> (string assetUrl) where T : Object {
             T nativeAsset = this.findNativeAsset<T> (assetUrl);
             if (nativeAsset != null) {
                 return nativeAsset;
@@ -61,7 +61,7 @@ namespace UFramework.GameCommon {
         /// <param name="folderUrl"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<PackAsset> getAllAssetsByUrlSync<T> (string folderUrl) where T : Object {
+        public List<PackAsset> GetAllAssetsByUrlSync<T> (string folderUrl) where T : Object {
             List<PackAsset> nativeAssets = this.findNativeAssets (folderUrl);
             if (nativeAssets != null) {
                 return nativeAssets;
@@ -84,7 +84,7 @@ namespace UFramework.GameCommon {
         }
 
         [Obsolete ("unity not allow")]
-        public async Task<T> getAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
+        public async Task<T> GetAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
             T nativeAsset = this.findNativeAsset<T> (assetUrl);
             if (nativeAsset != null) {
                 return nativeAsset;
@@ -101,7 +101,7 @@ namespace UFramework.GameCommon {
             return targetAsset;
         }
 
-        public void getAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object {
+        public void GetAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object {
             T nativeAsset = this.findNativeAsset<T> (assetUrl);
             if (nativeAsset != null) {
                 callback (nativeAsset);
@@ -138,7 +138,7 @@ namespace UFramework.GameCommon {
         /// </summary>
         /// <param name="assetUrl"></param>
         /// <returns></returns>
-        public bool tryReleaseAsset (string assetUrl) {
+        public bool TryReleaseAsset (string assetUrl) {
             if (!this.assetPool.ContainsKey (assetUrl)) {
                 Debug.LogWarning ("can not release not exist asset");
                 return false;
@@ -155,7 +155,7 @@ namespace UFramework.GameCommon {
         #endregion
 
         #region Asset Bundle Load Asset
-        public T getAssetByBundleSync<T> (string bundleName, string assetName) where T : Object {
+        public T GetAssetByBundleSync<T> (string bundleName, string assetName) where T : Object {
             string nativeUrl = bundleName + "/" + assetName;
             T nativeAsset = this.findNativeAsset<T> (nativeUrl);
             if (nativeAsset != null) {
@@ -181,7 +181,7 @@ namespace UFramework.GameCommon {
         /// <param name="bundleName"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<PackAsset> getAllAssetsByBundleSync<T> (string bundleName) where T : Object {
+        public List<PackAsset> GetAllAssetsByBundleSync<T> (string bundleName) where T : Object {
             List<PackAsset> nativeAssets = this.findNativeAssets (bundleName);
             if (nativeAssets != null) {
                 return nativeAssets;
@@ -197,7 +197,7 @@ namespace UFramework.GameCommon {
             return this.loadTaregetBundleAllAssetSync<T> (targetBundle);
         }
 
-        public void getAssetByBundleAsync<T> (string bundleName, string assetName, Action<T> callback) where T : Object {
+        public void GetAssetByBundleAsync<T> (string bundleName, string assetName, Action<T> callback) where T : Object {
             string nativeUrl = bundleName + "/" + assetName;
             T nativeAsset = this.findNativeAsset<T> (nativeUrl);
             if (nativeAsset != null) {
@@ -227,7 +227,7 @@ namespace UFramework.GameCommon {
         /// <param name="bundleName"></param>
         /// <param name="callback"></param>
         /// <typeparam name="T"></typeparam>
-        public void getAllAssetsByBundleASync<T> (string bundleName, Action<List<PackAsset>> callback) where T : Object {
+        public void GetAllAssetsByBundleASync<T> (string bundleName, Action<List<PackAsset>> callback) where T : Object {
             List<PackAsset> nativeAssets = this.findNativeAssets (bundleName);
             if (nativeAssets != null) {
                 callback?.Invoke (nativeAssets);
@@ -249,7 +249,7 @@ namespace UFramework.GameCommon {
                 });
         }
 
-        public bool tryReleaseBundle (string bundleName, bool unloadAllLoadedObjects = false) {
+        public bool TryReleaseBundle (string bundleName, bool unloadAllLoadedObjects = false) {
             string bundleUrl = CommonUtil.getBundleUrl ();
             string targetBundleUrl = Path.Combine (bundleUrl, bundleName);
             if (!this.assetPool.ContainsKey (targetBundleUrl)) {
@@ -267,7 +267,7 @@ namespace UFramework.GameCommon {
         /// </summary>
         /// <param name="bundleName"></param>
         private void checkDependenciesSync (string bundleName) {
-            this.loadManifestFile ();
+            this.LoadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
                 string bundleUrl = CommonUtil.getBundleUrl () + bundleName;
@@ -287,7 +287,7 @@ namespace UFramework.GameCommon {
         }
 
         private void addAllDependenciesBundle (List<Promise> promiseList, string bundleName) {
-            this.loadManifestFile ();
+            this.LoadManifestFile ();
             string[] allDependencies = this.assetBundleManifest.GetAllDependencies (bundleName);
             if (allDependencies.Length <= 0) {
                 promiseList.Add (new Promise ((Action reslove, Action<SException> reject) => {
