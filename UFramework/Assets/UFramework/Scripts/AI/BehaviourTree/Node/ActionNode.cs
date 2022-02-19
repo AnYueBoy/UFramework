@@ -9,46 +9,46 @@ namespace UFramework.AI.BehaviourTree {
 
         private ActionStatus m_actionStauts = ActionStatus.ACTION_READY;
 
-        protected override RunningStatus onUpdate () {
-            if (!this.onEvaluate ()) {
+        protected override RunningStatus OnUpdate () {
+            if (!this.OnEvaluate ()) {
                 return RunningStatus.Failed;
             }
 
             RunningStatus runningStatus = RunningStatus.Finished;
             if (m_actionStauts == ActionStatus.ACTION_READY) {
-                this.onEnter ();
+                this.OnEnter ();
                 m_actionStauts = ActionStatus.ACTION_RUNNING;
             }
 
             if (m_actionStauts == ActionStatus.ACTION_RUNNING) {
-                runningStatus = onExecute ();
+                runningStatus = OnExecute ();
             }
 
             return runningStatus;
         }
 
-        protected override void onReset () {
+        protected override void OnReset () {
             if (m_actionStauts == ActionStatus.ACTION_RUNNING) {
-                this.onExit ();
+                this.OnExit ();
             }
 
             m_actionStauts = ActionStatus.ACTION_READY;
         }
 
         //implemented by inherited class
-        protected virtual bool onEvaluate () {
+        protected virtual bool OnEvaluate () {
             return true;
         }
 
-        protected virtual void onEnter () {
+        protected virtual void OnEnter () {
 
         }
 
-        protected virtual RunningStatus onExecute () {
+        protected virtual RunningStatus OnExecute () {
             return RunningStatus.Finished;
         }
 
-        protected virtual void onExit () {
+        protected virtual void OnExit () {
 
         }
     }

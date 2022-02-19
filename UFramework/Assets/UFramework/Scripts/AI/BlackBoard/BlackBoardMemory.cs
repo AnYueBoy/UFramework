@@ -13,11 +13,11 @@ namespace UFramework.AI.BehaviourTree {
             this.m_items = new Dictionary<int, BlackBoardItem> ();
         }
 
-        public void clear () {
+        public void Clear () {
             this.m_items.Clear ();
         }
 
-        public void setValue (int key, object target, float expiredTime = -1f) {
+        public void SetValue (int key, object target, float expiredTime = -1f) {
             BlackBoardItem item;
             if (!m_items.ContainsKey (key)) {
                 item = new BlackBoardItem ();
@@ -26,39 +26,39 @@ namespace UFramework.AI.BehaviourTree {
                 item = m_items[key];
             }
 
-            item.setValue (target, expiredTime);
+            item.SetValue (target, expiredTime);
         }
 
-        public bool hasValue (int key) {
+        public bool HasValue (int key) {
             BlackBoardItem item;
             if (!m_items.TryGetValue (key, out item)) {
                 return false;
             }
 
-            return item.isValueValid ();
+            return item.IsValueValid ();
         }
 
-        public void delValue (int key) {
+        public void DelValue (int key) {
             m_items.Remove (key);
         }
 
-        public T getValue<T> (int key, T defaultValue = default (T)) {
+        public T GetValue<T> (int key, T defaultValue = default (T)) {
             BlackBoardItem item;
             if (!m_items.TryGetValue (key, out item)) {
                 return defaultValue;
             }
 
-            return item.getValue<T> (defaultValue);
+            return item.GetValue<T> (defaultValue);
         }
 
-        public bool tryGetValue<T> (int key, out T value) {
+        public bool TryGetValue<T> (int key, out T value) {
             BlackBoardItem item;
-            if (!m_items.TryGetValue (key, out item) || !item.isValueValid ()) {
+            if (!m_items.TryGetValue (key, out item) || !item.IsValueValid ()) {
                 value = default (T);
                 return false;
             }
 
-            value = item.getValue<T> (default (T));
+            value = item.GetValue<T> (default (T));
             return true;
         }
     }

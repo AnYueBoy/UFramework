@@ -6,7 +6,7 @@
 namespace UFramework.AI.BehaviourTree {
     public class BaseCondition {
 
-        public virtual bool isTrue (IAgent agent) {
+        public virtual bool IsTrue (IAgent agent) {
             return false;
         }
     }

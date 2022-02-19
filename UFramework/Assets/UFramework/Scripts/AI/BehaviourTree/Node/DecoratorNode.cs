@@ -14,7 +14,7 @@ namespace UFramework.AI.BehaviourTree {
         }
 
         public DecoratorNode (BaseNode child) {
-            addChild (child);
+            AddChild (child);
         }
     }
 }

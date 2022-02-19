@@ -14,8 +14,8 @@ namespace UFramework.AI.BehaviourTree {
             this.condistion = condition;
         }
 
-        public override bool isTrue (IAgent agent) {
-            return !this.condistion.isTrue (agent);
+        public override bool IsTrue (IAgent agent) {
+            return !this.condistion.IsTrue (agent);
         }
     }
 }

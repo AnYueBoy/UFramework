@@ -20,22 +20,22 @@ namespace UFramework.AI.BehaviourTree {
 
         protected BlackBoardMemory blackBoardMemory;
 
-        public RunningStatus update (IAgent agent, BlackBoardMemory workingMemory) {
+        public RunningStatus Update (IAgent agent, BlackBoardMemory workingMemory) {
             this.agent = agent;
             this.blackBoardMemory = workingMemory;
 
-            if (this.m_PreCondition != null && !this.m_PreCondition.isTrue (agent)) {
+            if (this.m_PreCondition != null && !this.m_PreCondition.IsTrue (agent)) {
                 return RunningStatus.Failed;
             }
 
-            return onUpdate ();
+            return OnUpdate ();
         }
 
-        public void reset () {
-            onReset ();
+        public void Reset () {
+            OnReset ();
         }
 
-        public BaseNode addChild (params BaseNode[] children) {
+        public BaseNode AddChild (params BaseNode[] children) {
             foreach (BaseNode node in children) {
                 node.m_parent = this;
                 m_Children.Add (node);
@@ -44,17 +44,17 @@ namespace UFramework.AI.BehaviourTree {
             return this;
         }
 
-        public BaseNode setPreCondition (BaseCondition condition) {
+        public BaseNode SetPreCondition (BaseCondition condition) {
             this.m_PreCondition = condition;
             return this;
         }
 
         //implemented by inherited class
-        protected virtual RunningStatus onUpdate () {
+        protected virtual RunningStatus OnUpdate () {
             return RunningStatus.Finished;
         }
 
-        protected virtual void onReset () {
+        protected virtual void OnReset () {
 
         }
     }

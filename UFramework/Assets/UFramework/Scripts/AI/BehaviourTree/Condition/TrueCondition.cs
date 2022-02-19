@@ -7,7 +7,7 @@
 namespace UFramework.AI.BehaviourTree {
     public class TrueCondition : BaseCondition {
 
-        public override bool isTrue (IAgent agent) {
+        public override bool IsTrue (IAgent agent) {
             return true;
         }
 

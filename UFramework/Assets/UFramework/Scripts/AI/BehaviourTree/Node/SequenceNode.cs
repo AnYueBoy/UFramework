@@ -9,7 +9,7 @@ namespace UFramework.AI.BehaviourTree {
 
         private int m_currentNodeIndex = -1;
 
-        protected override RunningStatus onUpdate () {
+        protected override RunningStatus OnUpdate () {
             if (m_Children.Count == 0) {
                 return RunningStatus.Finished;
             }
@@ -19,7 +19,7 @@ namespace UFramework.AI.BehaviourTree {
             }
 
             for (int i = m_currentNodeIndex; i < m_Children.Count; ++i) {
-                RunningStatus status = m_Children[i].update (this.agent, this.blackBoardMemory);
+                RunningStatus status = m_Children[i].Update (this.agent, this.blackBoardMemory);
                 if (status != RunningStatus.Finished) {
                     return status;
                 }
@@ -30,9 +30,9 @@ namespace UFramework.AI.BehaviourTree {
             return RunningStatus.Finished;
         }
 
-        protected override void onReset () {
+        protected override void OnReset () {
             foreach (BaseNode node in m_Children) {
-                node.reset ();
+                node.Reset ();
             }
 
             m_currentNodeIndex = -1;
