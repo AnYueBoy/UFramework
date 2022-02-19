@@ -16,6 +16,6 @@ public class GameBoard : MonoBehaviour
     }
 
     public void backHallBoard(){
-        SceneLoadManager.getInstance().loadAppointScene("HallBoard");
+        SceneLoadManager.GetInstance().LoadAppointScene("HallBoard");
     }
 }

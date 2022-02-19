@@ -10,6 +10,6 @@ namespace UFramework.GameCommon {
 
     public class BaseUI : MonoBehaviour {
 
-        public virtual void onShow (params object[] args) { }
+        public virtual void OnShow (params object[] args) { }
     }
 }

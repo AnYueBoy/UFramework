@@ -121,7 +121,7 @@ namespace UFramework.GameCommon {
             if (assetPool.ContainsKey (assetUrl)) {
                 // FIXME: 拿到资源不一定使用
                 PackAsset packAsset = assetPool[assetUrl];
-                return packAsset.targetAsset as T;
+                return packAsset.TargetAsset as T;
             }
             return null;
         }
@@ -145,7 +145,7 @@ namespace UFramework.GameCommon {
             }
 
             PackAsset packAsset = this.assetPool[assetUrl];
-            bool releaseResult = packAsset.releaseAsset ();
+            bool releaseResult = packAsset.ReleaseAsset ();
             if (releaseResult) {
                 this.assetPool.Remove (assetUrl);
             }

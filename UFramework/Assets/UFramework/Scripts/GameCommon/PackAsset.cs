@@ -19,29 +19,29 @@ namespace UFramework.GameCommon {
             this._targetAsset = targetAsset;
         }
 
-        public Object targetAsset {
+        public Object TargetAsset {
             get {
-                this.addRef ();
+                this.AddRef ();
                 return this._targetAsset;
             }
         }
 
-        private void addRef () {
+        private void AddRef () {
             this.referenceCounter++;
         }
 
-        public bool releaseAsset () {
+        public bool ReleaseAsset () {
             this.referenceCounter--;
             if (this.referenceCounter > 0) {
                 return false;
             }
 
             // UnloadAsset 不能卸载 GameObject、Component和AssetBundle 这三种资源
-            if (this.targetAsset is GameObject) {
+            if (this.TargetAsset is GameObject) {
                 Resources.UnloadUnusedAssets ();
                 return true;
             }
-            Resources.UnloadAsset (this.targetAsset);
+            Resources.UnloadAsset (this.TargetAsset);
             return true;
         }
 

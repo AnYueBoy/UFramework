@@ -15,7 +15,7 @@ namespace UFramework.GameCommon {
 
         private static ListenerManager instance = null;
 
-        public static ListenerManager getInstance () {
+        public static ListenerManager GetInstance () {
             if (instance == null) {
                 instance = new ListenerManager ();
             }
@@ -25,7 +25,7 @@ namespace UFramework.GameCommon {
 
         private Dictionary<object, List<string>> reverseListenerMap = new Dictionary<object, List<string>> ();
 
-        public void add (string eventName, object caller, CallBack listener) {
+        public void Add (string eventName, object caller, CallBack listener) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -72,7 +72,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void add<T> (string eventName, object caller, CallBack<T> listener) {
+        public void Add<T> (string eventName, object caller, CallBack<T> listener) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -119,7 +119,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void add<T, X> (string eventName, object caller, CallBack<T, X> listener) {
+        public void Add<T, X> (string eventName, object caller, CallBack<T, X> listener) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -166,7 +166,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void add<T, X, V> (string eventName, object caller, CallBack<T, X, V> listener) {
+        public void Add<T, X, V> (string eventName, object caller, CallBack<T, X, V> listener) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -213,7 +213,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void add<T, X, V, M> (string eventName, object caller, CallBack<T, X, V, M> listener) {
+        public void Add<T, X, V, M> (string eventName, object caller, CallBack<T, X, V, M> listener) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -260,7 +260,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void removeAll (object caller) {
+        public void RemoveAll (object caller) {
             if (caller == null) {
                 Debug.LogError ("caller is null");
                 return;
@@ -286,7 +286,7 @@ namespace UFramework.GameCommon {
             this.reverseListenerMap.Remove (caller);
         }
 
-        public void removeAt (string eventName, object caller) {
+        public void RemoveAt (string eventName, object caller) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("Listener eventName is null!");
                 return;
@@ -318,7 +318,7 @@ namespace UFramework.GameCommon {
             eventNameList.Remove (eventName);
         }
 
-        public void trigger (string eventName) {
+        public void Trigger (string eventName) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("not exist eventName: " + eventName);
                 return;
@@ -339,7 +339,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void trigger<T> (string eventName, T arg) {
+        public void Trigger<T> (string eventName, T arg) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("not exist eventName: " + eventName);
                 return;
@@ -360,7 +360,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void trigger<T, X> (string eventName, T arg1, X arg2) {
+        public void Trigger<T, X> (string eventName, T arg1, X arg2) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("not exist eventName: " + eventName);
                 return;
@@ -381,7 +381,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void trigger<T, X, V> (string eventName, T arg1, X arg2, V arg3) {
+        public void Trigger<T, X, V> (string eventName, T arg1, X arg2, V arg3) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("not exist eventName: " + eventName);
                 return;
@@ -402,7 +402,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void trigger<T, X, V, M> (string eventName, T arg1, X arg2, V arg3, M arg4) {
+        public void Trigger<T, X, V, M> (string eventName, T arg1, X arg2, V arg3, M arg4) {
             if (eventName == null || eventName == "") {
                 Debug.LogError ("not exist eventName: " + eventName);
                 return;

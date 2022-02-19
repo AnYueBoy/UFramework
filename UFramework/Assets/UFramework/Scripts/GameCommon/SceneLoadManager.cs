@@ -17,7 +17,7 @@ namespace UFramework.GameCommon {
 
         private static SceneLoadManager instance = null;
 
-        public static SceneLoadManager getInstance () {
+        public static SceneLoadManager GetInstance () {
             if (instance == null) {
                 instance = new SceneLoadManager ();
             }
@@ -29,7 +29,7 @@ namespace UFramework.GameCommon {
         /// 加载下一场景
         /// </summary>
         /// <param name="isFromSceneConfig">是否从场景配置文件中加载场景</param>
-        public void loadNextScene (bool isFromSceneConfig = false, Action<AsyncOperation> callBack = null) {
+        public void LoadNextScene (bool isFromSceneConfig = false, Action<AsyncOperation> callBack = null) {
             if (!isFromSceneConfig) {
                 int currentSceneIndex = SceneManager.GetActiveScene ().buildIndex;
                 int resultSceneIndex = currentSceneIndex + 1;
@@ -38,7 +38,7 @@ namespace UFramework.GameCommon {
                     resultSceneIndex = allSceneCount;
                 }
 
-                this.loadScene (resultSceneIndex, callBack);
+                this.LoadScene (resultSceneIndex, callBack);
                 return;
             }
 
@@ -65,18 +65,18 @@ namespace UFramework.GameCommon {
                 return;
             }
 
-            this.loadScene (nextSceneName, callBack);
+            this.LoadScene (nextSceneName, callBack);
         }
 
-        public void loadAppointScene (string sceneName, Action<AsyncOperation> callBack = null) {
+        public void LoadAppointScene (string sceneName, Action<AsyncOperation> callBack = null) {
             if (string.IsNullOrEmpty (sceneName)) {
                 return;
             }
 
-            this.loadScene (sceneName, callBack);
+            this.LoadScene (sceneName, callBack);
         }
 
-        public void loadScene (string sceneName, Action<AsyncOperation> callBack = null) {
+        public void LoadScene (string sceneName, Action<AsyncOperation> callBack = null) {
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync (sceneName);
 
             if (callBack != null) {
@@ -84,7 +84,7 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void loadScene (int sceneIndex, Action<AsyncOperation> callBack = null) {
+        public void LoadScene (int sceneIndex, Action<AsyncOperation> callBack = null) {
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync (sceneIndex);
 
             if (callBack != null) {

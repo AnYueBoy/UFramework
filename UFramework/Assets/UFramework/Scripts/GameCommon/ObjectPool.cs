@@ -16,7 +16,7 @@ namespace UFramework.GameCommon {
         // 存放预制与实例的关系
         private Dictionary<GameObject, GameObject> relationShip = new Dictionary<GameObject, GameObject> ();
 
-        public GameObject requestInstance (GameObject prefab) {
+        public GameObject RequestInstance (GameObject prefab) {
             if (pool.ContainsKey (prefab)) {
                 GameObject instance = null;
                 List<GameObject> subPool = pool[prefab];
@@ -40,11 +40,11 @@ namespace UFramework.GameCommon {
                 return instance;
             } else {
                 pool.Add (prefab, new List<GameObject> ());
-                return requestInstance (prefab);
+                return RequestInstance (prefab);
             }
         }
 
-        public void returnInstance (GameObject target) {
+        public void ReturnInstance (GameObject target) {
             if (!target.activeSelf) {
                 return;
             }

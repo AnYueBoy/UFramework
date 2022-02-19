@@ -2,8 +2,8 @@ using UnityEngine;
 namespace UFramework.GameCommon {
 
     public interface IObjectPool {
-        GameObject requestInstance (GameObject prefab);
+        GameObject RequestInstance (GameObject prefab);
 
-        void returnInstance (GameObject target);
+        void ReturnInstance (GameObject target);
     }
 }

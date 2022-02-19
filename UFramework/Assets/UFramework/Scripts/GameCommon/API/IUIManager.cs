@@ -3,14 +3,14 @@ namespace UFramework.GameCommon {
 
     public interface IUIManager {
 
-        void init (Transform uiRoot);
+        void Init (Transform uiRoot);
         
-        void showBoard (string uiName, params object[] args);
+        void ShowBoard (string uiName, params object[] args);
 
-        void showDialog (string uiName, params object[] args);
+        void ShowDialog (string uiName, params object[] args);
 
-        void closeDialog (string uiName);
+        void CloseDialog (string uiName);
 
-        void hideAll ();
+        void HideAll ();
     }
 }

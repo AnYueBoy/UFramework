@@ -37,8 +37,8 @@ public class Test : MonoBehaviour {
         //     }
         // );
 
-        ListenerManager.getInstance ().add ("event1", this, this.testListener);
-        ListenerManager.getInstance ().add ("event2", this, this.testListener);
+        ListenerManager.GetInstance ().Add ("event1", this, this.testListener);
+        ListenerManager.GetInstance ().Add ("event2", this, this.testListener);
 
         InjectTest injectTest = new InjectTest ();
 
@@ -56,19 +56,19 @@ public class Test : MonoBehaviour {
     private void newTestListener (object sender, EventArgs generalEventArgs) { }
 
     public void event1 () {
-        ListenerManager.getInstance ().trigger ("event1");
+        ListenerManager.GetInstance ().Trigger ("event1");
     }
 
     public void event2 () {
-        ListenerManager.getInstance ().trigger ("event2");
+        ListenerManager.GetInstance ().Trigger ("event2");
     }
 
     public void unloadAll () {
-        ListenerManager.getInstance ().removeAll (this);
+        ListenerManager.GetInstance ().RemoveAll (this);
     }
 
     public void unloadAt () {
-        ListenerManager.getInstance ().removeAt ("event1", this);
+        ListenerManager.GetInstance ().RemoveAt ("event1", this);
     }
 
     private async void loadCube () {

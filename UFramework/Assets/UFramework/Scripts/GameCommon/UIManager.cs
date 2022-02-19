@@ -18,12 +18,12 @@ namespace UFramework.GameCommon {
 
         private Transform uiRoot;
 
-        public void init (Transform uiRoot) {
+        public void Init (Transform uiRoot) {
             this.uiRoot = uiRoot;
             this.currentBoard = null;
         }
 
-        public void showBoard (string uiName, params object[] args) {
+        public void ShowBoard (string uiName, params object[] args) {
             BaseUI targetUI = this.getUI (uiName);
             if (currentBoard != null && this.currentBoard == targetUI) {
                 return;
@@ -38,7 +38,7 @@ namespace UFramework.GameCommon {
             this.currentBoard = targetUI;
         }
 
-        public void hideAll () {
+        public void HideAll () {
             foreach (BaseUI targerUI in this.uiDic.Values) {
                 if (targerUI == null) {
                     continue;
@@ -47,11 +47,11 @@ namespace UFramework.GameCommon {
             }
         }
 
-        public void showDialog (string uiName, params object[] args) {
+        public void ShowDialog (string uiName, params object[] args) {
             this.showUI (uiName, args);
         }
 
-        public void closeDialog (string uiName) {
+        public void CloseDialog (string uiName) {
             this.hideUI (uiName);
         }
 
@@ -86,7 +86,7 @@ namespace UFramework.GameCommon {
                 uiNode.SetActive (true);
             }
 
-            targetUI.onShow (args);
+            targetUI.OnShow (args);
 
             return targetUI;
         }
