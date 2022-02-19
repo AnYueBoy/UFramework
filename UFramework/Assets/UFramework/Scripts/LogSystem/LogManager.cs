@@ -6,29 +6,29 @@
  * @Last Modified time: 2021-01-25 17:28:21
  */
 
+using UnityEngine;
 namespace UFramework.LogSystem {
-    using UnityEngine;
-    public class LogManager {
+    public class LogManager : ILogManager {
         private LogOutThread logOutThread = new LogOutThread ();
 
-        public void init () {
-            logOutThread.init ();
+        public void Init () {
+            logOutThread.Init ();
 
-            Application.logMessageReceived += unityLogCallback;
-            Application.logMessageReceivedThreaded += unityLogCallbackThread;
+            Application.logMessageReceived += UnityLogCallback;
+            Application.logMessageReceivedThreaded += UnityLogCallbackThread;
         }
 
-        private void unityLogCallbackThread (string log, string track, LogType logType) {
+        private void UnityLogCallbackThread (string log, string track, LogType logType) {
             LogInfo logInfo = new LogInfo (log, track, logType);
-            logOutThread.log (logInfo);
+            logOutThread.Log (logInfo);
         }
 
-        private void unityLogCallback (string log, string track, LogType logType) {
+        private void UnityLogCallback (string log, string track, LogType logType) {
             LogInfo logInfo = new LogInfo (log, track, logType);
         }
 
-        public void quit () {
-            logOutThread.quit ();
+        public void Quit () {
+            logOutThread.Quit ();
         }
     }
 }

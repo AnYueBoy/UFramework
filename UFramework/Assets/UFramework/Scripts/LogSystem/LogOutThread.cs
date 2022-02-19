@@ -4,12 +4,13 @@
  * @Description: 日志输出线程
  */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using UnityEngine;
+
 namespace UFramework.LogSystem {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading;
-    using System;
-    using UnityEngine;
 
     public class LogOutThread {
 
@@ -31,7 +32,7 @@ namespace UFramework.LogSystem {
         private bool isRunning = false;
         private StreamWriter logWriter = null;
 
-        public void init () {
+        public void Init () {
             this.writingLogQueue = new Queue<LogInfo> ();
             this.waitingLogQueue = new Queue<LogInfo> ();
             this.logLock = new object ();
@@ -58,13 +59,13 @@ namespace UFramework.LogSystem {
             this.logWriter = new StreamWriter (logPath);
             this.logWriter.AutoFlush = true;
             this.isRunning = true;
-            this.fileLogThread = new Thread (new ThreadStart (this.writeLog));
+            this.fileLogThread = new Thread (new ThreadStart (this.WriteLog));
             this.fileLogThread.Start ();
 
             Debug.Log (logPath);
         }
 
-        private void writeLog () {
+        private void WriteLog () {
             while (this.isRunning) {
                 if (this.writingLogQueue.Count == 0) {
                     lock (this.logLock) {
@@ -94,20 +95,20 @@ namespace UFramework.LogSystem {
             }
         }
 
-        public void log (LogInfo logData) {
+        public void Log (LogInfo logData) {
             lock (this.logLock) {
                 this.waitingLogQueue.Enqueue (logData);
                 Monitor.Pulse (this.logLock);
             }
         }
 
-        private void close () {
+        private void Close () {
             this.isRunning = false;
             this.logWriter.Close ();
         }
 
-        public void quit () {
-            this.close ();
+        public void Quit () {
+            this.Close ();
         }
     }
 }

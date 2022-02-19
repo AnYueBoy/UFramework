@@ -10,7 +10,8 @@ namespace UFramework.Bootstarp {
             IServiceProvider[] providerArray = new IServiceProvider[] {
                 new ProviderPromise (),
                 new ProviderTweener (),
-                new ProviderGameCommon ()
+                new ProviderGameCommon (),
+                new ProviderLogService ()
             };
 
             foreach (IServiceProvider provider in providerArray) {

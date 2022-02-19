@@ -4,8 +4,8 @@
  * @Description: log信息
  */
 
+using UnityEngine;
 namespace UFramework.LogSystem {
-    using UnityEngine;
     public class LogInfo {
         public string logContent;
         public string logTrack;
