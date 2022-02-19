@@ -83,23 +83,23 @@ namespace UFramework.GameCommon {
             return nativeAssets;
         }
 
-        [Obsolete ("unity not allow")]
-        public async Task<T> GetAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
-            T nativeAsset = this.findNativeAsset<T> (assetUrl);
-            if (nativeAsset != null) {
-                return nativeAsset;
-            }
+        // [Obsolete ("unity not allow")]
+        // public async Task<T> GetAssetByUrlAsyncOb<T> (string assetUrl) where T : Object {
+        //     T nativeAsset = this.findNativeAsset<T> (assetUrl);
+        //     if (nativeAsset != null) {
+        //         return nativeAsset;
+        //     }
 
-            T targetAsset = null;
-            targetAsset = await Task.Run (() => {
-                ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
-                PackAsset packageAsset = new PackAsset (assetUrl, request.asset);
-                assetPool.Add (assetUrl, packageAsset);
-                return request.asset as T;
-            });
+        //     T targetAsset = null;
+        //     targetAsset = await Task.Run (() => {
+        //         ResourceRequest request = Resources.LoadAsync<T> (assetUrl);
+        //         PackAsset packageAsset = new PackAsset (assetUrl, request.asset);
+        //         assetPool.Add (assetUrl, packageAsset);
+        //         return request.asset as T;
+        //     });
 
-            return targetAsset;
-        }
+        //     return targetAsset;
+        // }
 
         public void GetAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object {
             T nativeAsset = this.findNativeAsset<T> (assetUrl);

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 namespace UFramework.GameCommon {
     using UnityEngine;
     public interface IAssetsManager {
@@ -13,8 +12,6 @@ namespace UFramework.GameCommon {
         T GetAssetByUrlSync<T> (string assetUrl) where T : Object;
 
         List<PackAsset> GetAllAssetsByUrlSync<T> (string folderUrl) where T : Object;
-
-        Task<T> GetAssetByUrlAsyncOb<T> (string assetUrl) where T : Object;
 
         void GetAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object;
 
