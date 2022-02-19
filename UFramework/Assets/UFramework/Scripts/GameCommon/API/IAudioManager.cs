@@ -3,16 +3,16 @@ namespace UFramework.GameCommon {
 
     public interface IAudioManager {
 
-        void init (GameObject attach);
+        void Init (GameObject attach);
 
-        void playSound (string soundName);
+        void PlaySound (string soundName);
 
-        void playMusic (string musicName, bool isLoop = true);
+        void PlayMusic (string musicName, bool isLoop = true);
 
-        void pauseMusic ();
+        void PauseMusic ();
 
-        void stopMusic ();
+        void StopMusic ();
 
-        void resumeMusic ();
+        void ResumeMusic ();
     }
 }

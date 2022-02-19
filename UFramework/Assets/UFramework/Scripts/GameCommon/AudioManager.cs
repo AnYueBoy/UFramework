@@ -15,7 +15,7 @@ namespace UFramework.GameCommon {
 
         private AudioSource audioSource = null;
 
-        public void init (GameObject attach) {
+        public void Init (GameObject attach) {
             this.audioSource = attach.AddComponent<AudioSource> ();
         }
 
@@ -23,14 +23,14 @@ namespace UFramework.GameCommon {
         /// 播放音效
         /// </summary>
         /// <param name="soundName">音效名</param>
-        public void playSound (string soundName) {
+        public void PlaySound (string soundName) {
 
             AudioClip targetClip = this.getAudioClipByName (soundName);
 
             this.audioSource.PlayOneShot (targetClip);
         }
 
-        public void playMusic (string musicName, bool isLoop = true) {
+        public void PlayMusic (string musicName, bool isLoop = true) {
             if (!CommonUtil.isVialid (musicName)) {
                 return;
             }
@@ -47,7 +47,7 @@ namespace UFramework.GameCommon {
             this.audioSource.Play ();
         }
 
-        public void pauseMusic () {
+        public void PauseMusic () {
             if (!this.audioSource) {
                 return;
             }
@@ -63,7 +63,7 @@ namespace UFramework.GameCommon {
             this.audioSource.Pause ();
         }
 
-        public void stopMusic () {
+        public void StopMusic () {
             if (!this.audioSource) {
                 return;
             }
@@ -80,7 +80,7 @@ namespace UFramework.GameCommon {
             this.audioSource.clip = null;
         }
 
-        public void resumeMusic () {
+        public void ResumeMusic () {
             if (!this.audioSource) {
                 return;
             }
