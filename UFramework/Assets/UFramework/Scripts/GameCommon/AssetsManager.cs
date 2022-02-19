@@ -283,7 +283,7 @@ namespace UFramework.GameCommon {
         private Promise checkDependenciesAsync (string bundleName) {
             List<Promise> allPromise = new List<Promise> ();
             this.addAllDependenciesBundle (allPromise, bundleName);
-            return Promise.all (allPromise.ToArray ());
+            return Promise.All (allPromise.ToArray ());
         }
 
         private void addAllDependenciesBundle (List<Promise> promiseList, string bundleName) {
@@ -346,7 +346,7 @@ namespace UFramework.GameCommon {
         private Promise<AssetBundle> loadTargetBundleAsync (string bundleUrl) {
             if (this.bundleDic.ContainsKey (bundleUrl)) {
                 AssetBundle targetAssetBundle = this.bundleDic[bundleUrl];
-                return Promise<AssetBundle>.resolved (targetAssetBundle);
+                return Promise<AssetBundle>.Resolved (targetAssetBundle);
             }
 
             if (this.bundleMap.ContainsKey (bundleUrl)) {

@@ -11,12 +11,12 @@ using UnityEngine;
 namespace UFramework.Tween {
 
     public static class TweenExtension {
-        public static TweenerTransform<Vector3> pathTween (this Transform target, List<Vector3> pathList, float duration) {
+        public static TweenerTransform<Vector3> PathTween (this Transform target, List<Vector3> pathList, float duration) {
             if (pathList.Count <= 1) {
-                return moveTween (target, pathList[0], duration);
+                return MoveTween (target, pathList[0], duration);
             }
 
-            TweenerTransform<Vector3> tweener = App.Make<ITweenManager> ().spawnTweener<Vector3, TweenerTransform<Vector3>> ();
+            TweenerTransform<Vector3> tweener = App.Make<ITweenManager> ().SpawnTweener<Vector3, TweenerTransform<Vector3>> ();
             TweenerCore<Vector3> tweenerCore = new TweenerCore<Vector3> (
                 () => {
                     return target.transform.position;
@@ -38,14 +38,14 @@ namespace UFramework.Tween {
 
             tweenerCore.changeValue = Vector3.one * distance;
 
-            tweener.setTweenCore (tweenerCore);
-            tweener.setExtraData<List<Vector3>> (pathList);
-            tweener.setExecuteAction (tweener.pathTween);
+            tweener.SetTweenCore (tweenerCore);
+            tweener.SetExtraData<List<Vector3>> (pathList);
+            tweener.SetExecuteAction (tweener.PathTween);
             return tweener;
         }
 
-        public static TweenerTransform<Vector3> moveTween (this Transform target, Vector3 endPos, float duration) {
-            TweenerTransform<Vector3> tweener = App.Make<ITweenManager> ().spawnTweener<Vector3, TweenerTransform<Vector3>> ();
+        public static TweenerTransform<Vector3> MoveTween (this Transform target, Vector3 endPos, float duration) {
+            TweenerTransform<Vector3> tweener = App.Make<ITweenManager> ().SpawnTweener<Vector3, TweenerTransform<Vector3>> ();
 
             TweenerCore<Vector3> tweenerCore = new TweenerCore<Vector3> (
                 () => {
@@ -59,8 +59,8 @@ namespace UFramework.Tween {
 
             tweenerCore.changeValue = endPos - tweenerCore.beginValue;
 
-            tweener.setTweenCore (tweenerCore);
-            tweener.setExecuteAction (tweener.moveTween);
+            tweener.SetTweenCore (tweenerCore);
+            tweener.SetExecuteAction (tweener.MoveTween);
             return tweener;
         }
     }

@@ -17,54 +17,54 @@ namespace UFramework.Tween {
         private object extraData;
         private Action<Tweener<T>> tweenerOverCallback;
 
-        public void init (Action<Tweener<T>> tweenerOverCallback) {
+        public void Init (Action<Tweener<T>> tweenerOverCallback) {
             this.tweenerOverCallback = tweenerOverCallback;
         }
 
-        public void setExecuteAction (Action<float, TweenerCore<T>> actionHandler) {
+        public void SetExecuteAction (Action<float, TweenerCore<T>> actionHandler) {
             this.executeHandler = actionHandler;
         }
 
-        public void localUpdate (float dt) {
+        public void LocalUpdate (float dt) {
             executeHandler?.Invoke (dt, this.tweenerCore);
         }
 
-        public void setTweenCore (TweenerCore<T> tweenCore) {
+        public void SetTweenCore (TweenerCore<T> tweenCore) {
             this.tweenerCore = tweenCore;
         }
 
-        public void setExtraData<T1> (T1 extraData) {
+        public void SetExtraData<T1> (T1 extraData) {
             this.extraData = extraData;
         }
 
-        protected T1 getExtraData<T1> () {
+        protected T1 GetExtraData<T1> () {
             return (T1) this.extraData;
         }
 
-        private void resetExtraData () {
+        private void ResetExtraData () {
             this.extraData = null;
         }
 
-        public Tweener<T> setEase (EaseType easeType) {
+        public Tweener<T> SetEase (EaseType easeType) {
             this.tweenerCore.easeTye = easeType;
             return this;
         }
 
-        public Tweener<T> setCompleted (Action callback) {
+        public Tweener<T> SetCompleted (Action callback) {
             this.tweenerCore.completedCallback = callback;
             return this;
         }
 
-        private void triggerCompleted () {
+        private void TriggerCompleted () {
             this.tweenerCore.completedCallback?.Invoke ();
             this.tweenerCore.completedCallback = null;
         }
 
-        protected void tweenerCompleted () {
+        protected void TweenerCompleted () {
             this.executeHandler = null;
             this.timer = 0;
-            this.resetExtraData ();
-            this.triggerCompleted ();
+            this.ResetExtraData ();
+            this.TriggerCompleted ();
             this.tweenerOverCallback?.Invoke (this);
         }
     }

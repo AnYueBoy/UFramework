@@ -12,7 +12,7 @@ namespace UFramework.Promise {
 
     public interface IPromise<PromisedT> {
 
-        IPromise<PromisedT> catchs (Action<SException> onRejected);
+        IPromise<PromisedT> Catchs (Action<SException> onRejected);
 
         void Done ();
         void Done (Action<PromisedT> onResolved);

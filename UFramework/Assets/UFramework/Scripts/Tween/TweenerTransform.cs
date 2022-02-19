@@ -11,18 +11,18 @@ namespace UFramework.Tween {
 
     public class TweenerTransform<T> : Tweener<T> {
 
-        public void pathTween (float dt, TweenerCore<Vector3> tweenerCore) {
+        public void PathTween (float dt, TweenerCore<Vector3> tweenerCore) {
             this.timer += dt;
             if (this.timer > tweenerCore.duration) {
-                this.tweenerCompleted ();
+                this.TweenerCompleted ();
                 return;
             }
 
             float time = Mathf.Min (tweenerCore.duration, this.timer);
-            float ratioValue = EaseManager.getEaseFuncValue (tweenerCore.easeTye, time, tweenerCore.duration);
+            float ratioValue = EaseManager.GetEaseFuncValue (tweenerCore.easeTye, time, tweenerCore.duration);
             float curMoveDistance = tweenerCore.changeValue.x * ratioValue;
 
-            List<Vector3> pathList = this.getExtraData<List<Vector3>> ();
+            List<Vector3> pathList = this.GetExtraData<List<Vector3>> ();
             float cumulativeDis = 0;
             for (int i = 0; i < pathList.Count - 1; i++) {
                 Vector3 prePos = pathList[i];
@@ -41,15 +41,15 @@ namespace UFramework.Tween {
             }
         }
 
-        public void moveTween (float dt, TweenerCore<Vector3> tweenerCore) {
+        public void MoveTween (float dt, TweenerCore<Vector3> tweenerCore) {
             this.timer += dt;
             if (this.timer > tweenerCore.duration) {
-                this.tweenerCompleted ();
+                this.TweenerCompleted ();
                 return;
             }
 
             float time = Mathf.Min (tweenerCore.duration, this.timer);
-            float ratioValue = EaseManager.getEaseFuncValue (tweenerCore.easeTye, time, tweenerCore.duration);
+            float ratioValue = EaseManager.GetEaseFuncValue (tweenerCore.easeTye, time, tweenerCore.duration);
 
             Vector3 endPos = tweenerCore.changeValue * ratioValue + tweenerCore.beginValue;
             tweenerCore.setter (endPos);

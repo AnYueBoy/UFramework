@@ -15,9 +15,9 @@ namespace UFramework.Tween {
         private HashSet<ITweener> removeList = new HashSet<ITweener> ();
 
         private Dictionary<Type, List<ITweener>> tweenerPool = new Dictionary<Type, List<ITweener>> ();
-        public void localUpdate (float dt) {
+        public void LocalUpdate (float dt) {
             foreach (ITweener tweener in tweeners) {
-                tweener.localUpdate (dt);
+                tweener.LocalUpdate (dt);
             }
 
             foreach (ITweener removeTweener in removeList) {
@@ -27,7 +27,7 @@ namespace UFramework.Tween {
             removeList.Clear ();
         }
 
-        public T2 spawnTweener<T1, T2> () where T2 : Tweener<T1>, new () {
+        public T2 SpawnTweener<T1, T2> () where T2 : Tweener<T1>, new () {
             Type type = typeof (T2);
             T2 tweener = null;
             if (!tweenerPool.ContainsKey (type)) {
@@ -44,15 +44,15 @@ namespace UFramework.Tween {
                 }
             }
 
-            tweener.init ((Tweener<T1> tweenerInstance) => {
-                removeTween<T2> (tweenerInstance);
+            tweener.Init ((Tweener<T1> tweenerInstance) => {
+                RemoveTween<T2> (tweenerInstance);
             });
 
             tweeners.Add (tweener);
             return tweener;
         }
 
-        private void removeTween<T> (ITweener tweener) {
+        private void RemoveTween<T> (ITweener tweener) {
             removeList.Add (tweener);
             Type poolType = typeof (T);
             List<ITweener> tweenerList = tweenerPool[poolType];

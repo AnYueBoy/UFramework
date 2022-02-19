@@ -1,4 +1,4 @@
 interface ITweener {
 
-    void localUpdate (float dt);
+    void LocalUpdate (float dt);
 }
