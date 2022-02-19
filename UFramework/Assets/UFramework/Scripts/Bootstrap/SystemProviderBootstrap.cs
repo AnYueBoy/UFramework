@@ -2,6 +2,7 @@ using UFramework.Core;
 using UFramework.GameCommon;
 using UFramework.Promise;
 using UFramework.Tween;
+using UFramework.LogSystem;
 namespace UFramework.Bootstarp {
 
     public class SystemProviderBootstrap : IBootstrap {
@@ -11,7 +12,7 @@ namespace UFramework.Bootstarp {
                 new ProviderPromise (),
                 new ProviderTweener (),
                 new ProviderGameCommon (),
-                new ProviderLogService ()
+                new ProviderLogManager ()
             };
 
             foreach (IServiceProvider provider in providerArray) {
