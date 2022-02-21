@@ -22,7 +22,7 @@ namespace UFramework.AI.BehaviourTree {
             while (true) {
                 RunningStatus status = child.Update (this.agent, this.blackBoardMemory);
                 if (status == RunningStatus.Failed) {
-                    return RunningStatus.Failed;
+                    return nodeRunningState = RunningStatus.Failed;
                 }
 
                 if (status == RunningStatus.Executing) {
@@ -30,12 +30,12 @@ namespace UFramework.AI.BehaviourTree {
                 }
 
                 if (++m_repeatIndex == m_repeatCount) {
-                    return RunningStatus.Finished;
+                    return nodeRunningState = RunningStatus.Finished;
                 }
                 child.Reset ();
             }
 
-            return RunningStatus.Executing;
+            return nodeRunningState = RunningStatus.Executing;
         }
 
         protected override void OnReset () {

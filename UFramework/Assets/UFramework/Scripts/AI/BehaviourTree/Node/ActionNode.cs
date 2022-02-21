@@ -11,7 +11,7 @@ namespace UFramework.AI.BehaviourTree {
 
         protected override RunningStatus OnUpdate () {
             if (!this.OnEvaluate ()) {
-                return RunningStatus.Failed;
+                return nodeRunningState = RunningStatus.Failed;
             }
 
             RunningStatus runningStatus = RunningStatus.Finished;
@@ -24,7 +24,7 @@ namespace UFramework.AI.BehaviourTree {
                 runningStatus = OnExecute ();
             }
 
-            return runningStatus;
+            return nodeRunningState = runningStatus;
         }
 
         protected override void OnReset () {

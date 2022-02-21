@@ -27,7 +27,7 @@ namespace UFramework.AI.BehaviourTree {
                 previousNode.Reset ();
             }
 
-            return runningStatus;
+            return nodeRunningState = runningStatus;
         }
 
         protected override void OnReset () {

@@ -20,12 +20,14 @@ namespace UFramework.AI.BehaviourTree {
 
         protected BlackBoardMemory blackBoardMemory;
 
+        protected RunningStatus nodeRunningState;
+
         public RunningStatus Update (IAgent agent, BlackBoardMemory workingMemory) {
             this.agent = agent;
             this.blackBoardMemory = workingMemory;
 
             if (this.m_PreCondition != null && !this.m_PreCondition.IsTrue (agent)) {
-                return RunningStatus.Failed;
+                return nodeRunningState = RunningStatus.Failed;
             }
 
             return OnUpdate ();
@@ -51,7 +53,7 @@ namespace UFramework.AI.BehaviourTree {
 
         //implemented by inherited class
         protected virtual RunningStatus OnUpdate () {
-            return RunningStatus.Finished;
+            return nodeRunningState = RunningStatus.Finished;
         }
 
         protected virtual void OnReset () {
