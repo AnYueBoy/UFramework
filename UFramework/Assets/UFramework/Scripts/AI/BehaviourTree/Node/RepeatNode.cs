@@ -20,7 +20,7 @@ namespace UFramework.AI.BehaviourTree {
 
         protected override RunningStatus OnUpdate () {
             while (true) {
-                RunningStatus status = child.Update (this.agent, this.blackBoardMemory);
+                RunningStatus status = child.Update (agent, blackBoardMemory, deltaTime);
                 if (status == RunningStatus.Failed) {
                     return nodeRunningState = RunningStatus.Failed;
                 }
@@ -30,7 +30,7 @@ namespace UFramework.AI.BehaviourTree {
                 }
 
                 if (++m_repeatIndex == m_repeatCount) {
-                    return nodeRunningState = RunningStatus.Finished;
+                    return nodeRunningState = RunningStatus.Success;
                 }
                 child.Reset ();
             }

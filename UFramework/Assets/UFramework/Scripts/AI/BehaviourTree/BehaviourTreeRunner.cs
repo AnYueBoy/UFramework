@@ -7,8 +7,8 @@
 namespace UFramework.AI.BehaviourTree {
     public static class BehaviourTreeRunner {
 
-        public static void Execute (BaseNode root, IAgent agent, BlackBoardMemory workingMemory) {
-            RunningStatus status = root.Update (agent, workingMemory);
+        public static void Execute (BaseNode root, IAgent agent, BlackBoardMemory workingMemory, float deltaTime) {
+            RunningStatus status = root.Update (agent, workingMemory, deltaTime);
             if (status != RunningStatus.Executing) {
                 root.Reset ();
             }

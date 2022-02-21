@@ -12,6 +12,6 @@ namespace UFramework.AI.BehaviourTree {
 
         Executing,
 
-        Finished
+        Success
     }
 }

@@ -9,13 +9,13 @@ namespace UFramework.AI.BehaviourTree {
         private BaseNode m_lastRunningNode;
 
         protected override RunningStatus OnUpdate () {
-            RunningStatus runningStatus = RunningStatus.Finished;
+            RunningStatus runningStatus = RunningStatus.Success;
             BaseNode previousNode = m_lastRunningNode;
 
             // select running node
             m_lastRunningNode = null;
             foreach (BaseNode node in m_Children) {
-                runningStatus = node.Update (this.agent, this.blackBoardMemory);
+                runningStatus = node.Update (agent, blackBoardMemory, deltaTime);
                 if (runningStatus != RunningStatus.Failed) {
                     m_lastRunningNode = node;
                     break;
