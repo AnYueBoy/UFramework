@@ -1,12 +1,14 @@
+using UFramework.Bootstarp;
 using UFramework.Core;
 using UFramework.EventDispatcher;
 using UnityEngine;
+
 public class FrameworkTest : MonoBehaviour {
 
     public UFramework.Core.Application application;
     private void Awake () {
         application = UFramework.Core.Application.New ();
-        application.Bootstrap (new ProviderBootStart ());
+        application.Bootstrap (new SystemProviderBootstrap (this));
     }
     private void Start () {
         application.Init ();
