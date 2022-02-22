@@ -25,10 +25,7 @@ namespace UFramework.Util {
         /// <typeparam name="T">The type of array.</typeparam>
         /// <param name="sources">The specified array.</param>
         /// <returns>Returns an merged array.</returns>
-#pragma warning disable S2368
-        public static T[] Merge<T> (params T[][] sources)
-#pragma warning restore S2368
-        {
+        public static T[] Merge<T> (params T[][] sources) {
             if (sources == null || sources.Length <= 0) {
                 return Array.Empty<T> ();
             }
