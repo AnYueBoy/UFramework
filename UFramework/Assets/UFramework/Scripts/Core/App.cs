@@ -3,14 +3,10 @@ using UFramework.Container;
 
 namespace UFramework.Core {
     public abstract class App {
-        /// <summary>
-        /// The IApplication instance.
-        /// </summary>
         private static IApplication that;
 
-        /// <summary>
-        /// Callback when a new IApplication instance is created.
-        /// </summary>
+        private static event Action<IApplication> RaiseOnNewApplication;
+
         public static event Action<IApplication> OnNewApplication {
             add {
                 RaiseOnNewApplication += value;
@@ -21,14 +17,6 @@ namespace UFramework.Core {
             remove => RaiseOnNewApplication -= value;
         }
 
-        /// <summary>
-        /// Callback when a new IApplication instance is created.
-        /// </summary>
-        private static event Action<IApplication> RaiseOnNewApplication;
-
-        /// <summary>
-        /// Gets or Sets the IApplication instance.
-        /// </summary>
         public static IApplication That {
             get {
                 return that;
