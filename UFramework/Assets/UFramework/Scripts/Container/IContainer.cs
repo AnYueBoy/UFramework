@@ -4,11 +4,6 @@ namespace UFramework.Container {
     public interface IContainer {
 
         /// <summary>
-        /// Resolve the given type from the container.
-        /// </summary>
-        object this [string service] { get; set; }
-
-        /// <summary>
         /// Gets the binding data of the given service.
         /// </summary>
         IBindData GetBind (string service);

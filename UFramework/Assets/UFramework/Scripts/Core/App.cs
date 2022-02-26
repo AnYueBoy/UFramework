@@ -239,6 +239,24 @@ namespace UFramework.Core {
             return That.Factory<TService> (userParams);
         }
 
+        public static void Watch<TService> (Action method) {
+            That.Watch<TService> (method);
+        }
+
+        public static void Watch<TService> (Action<TService> method) {
+            That.Watch (method);
+        }
+
+        public static string Type2Service (Type type) {
+            return That.Type2Service (type);
+        }
+
+        public static string Type2Service<TService> () {
+            return That.Type2Service<TService> ();
+        }
+
+        #region 事件周期
+
         public static IContainer OnRelease (Action<IBindData, object> action) {
             return That.OnRelease (action);
         }
@@ -287,20 +305,6 @@ namespace UFramework.Core {
             return That.OnAfterResolving (closure);
         }
 
-        public static void Watch<TService> (Action method) {
-            That.Watch<TService> (method);
-        }
-
-        public static void Watch<TService> (Action<TService> method) {
-            That.Watch (method);
-        }
-
-        public static string Type2Service (Type type) {
-            return That.Type2Service (type);
-        }
-
-        public static string Type2Service<TService> () {
-            return That.Type2Service<TService> ();
-        }
+        #endregion
     }
 }

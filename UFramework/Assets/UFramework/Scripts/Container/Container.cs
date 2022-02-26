@@ -127,13 +127,6 @@ namespace UFramework.Container {
             instanceId = 0;
         }
 
-        public object this [string service] {
-            get => Make (service);
-            set {
-                GetBind (service)?.Unbind ();
-            }
-        }
-
         public void Tag (string tag, params string[] services) {
             Guard.ParameterNotNull (tag, nameof (tag));
             GuardFlushing ();
