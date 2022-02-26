@@ -7,8 +7,13 @@ public class FrameworkTest : MonoBehaviour {
 
     public UFramework.Core.Application application;
     private void Awake () {
+        App.OnNewApplication += (IApplication application) => {
+            Debug.Log ("框架创建");
+        };
         application = UFramework.Core.Application.New ();
         application.Bootstrap (new SystemProviderBootstrap (this));
+
+        Debug.Log ($"runtimeId: {App.GetRuntimeId()}");
     }
     private void Start () {
         application.Init ();
