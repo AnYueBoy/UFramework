@@ -92,10 +92,7 @@ namespace UFramework.GameCommon {
 
                 GameObject uiNode = App.Make<IObjectPool> ().RequestInstance (prefab);
                 RectTransform rectTransform = uiNode.GetComponent<RectTransform> ();
-                rectTransform.SetParent (this.uiRoot);
-                rectTransform.localPosition = Vector3.zero;
-                rectTransform.offsetMin = rectTransform.offsetMax = Vector2.zero;
-                rectTransform.localScale = Vector3.one;
+                rectTransform.SetParent (this.uiRoot, false);
                 targetUI = uiNode.GetComponent<BaseUI> ();
                 this.uiDic.Add (uiName, targetUI);
                 uiNode.SetActive (true);
