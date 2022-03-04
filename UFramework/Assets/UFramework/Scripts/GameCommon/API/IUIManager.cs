@@ -11,7 +11,11 @@ namespace UFramework.GameCommon {
 
         void ShowDialog (string uiName, params object[] args);
 
+        void ShowDialog<T> (params object[] args) where T : BaseUI;
+
         void CloseDialog (string uiName);
+
+        void CloseDialog<T> () where T : BaseUI;
 
         void HideAll ();
     }
