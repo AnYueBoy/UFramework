@@ -154,16 +154,6 @@ namespace UFramework.Container {
         }
 
         /// <summary>
-        /// Assign a set of tags to a given binding.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="tag">The tag name.</param>
-        public static void Tag<TService> (this IContainer container, string tag) {
-            container.Tag (tag, container.Type2Service (typeof (TService)));
-        }
-
-        /// <summary>
         /// Register an existing instance as shared in the container.
         /// </summary>
         /// <typeparam name="TService">The service name.</typeparam>

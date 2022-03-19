@@ -187,18 +187,6 @@ namespace UFramework.Core {
             That.Unbind<TService> ();
         }
 
-        public static object[] Tagged (string tag) {
-            return That.Tagged (tag);
-        }
-
-        public static void Tag (string tag, params string[] service) {
-            That.Tag (tag, service);
-        }
-
-        public static void Tag<TService> (string tag) {
-            That.Tag<TService> (tag);
-        }
-
         public static object Instance (string service, object instance) {
             return That.Instance (service, instance);
         }

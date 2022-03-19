@@ -40,11 +40,6 @@ namespace UFramework.Container {
         private readonly Dictionary<string, List<string>> aliasesReverse;
 
         /// <summary>
-        /// All of the registered tags.
-        /// </summary>
-        private readonly Dictionary<string, List<string>> tags;
-
-        /// <summary>
         /// All of the global resolving callbacks.
         /// </summary>
         private readonly List<Action<IBindData, object>> resolving;
@@ -106,7 +101,6 @@ namespace UFramework.Container {
 
         public Container (int prime = 64) {
             prime = Math.Max (8, prime);
-            tags = new Dictionary<string, List<string>> ((int) (prime * 0.25));
             aliases = new Dictionary<string, string> (prime * 4);
             aliasesReverse = new Dictionary<string, List<string>> (prime * 4);
             instances = new Dictionary<string, object> (prime * 4);
@@ -125,36 +119,6 @@ namespace UFramework.Container {
             UserParamsStack = new Stack<object[]> (32);
             flushing = false;
             instanceId = 0;
-        }
-
-        public void Tag (string tag, params string[] services) {
-            Guard.ParameterNotNull (tag, nameof (tag));
-            GuardFlushing ();
-
-            if (!tags.TryGetValue (tag, out List<string> collection)) {
-                tags[tag] = collection = new List<string> ();
-            }
-
-            if (services == null || services.Length <= 0) {
-                return;
-            }
-
-            foreach (string service in services) {
-                if (string.IsNullOrEmpty (service)) {
-                    continue;
-                }
-                collection.Add (service);
-            }
-        }
-
-        public object[] Tagged (string tag) {
-            Guard.ParameterNotNull (tag, nameof (tag));
-
-            if (!tags.TryGetValue (tag, out List<string> services)) {
-                throw new LogicException ($"Tag \"{tag}\" is not exists.");
-            }
-
-            return Arr.Map (services, (service) => Make (service));
         }
 
         public IBindData GetBind (string service) {
@@ -510,7 +474,6 @@ namespace UFramework.Container {
 
                 Guard.Requires<AssertException> (instances.Count <= 0);
 
-                tags.Clear ();
                 aliases.Clear ();
                 aliasesReverse.Clear ();
                 instances.Clear ();

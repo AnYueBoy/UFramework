@@ -54,16 +54,6 @@ namespace UFramework.Container {
         void Unbind (string service);
 
         /// <summary>
-        /// Assign a set of tags to a given binding.
-        /// </summary>
-        void Tag (string tag, params string[] services);
-
-        /// <summary>
-        /// Reslove all of the bindings for a given tag.
-        /// </summary>
-        object[] Tagged (string tag);
-
-        /// <summary>
         /// Register an existing instance as shared in the container.
         /// </summary>
         object Instance (string service, object instance);
