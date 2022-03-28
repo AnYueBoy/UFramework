@@ -29,8 +29,6 @@ namespace UFramework.Container
 
         private readonly HashSet<string> resolved;
 
-        private readonly Dictionary<string, List<Action<object>>> rebound;
-
         private bool flushing;
 
         protected Stack<string> BuildStack { get; }
@@ -49,7 +47,6 @@ namespace UFramework.Container
             resolved = new HashSet<string>();
             findType = new SortSet<Func<string, Type>, int>();
             findTypeCache = new Dictionary<string, Type>(prime * 4);
-            rebound = new Dictionary<string, List<Action<object>>>(prime);
 
             BuildStack = new Stack<string>(32);
             UserParamsStack = new Stack<object[]>(32);
@@ -166,11 +163,6 @@ namespace UFramework.Container
             {
                 Make(service);
             }
-            else
-            {
-                TriggerOnRebound(service);
-            }
-
             return bindData;
         }
 
@@ -179,7 +171,7 @@ namespace UFramework.Container
             return Resolve(service, userParams);
         }
 
-        protected object Resolve(string service, params object[] userParams)
+        private object Resolve(string service, params object[] userParams)
         {
             Guard.ParameterNotNull(service, nameof(service));
 
@@ -226,7 +218,7 @@ namespace UFramework.Container
             return instance;
         }
 
-        protected object CreateInstance(BindData makeServiceBindData, Type makeServiceType, object[] userParams)
+        private object CreateInstance(BindData makeServiceBindData, Type makeServiceType, object[] userParams)
         {
             if (IsUnableType(makeServiceType))
             {
@@ -291,11 +283,6 @@ namespace UFramework.Container
                 instancesReverse.Add(instance, service);
             }
 
-            if (isResolved)
-            {
-                TriggerOnRebound(service, instance);
-            }
-
             return instance;
         }
 
@@ -357,25 +344,6 @@ namespace UFramework.Container
             return this;
         }
 
-        public IContainer OnRebound(string service, Action<object> callback)
-        {
-            Guard.Requires<ArgumentNullException>(callback != null);
-            GuardFlushing();
-            if (!IsResolved(service) && !CanMake(service))
-            {
-                throw new LogicException(
-                    $"If you want use Rebound(Watch) , please {nameof(Bind)} or {nameof(Instance)} service first.");
-            }
-
-            if (!rebound.TryGetValue(service, out List<Action<object>> list))
-            {
-                rebound[service] = list = new List<Action<object>>();
-            }
-
-            list.Add(callback);
-            return this;
-        }
-
         public void Unbind(string service)
         {
             IBindData bind = GetBind(service);
@@ -401,7 +369,6 @@ namespace UFramework.Container
                 resolved.Clear();
                 BuildStack.Clear();
                 UserParamsStack.Clear();
-                rebound.Clear();
             }
             finally
             {
@@ -560,40 +527,12 @@ namespace UFramework.Container
             Trigger(bindData, instance, release);
         }
 
-        private void TriggerOnRebound(string service, object instance = null)
-        {
-            IList<Action<object>> callbacks = GetOnReboundCallbacks(service);
-            if (callbacks == null || callbacks.Count <= 0)
-            {
-                return;
-            }
-
-            IBindData bind = GetBind(service);
-            instance = instance ?? Make(service);
-
-            for (int index = 0; index < callbacks.Count; index++)
-            {
-                callbacks[index](instance);
-
-                // If it is a not singleton(static) binding then each callback is given a separate instance.
-                if (index + 1 < callbacks.Count && (bind == null || !bind.IsStatic))
-                {
-                    instance = Make(service);
-                }
-            }
-        }
-
         private void DisposeInstance(object instance)
         {
             if (instance is IDisposable disposable)
             {
                 disposable.Dispose();
             }
-        }
-
-        private IList<Action<object>> GetOnReboundCallbacks(string service)
-        {
-            return rebound.TryGetValue(service, out List<Action<object>> result) ? result : null;
         }
 
         private void AddClosure(Action<IBindData, object> closure, List<Action<IBindData, object>> list)

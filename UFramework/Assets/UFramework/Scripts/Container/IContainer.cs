@@ -35,8 +35,6 @@ namespace UFramework.Container {
 
         IContainer OnRelease (Action<IBindData, object> closure);
 
-        IContainer OnRebound (string service, Action<object> callback);
-
         string Type2Service (Type type);
     }
 }
