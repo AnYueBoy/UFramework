@@ -21,9 +21,6 @@ namespace UFramework.Core
         private DebugLevel debugLevel;
         private IEventDispatcher dispatcher;
 
-        /// <summary>
-        /// Initializes a new instance of the Application class.
-        /// </summary>
         public Application()
         {
             loadedProviders = new List<IServiceProvider>();
@@ -249,6 +246,17 @@ namespace UFramework.Core
             {
                 InitProvider(provider);
             }
+        }
+        
+        protected override void GuardConstruct(string method)
+        {
+            if (registering)
+            {
+                throw new LogicException(
+                    $"It is not allowed to make services or dependency injection in the {nameof(Register)} process, method:{method}");
+            }
+
+            base.GuardConstruct(method);
         }
 
         public bool IsRegistered(IServiceProvider provider)

@@ -7,7 +7,6 @@ namespace UFramework.Container {
     public sealed class BindData : IBindData {
 
         private readonly Container container;
-        private bool isDestroy;
         public string Service { get; }
         public Func<IContainer, object[], object> Concrete { get; }
         public bool IsStatic { get; }
@@ -21,14 +20,12 @@ namespace UFramework.Container {
 
             this.container = container;
             Service = service;
-            isDestroy = false;
 
             Concrete = concrete;
             IsStatic = isStatic;
         }
 
         public void Unbind () {
-            isDestroy = true;
             ((UFrameworkContainer) Container).Unbind (this);
         }
     }

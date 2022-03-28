@@ -169,7 +169,12 @@ namespace UFramework.Container
 
         public object Make(string service, params object[] userParams)
         {
+            GuardConstruct(nameof(Make));
             return Resolve(service, userParams);
+        }
+
+        protected virtual void GuardConstruct(string method)
+        {
         }
 
         private object Resolve(string service, params object[] userParams)
