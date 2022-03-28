@@ -26,6 +26,8 @@ namespace UFramework.Container {
         bool Release (object mixed);
 
         void Flush ();
+        
+        IContainer OnFindType (Func<string, Type> func, int priority = int.MaxValue);
 
         object Make (string service, params object[] userParams);
        

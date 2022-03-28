@@ -163,6 +163,7 @@ namespace UFramework.Container
             {
                 Make(service);
             }
+
             return bindData;
         }
 
@@ -464,6 +465,14 @@ namespace UFramework.Container
         protected string FormatService(string service)
         {
             return service.Trim();
+        }
+
+        public IContainer OnFindType(Func<string, Type> func, int priority = int.MaxValue)
+        {
+            Guard.Requires<ArgumentNullException>(func != null);
+            GuardFlushing();
+            findType.Add(func, priority);
+            return this;
         }
 
         protected Type SpeculatedServiceType(string service)
