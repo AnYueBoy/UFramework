@@ -28,115 +28,15 @@ namespace UFramework.Container {
         public static bool IsStatic<TService> (this IContainer container) {
             return container.IsStatic (container.Type2Service (typeof (TService)));
         }
-
-        public static bool IsAlias<TService> (this IContainer container) {
-            return container.IsAlias (container.Type2Service (typeof (TService)));
-        }
-
-        public static IContainer Alias<TAlias, TService> (this IContainer container) {
-            return container.Alias (container.Type2Service (typeof (TAlias)), container.Type2Service (typeof (TService)));
-        }
-
-        public static IBindData Bind<TService> (this IContainer container) {
-            return container.Bind (container.Type2Service (typeof (TService)), typeof (TService), false);
-        }
-
-        public static IBindData Bind<TService, TConcrete> (this IContainer container) {
-            return container.Bind (container.Type2Service (typeof (TService)), typeof (TConcrete), false);
-        }
-
-        public static IBindData Bind<TService> (this IContainer container, Func<IContainer, object[], object> concrete) {
-            Guard.Requires<ArgumentNullException> (concrete != null);
-            return container.Bind (container.Type2Service (typeof (TService)), concrete, false);
-        }
-
-        public static IBindData Bind<TService> (this IContainer container, Func<object[], object> concrete) {
-            Guard.Requires<ArgumentNullException> (concrete != null);
-            return container.Bind (container.Type2Service (typeof (TService)), (c, p) => concrete.Invoke (p), false);
-        }
-
-        public static IBindData Bind<TService> (this IContainer container, Func<object> concrete) {
-            Guard.Requires<ArgumentNullException> (concrete != null);
-            return container.Bind (container.Type2Service (typeof (TService)), (c, p) => concrete.Invoke (), false);
-        }
-
-        /// <summary>
-        /// Register a binding with the container.
-        /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="service">The service name.</param>
-        /// <param name="concrete">The service concrete.</param>
-        /// <returns>The service binding data.</returns>
-        public static IBindData Bind (this IContainer container, string service, Func<IContainer, object[], object> concrete) {
-            Guard.Requires<ArgumentNullException> (concrete != null);
-            return container.Bind (service, concrete, false);
-        }
-
-        /// <summary>
-        /// Register a singleton binding with the container.
-        /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="service">The service name.</param>
-        /// <param name="concrete">The service concrete.</param>
-        /// <returns>The service binding data.</returns>
-        public static IBindData Singleton (this IContainer container, string service, Func<IContainer, object[], object> concrete) {
-            return container.Bind (service, concrete, true);
-        }
-
-        /// <summary>
-        /// Register a singleton binding with the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <typeparam name="TConcrete">The service concrete.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <returns>The service binding data.</returns>
+        
         public static IBindData Singleton<TService, TConcrete> (this IContainer container) {
             return container.Bind (container.Type2Service (typeof (TService)), typeof (TConcrete), true);
         }
 
-        /// <summary>
-        /// Register a singleton binding with the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name (also indicates specific implementation).</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <returns>The service binding data.</returns>
         public static IBindData Singleton<TService> (this IContainer container) {
             return container.Bind (container.Type2Service (typeof (TService)), typeof (TService), true);
         }
 
-        /// <summary>
-        /// Register a singleton binding with the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="concrete">The service concrete.</param>
-        /// <returns>The service binding data.</returns>
-        public static IBindData Singleton<TService> (
-            this IContainer container,
-            Func<IContainer, object[], object> concrete) {
-            Guard.Requires<ArgumentNullException> (concrete != null);
-            return container.Bind (container.Type2Service (typeof (TService)), concrete, true);
-        }
-
-        /// <summary>
-        /// Register a singleton binding with the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="concrete">The service concrete.</param>
-        /// <returns>The service binding data.</returns>
-        public static IBindData Singleton<TService> (this IContainer container, Func<object[], object> concrete) {
-            Guard.Requires<ArgumentNullException> (concrete != null);
-            return container.Bind (container.Type2Service (typeof (TService)), (c, p) => concrete.Invoke (p), true);
-        }
-
-        /// <summary>
-        /// Register a singleton binding with the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="concrete">The service concrete.</param>
-        /// <returns>The service binding data.</returns>
         public static IBindData Singleton<TService> (
             this IContainer container,
             Func<object> concrete) {
@@ -144,32 +44,14 @@ namespace UFramework.Container {
             return container.Bind (container.Type2Service (typeof (TService)), (c, p) => concrete.Invoke (), true);
         }
 
-        /// <summary>
-        /// Unbinds a service from the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
         public static void Unbind<TService> (this IContainer container) {
             container.Unbind (container.Type2Service (typeof (TService)));
         }
 
-        /// <summary>
-        /// Register an existing instance as shared in the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="instance">The service instance.</param>
-        /// <returns>Object processed by the decorator.</returns>
         public static object Instance<TService> (this IContainer container, object instance) {
             return container.Instance (container.Type2Service (typeof (TService)), instance);
         }
 
-        /// <summary>
-        /// Release an existing instance in the container.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <returns>True if the instance is released. otherwise if instance not exits return false.</returns>
         public static bool Release<TService> (this IContainer container) {
             return container.Release (container.Type2Service (typeof (TService)));
         }
@@ -370,56 +252,13 @@ namespace UFramework.Container {
             });
         }
 
-        /// <summary>
-        /// Watch the specified service, trigger callback when rebinding the service.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="method">The callback.</param>
-        public static void Watch<TService> (this IContainer container, Action method) {
-            Guard.Requires<ArgumentNullException> (method != null);
-            container.OnRebound (container.Type2Service (typeof (TService)), (instance) => method ());
-        }
-
-        /// <summary>
-        /// Watch the specified service, trigger callback when rebinding the service.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="method">The callback.</param>
-        public static void Watch<TService> (this IContainer container, Action<TService> method) {
-            Guard.Requires<ArgumentNullException> (method != null);
-            container.OnRebound (container.Type2Service (typeof (TService)), (instance) => method ((TService) instance));
-        }
-
-        /// <summary>
-        /// Converts the given type to the service name.
-        /// </summary>
-        /// <typeparam name="TService">The given type.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <returns>The service name.</returns>
         public static string Type2Service<TService> (this IContainer container) {
             return container.Type2Service (typeof (TService));
         }
 
-        /// <summary>
-        /// Lazially resolve a service that is built when the call returns a callback.
-        /// </summary>
-        /// <typeparam name="TService">The service name.</typeparam>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="userParams">The user parameters.</param>
-        /// <returns>The callback.</returns>
         public static Func<TService> Factory<TService> (this IContainer container, params object[] userParams) {
             return () => (TService) container.Make (container.Type2Service (typeof (TService)), userParams);
         }
-
-        /// <summary>
-        /// Lazially resolve a service that is built when the call returns a callback.
-        /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance.</param>
-        /// <param name="service">The service name or alias.</param>
-        /// <param name="userParams">The user parameters.</param>
-        /// <returns>The callback.</returns>
         public static Func<object> Factory (this IContainer container, string service, params object[] userParams) {
             return () => container.Make (service, userParams);
         }
