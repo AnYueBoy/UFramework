@@ -21,32 +21,15 @@ namespace UFramework.Container {
 
             this.container = container;
             Service = service;
-            this.isDestroy = false;
+            isDestroy = false;
 
             Concrete = concrete;
             IsStatic = isStatic;
         }
 
-        public IBindData Alias (string alias) {
-            AssertDestroyed ();
-            Guard.ParameterNotNull (alias, nameof (alias));
-            Container.Alias (alias, Service);
-            return this;
-        }
-
-        public IBindData Alias<TAlias> () {
-            return this.Alias (this.Container.Type2Service (typeof (TAlias)));
-        }
-
         public void Unbind () {
             isDestroy = true;
             ((UFrameworkContainer) Container).Unbind (this);
-        }
-
-        private void AssertDestroyed () {
-            if (isDestroy) {
-                throw new LogicException ("The current instance is destroyed.");
-            }
         }
     }
 }
