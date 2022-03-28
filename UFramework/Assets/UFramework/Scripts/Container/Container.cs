@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 using UFramework.Exception;
 using UFramework.Util;
@@ -165,8 +164,6 @@ namespace UFramework.Container
 
             if (isStatic)
             {
-                // If it is "static" then solve this service directly
-                // The process of staticing the service triggers TriggerOnRebound
                 Make(service);
             }
             else
@@ -203,9 +200,6 @@ namespace UFramework.Container
             {
                 BindData bindData = GetBindFillable(service);
 
-                // We will start building a service instance.
-                // For the built service we will try to do dependency injection.
-
                 // 构建实例
                 instance = Build(bindData, userParams);
 
@@ -223,7 +217,7 @@ namespace UFramework.Container
             }
         }
 
-        protected virtual object Build(BindData makeServiceBindData, object[] userParams)
+        protected object Build(BindData makeServiceBindData, object[] userParams)
         {
             object instance = makeServiceBindData.Concrete != null
                 ? makeServiceBindData.Concrete(this, userParams)
@@ -232,7 +226,7 @@ namespace UFramework.Container
             return instance;
         }
 
-        protected virtual object CreateInstance(BindData makeServiceBindData, Type makeServiceType, object[] userParams)
+        protected object CreateInstance(BindData makeServiceBindData, Type makeServiceType, object[] userParams)
         {
             if (IsUnableType(makeServiceType))
             {
@@ -249,7 +243,7 @@ namespace UFramework.Container
             }
         }
 
-        protected virtual object CreateInstance(Type makeService, object[] userParams)
+        protected object CreateInstance(Type makeService, object[] userParams)
         {
             if (userParams == null || userParams.Length <= 0)
             {
@@ -388,7 +382,7 @@ namespace UFramework.Container
             bind?.Unbind();
         }
 
-        public virtual void Flush()
+        public void Flush()
         {
             try
             {
