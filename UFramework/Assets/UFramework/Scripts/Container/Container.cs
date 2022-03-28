@@ -321,11 +321,8 @@ namespace UFramework.Container
             }
             else
             {
-                if (!instances.TryGetValue(service, out instance))
-                {
-                    // Prevent the use of a string as a service name.
-                    service = GetServiceWithInstanceObject(mixed);
-                }
+                service = mixed as string;
+                instances.TryGetValue(service, out instance);
             }
 
             if (instance == null &&
@@ -344,11 +341,6 @@ namespace UFramework.Container
             }
 
             instances.Remove(service);
-
-            if (!HasOnReboundCallbacks(service))
-            {
-                // TODO:
-            }
 
             return true;
         }
@@ -401,7 +393,7 @@ namespace UFramework.Container
             try
             {
                 flushing = true;
-                foreach (var service in instanceTiming.GetIterator(false))
+                foreach (var service in instances.Keys)
                 {
                     Release(service);
                 }
@@ -428,10 +420,7 @@ namespace UFramework.Container
             return type.ToString();
         }
 
-        /// <summary>
-        /// Trigger all callbacks in specified list.
-        /// </summary>
-        internal static object Trigger(IBindData bindData, object instance, List<Action<IBindData, object>> list)
+        private static object Trigger(IBindData bindData, object instance, List<Action<IBindData, object>> list)
         {
             if (list == null)
             {
@@ -465,18 +454,13 @@ namespace UFramework.Container
                    (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
 
-        protected virtual string GetParamNeedsService(ParameterInfo baseParam)
-        {
-            return Type2Service(baseParam.ParameterType);
-        }
-
-        protected virtual string GetBuildStackDebugMessage()
+        protected string GetBuildStackDebugMessage()
         {
             string previous = string.Join(",", BuildStack.ToArray());
             return $"While building stack [{previous}]";
         }
 
-        protected virtual UnresolvableException MakeBuildFailedException(string makeService, Type makeServiceType,
+        protected UnresolvableException MakeBuildFailedException(string makeService, Type makeServiceType,
             SException innerException)
         {
             string message = makeServiceType != null
@@ -488,7 +472,7 @@ namespace UFramework.Container
             return new UnresolvableException(message, innerException);
         }
 
-        protected virtual string GetInnerExceptionMessage(SException innerException)
+        protected string GetInnerExceptionMessage(SException innerException)
         {
             if (innerException == null)
             {
@@ -509,31 +493,19 @@ namespace UFramework.Container
             return $" InnerException mesage stack: [{stack}]";
         }
 
-        protected virtual LogicException MakeCircularDependencyException(string service)
+        protected LogicException MakeCircularDependencyException(string service)
         {
             string message = $"Circular dependency detected while for [{service}].";
             message += GetBuildStackDebugMessage();
             return new LogicException(message);
         }
 
-        protected virtual string FormatService(string service)
+        protected string FormatService(string service)
         {
             return service.Trim();
         }
 
-        protected virtual void GuardUserParamsCount(int count)
-        {
-            if (count > 255)
-            {
-                throw new LogicException(
-                    $"Too many parameters, must be less or equal than 255 or override the {nameof(GuardUserParamsCount)} method.");
-            }
-        }
-
-        /// <summary>
-        /// Speculative service type based on specified service name.
-        /// </summary>
-        protected virtual Type SpeculatedServiceType(string service)
+        protected Type SpeculatedServiceType(string service)
         {
             if (findTypeCache.TryGetValue(service, out Type result))
             {
@@ -557,7 +529,7 @@ namespace UFramework.Container
             return instancesReverse.TryGetValue(instance, out string origin) ? origin : null;
         }
 
-        protected virtual void GuardServiceName(string service)
+        protected void GuardServiceName(string service)
         {
             foreach (char c in ServiceBanChars)
             {
@@ -628,12 +600,6 @@ namespace UFramework.Container
         private IList<Action<object>> GetOnReboundCallbacks(string service)
         {
             return rebound.TryGetValue(service, out List<Action<object>> result) ? result : null;
-        }
-
-        private bool HasOnReboundCallbacks(string service)
-        {
-            IList<Action<object>> result = GetOnReboundCallbacks(service);
-            return result != null && result.Count > 0;
         }
 
         private void AddClosure(Action<IBindData, object> closure, List<Action<IBindData, object>> list)
