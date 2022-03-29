@@ -10,29 +10,20 @@ namespace UFramework.Container
     public class Container : IContainer
     {
         private static readonly char[] ServiceBanChars = {'@', ':', '$'};
-
         private readonly Dictionary<string, BindData> bindings;
-
         private readonly Dictionary<string, object> instances;
+        private readonly HashSet<string> resolved;
 
         private readonly Dictionary<object, string> instancesReverse;
-
         private readonly List<Action<IBindData, object>> resolving;
-
         private readonly List<Action<IBindData, object>> afterResloving;
-
         private readonly List<Action<IBindData, object>> release;
 
         private readonly SortSet<Func<string, Type>, int> findType;
-
         private readonly Dictionary<string, Type> findTypeCache;
 
-        private readonly HashSet<string> resolved;
-
         private bool flushing;
-
         protected Stack<string> BuildStack { get; }
-
         protected Stack<object[]> UserParamsStack { get; }
 
         public Container(int prime = 64)
@@ -41,10 +32,12 @@ namespace UFramework.Container
             instances = new Dictionary<string, object>(prime * 4);
             instancesReverse = new Dictionary<object, string>(prime * 4);
             bindings = new Dictionary<string, BindData>(prime * 4);
+            resolved = new HashSet<string>();
+
             resolving = new List<Action<IBindData, object>>((int) (prime * 0.25));
             afterResloving = new List<Action<IBindData, object>>((int) (prime * 0.25));
             release = new List<Action<IBindData, object>>((int) (prime * 0.25));
-            resolved = new HashSet<string>();
+
             findType = new SortSet<Func<string, Type>, int>();
             findTypeCache = new Dictionary<string, Type>(prime * 4);
 
