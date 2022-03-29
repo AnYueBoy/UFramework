@@ -5,12 +5,8 @@ namespace UFramework.Container {
 
         string Service { get; }
 
-        IContainer Container { get; }
-
         Func<IContainer, object[], object> Concrete { get; }
 
         bool IsStatic { get; }
-
-        void Unbind ();
     }
 }

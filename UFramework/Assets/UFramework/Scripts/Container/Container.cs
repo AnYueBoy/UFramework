@@ -129,7 +129,7 @@ namespace UFramework.Container
 
         protected BindData MakeEmptyBindData(string service)
         {
-            return new BindData(this, service, null, false);
+            return new BindData(service, null, false);
         }
 
         public IBindData Bind(string service, Func<IContainer, object[], object> concrete, bool isStatic)
@@ -151,7 +151,7 @@ namespace UFramework.Container
             }
 
             // concrete 根据类型用反射创建实例
-            BindData bindData = new BindData(this, service, concrete, isStatic);
+            BindData bindData = new BindData(service, concrete, isStatic);
             bindings.Add(service, bindData);
 
             if (!IsResolved(service))
@@ -353,7 +353,7 @@ namespace UFramework.Container
         public void Unbind(string service)
         {
             IBindData bind = GetBind(service);
-            bind?.Unbind();
+            Unbind(bind);
         }
 
         public void Flush()
@@ -402,8 +402,13 @@ namespace UFramework.Container
             return instance;
         }
 
-        internal void Unbind(IBindData bindData)
+        private void Unbind(IBindData bindData)
         {
+            if (bindData == null)
+            {
+                return;
+            }
+
             GuardFlushing();
             Release(bindData.Service);
             bindings.Remove(bindData.Service);
