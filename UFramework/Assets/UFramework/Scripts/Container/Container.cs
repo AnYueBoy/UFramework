@@ -23,10 +23,10 @@ namespace UFramework.Container
         private readonly Dictionary<string, Type> findTypeCache;
 
         private bool flushing;
-        protected Stack<string> BuildStack { get; }
-        protected Stack<object[]> UserParamsStack { get; }
+        private Stack<string> BuildStack { get; }
+        private Stack<object[]> UserParamsStack { get; }
 
-        public Container(int prime = 64)
+        protected Container(int prime = 64)
         {
             prime = Math.Max(8, prime);
             instances = new Dictionary<string, object>(prime * 4);
@@ -107,13 +107,13 @@ namespace UFramework.Container
             return Bind(service, WrapperTypeBuilder(service, concrete), isStatic);
         }
 
-        protected Func<IContainer, object[], object> WrapperTypeBuilder(string service, Type concrete)
+        private Func<IContainer, object[], object> WrapperTypeBuilder(string service, Type concrete)
         {
             return (container, userParams) =>
                 ((Container) container).CreateInstance(GetBindFillable(service), concrete, userParams);
         }
 
-        protected BindData GetBindFillable(string service)
+        private BindData GetBindFillable(string service)
         {
             return service != null && bindings.TryGetValue(service, out BindData bindData)
                 ? bindData
@@ -208,7 +208,7 @@ namespace UFramework.Container
             }
         }
 
-        protected object Build(BindData makeServiceBindData, object[] userParams)
+        private object Build(BindData makeServiceBindData, object[] userParams)
         {
             object instance = makeServiceBindData.Concrete != null
                 ? makeServiceBindData.Concrete(this, userParams)
@@ -234,7 +234,7 @@ namespace UFramework.Container
             }
         }
 
-        protected object CreateInstance(Type makeService, object[] userParams)
+        private object CreateInstance(Type makeService, object[] userParams)
         {
             if (userParams == null || userParams.Length <= 0)
             {
@@ -272,7 +272,6 @@ namespace UFramework.Container
                 throw new LogicException($"The instance has been registered as a singleton in {realService}.");
             }
 
-            bool isResolved = IsResolved(service);
             Release(service);
 
             instances.Add(service, instance);
@@ -407,25 +406,33 @@ namespace UFramework.Container
             bindings.Remove(bindData.Service);
         }
 
-        protected bool IsBasicType(Type type)
+        private bool IsBasicType(Type type)
         {
             // IsPrimitive 判断是否为基元类型
             return type == null || type.IsPrimitive || type == typeof(string);
         }
 
-        protected bool IsUnableType(Type type)
+        private bool IsUnableType(Type type)
         {
             return type == null || type.IsAbstract || type.IsInterface || type.IsArray || type.IsEnum ||
                    (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
 
-        protected string GetBuildStackDebugMessage()
+
+        private LogicException MakeCircularDependencyException(string service)
+        {
+            string message = $"Circular dependency detected while for [{service}].";
+            message += GetBuildStackDebugMessage();
+            return new LogicException(message);
+        }
+
+        private string GetBuildStackDebugMessage()
         {
             string previous = string.Join(",", BuildStack.ToArray());
             return $"While building stack [{previous}]";
         }
 
-        protected UnresolvableException MakeBuildFailedException(string makeService, Type makeServiceType,
+        private UnresolvableException MakeBuildFailedException(string makeService, Type makeServiceType,
             SException innerException)
         {
             string message = makeServiceType != null
@@ -437,7 +444,7 @@ namespace UFramework.Container
             return new UnresolvableException(message, innerException);
         }
 
-        protected string GetInnerExceptionMessage(SException innerException)
+        private string GetInnerExceptionMessage(SException innerException)
         {
             if (innerException == null)
             {
@@ -456,13 +463,6 @@ namespace UFramework.Container
             } while ((innerException = innerException.InnerException) != null);
 
             return $" InnerException mesage stack: [{stack}]";
-        }
-
-        protected LogicException MakeCircularDependencyException(string service)
-        {
-            string message = $"Circular dependency detected while for [{service}].";
-            message += GetBuildStackDebugMessage();
-            return new LogicException(message);
         }
 
         protected string FormatService(string service)
@@ -497,12 +497,12 @@ namespace UFramework.Container
             return findTypeCache[service] = null;
         }
 
-        protected string GetServiceWithInstanceObject(object instance)
+        private string GetServiceWithInstanceObject(object instance)
         {
             return instancesReverse.TryGetValue(instance, out string origin) ? origin : null;
         }
 
-        protected void GuardServiceName(string service)
+        private void GuardServiceName(string service)
         {
             foreach (char c in ServiceBanChars)
             {
