@@ -37,9 +37,6 @@ public class Test : MonoBehaviour {
         //     }
         // );
 
-        ListenerManager.GetInstance ().Add ("event1", this, this.testListener);
-        ListenerManager.GetInstance ().Add ("event2", this, this.testListener);
-
         InjectTest injectTest = new InjectTest ();
 
         foreach (var property in injectTest.GetType ().GetProperties (BindingFlags.Public | BindingFlags.Instance)) {
@@ -54,22 +51,6 @@ public class Test : MonoBehaviour {
     }
 
     private void newTestListener (object sender, EventArgs generalEventArgs) { }
-
-    public void event1 () {
-        ListenerManager.GetInstance ().Trigger ("event1");
-    }
-
-    public void event2 () {
-        ListenerManager.GetInstance ().Trigger ("event2");
-    }
-
-    public void unloadAll () {
-        ListenerManager.GetInstance ().RemoveAll (this);
-    }
-
-    public void unloadAt () {
-        ListenerManager.GetInstance ().RemoveAt ("event1", this);
-    }
 
     private void loadCubeCallback () {
         assetManager.GetAssetByUrlAsync<GameObject> ("Shape/Cube", (res) => {
@@ -94,10 +75,7 @@ public class Test : MonoBehaviour {
         releaseCompleted = true;
         Debug.Log ("releaseComplete : " + releaseCompleted);
 
-        bool result = assetManager.TryReleaseAsset ("Shape/Cube");
-        if (result) {
-            Debug.Log ("卸载成功");
-        }
+        assetManager.TryReleaseAsset ("Shape/Cube");
     }
 
     private async Task<bool> loadResOne () {

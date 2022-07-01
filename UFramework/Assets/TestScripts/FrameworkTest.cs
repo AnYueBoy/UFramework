@@ -34,8 +34,8 @@ public class FrameworkTest : MonoBehaviour {
     }
 
     private void handlerEvent (object sender, EventParam e) {
-        object value1 = e.value[0];
-        Debug.Log ($"sender {sender} params: {e.value[0]}");
+        object value1 = e.Value[0];
+        Debug.Log ($"sender {sender} params: {e.Value[0]}");
     }
 
     public void clickEvent () {

@@ -5,45 +5,35 @@
  * @Last Modified by: l hy
  * @Last Modified time: 2021-01-21 22:26:24
  */
+
 using UnityEngine;
-namespace UFramework.GameCommon {
-    public class PackAsset {
 
-        public string assetUrl;
-        private Object _targetAsset;
+namespace UFramework.GameCommon
+{
+    public class PackAsset
+    {
+        private string assetUrl;
+        private Object targetAsset;
 
-        private int referenceCounter = 0;
-
-        public PackAsset (string assetUrl, Object targetAsset) {
+        public PackAsset(string assetUrl, Object targetAsset)
+        {
             this.assetUrl = assetUrl;
-            this._targetAsset = targetAsset;
+            this.targetAsset = targetAsset;
         }
 
-        public Object TargetAsset {
-            get {
-                this.AddRef ();
-                return this._targetAsset;
-            }
-        }
+        public Object TargetAsset => targetAsset;
+        public string AssetUrl => assetUrl;
 
-        private void AddRef () {
-            this.referenceCounter++;
-        }
-
-        public bool ReleaseAsset () {
-            this.referenceCounter--;
-            if (this.referenceCounter > 0) {
-                return false;
-            }
-
+        public void ReleaseAsset()
+        {
             // UnloadAsset 不能卸载 GameObject、Component和AssetBundle 这三种资源
-            if (this.TargetAsset is GameObject) {
-                Resources.UnloadUnusedAssets ();
-                return true;
+            if (TargetAsset is GameObject)
+            {
+                Resources.UnloadUnusedAssets();
+                return;
             }
-            Resources.UnloadAsset (this.TargetAsset);
-            return true;
-        }
 
+            Resources.UnloadAsset(TargetAsset);
+        }
     }
 }

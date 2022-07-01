@@ -31,7 +31,8 @@ namespace UFramework.GameCommon {
         }
 
         public void PlayMusic (string musicName, bool isLoop = true) {
-            if (!CommonUtil.isVialid (musicName)) {
+            if (string.IsNullOrEmpty(musicName))
+            {
                 return;
             }
 

@@ -511,8 +511,10 @@
                PromisedT[] results = new PromisedT[remainingCount];
                Promise<IEnumerable<PromisedT>> resultPromise = new Promise<IEnumerable<PromisedT>> ();
 
-               for (var index = 0; index < promises.Length; index++) {
-                   IPromise<PromisedT> promise = promises[index];
+               for (var index = 0; index < promises.Length; index++)
+               {
+                   int curIndex = index;
+                   IPromise<PromisedT> promise = promises[curIndex];
                    promise
                        .Catchs ((SException exception) => {
                            if (resultPromise.curState == PromiseState.Pending) {
@@ -520,7 +522,7 @@
                            }
                        })
                        .Then ((PromisedT result) => {
-                           results[index] = result;
+                           results[curIndex] = result;
                            remainingCount--;
                            if (remainingCount <= 0) {
                                resultPromise.Resolve (results);

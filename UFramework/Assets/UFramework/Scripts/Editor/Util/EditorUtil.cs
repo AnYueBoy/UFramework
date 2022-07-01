@@ -41,7 +41,7 @@ namespace UFramework.Editor.Util {
                     return "Linux";
 
                 default:
-                    // FIXME: other platfrom not support
+                    // FIXME: other platform not support
                     return null;
             }
 

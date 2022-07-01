@@ -7,16 +7,12 @@
 using System;
 namespace UFramework.EventDispatcher {
     public class EventParam {
-        private object[] _data;
+        private readonly object[] data;
 
         public EventParam (params object[] data) {
-            _data = data;
+            this.data = data;
         }
 
-        public object[] value {
-            get {
-                return _data;
-            }
-        }
+        public object[] Value => data;
     }
 }

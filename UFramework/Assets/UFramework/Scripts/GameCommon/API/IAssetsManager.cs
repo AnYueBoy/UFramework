@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using UFramework.Promise;
+using UnityEngine;
+using Object = UnityEngine.Object;
 namespace UFramework.GameCommon {
-    using UnityEngine;
     public interface IAssetsManager {
         /// <summary>
         ///  加载Bundle清单文件
@@ -15,7 +17,9 @@ namespace UFramework.GameCommon {
 
         void GetAssetByUrlAsync<T> (string assetUrl, Action<T> callback) where T : Object;
 
-        bool TryReleaseAsset (string assetUrl);
+        Promise<List<T>> GetAssetsByListAsync<T>(params string[] assetsUrlList) where T : Object;
+
+        void TryReleaseAsset (string assetUrl);
         #endregion
 
         #region Bundle下加载资源接口
@@ -28,7 +32,7 @@ namespace UFramework.GameCommon {
 
         void GetAllAssetsByBundleASync<T> (string bundleName, Action<List<PackAsset>> callback) where T : Object;
 
-        bool TryReleaseBundle (string bundleName, bool unloadAllLoadedObjects = false);
+        void TryReleaseBundle (string bundleName, bool unloadAllLoadedObjects = false);
 
         #endregion
     }
