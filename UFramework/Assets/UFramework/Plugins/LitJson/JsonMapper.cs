@@ -62,7 +62,7 @@ namespace LitJson
         private Type element_type;
         private bool is_dictionary;
 
-        private IDictionary<string, PropertyMetadata> properties;
+        private IDictionary<object, PropertyMetadata> properties;
 
 
         public Type ElementType {
@@ -81,7 +81,7 @@ namespace LitJson
             set { is_dictionary = value; }
         }
 
-        public IDictionary<string, PropertyMetadata> Properties {
+        public IDictionary<object, PropertyMetadata> Properties {
             get { return properties; }
             set { properties = value; }
         }
@@ -205,7 +205,7 @@ namespace LitJson
             if (type.GetInterface ("System.Collections.IDictionary") != null)
                 data.IsDictionary = true;
 
-            data.Properties = new Dictionary<string, PropertyMetadata> ();
+            data.Properties = new Dictionary<object, PropertyMetadata> ();
 
             foreach (PropertyInfo p_info in type.GetProperties ()) {
                 if (p_info.Name == "Item") {
@@ -437,7 +437,7 @@ namespace LitJson
                     if (reader.Token == JsonToken.ObjectEnd)
                         break;
 
-                    string property = (string) reader.Value;
+                    object property = reader.Value;
 
                     if (t_data.Properties.ContainsKey (property)) {
                         PropertyMetadata prop_data =
@@ -473,6 +473,17 @@ namespace LitJson
                             }
                         }
 
+                        if (t_data.IsDictionary)
+                        {
+                            var dicTypes = instance.GetType().GetGenericArguments();
+                            var converter = System.ComponentModel.TypeDescriptor.GetConverter(dicTypes[0]);
+                            if (converter != null)
+                            {
+                                property = converter.ConvertFromString((string)property);
+                                t_data.ElementType = dicTypes[1];
+                            }
+                        }
+ 
                         ((IDictionary) instance).Add (
                             property, ReadValue (
                                 t_data.ElementType, reader));
