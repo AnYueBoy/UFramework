@@ -4,10 +4,13 @@
  * @Description: 停止事件派发接口
  */
 
-namespace UFramework.EventDispatcher {
+namespace UFramework.EventDispatcher
+{
+    public interface IStoppableEvent
+    {
+        bool IsStopEvent { get;  }
+        EventParam StopEvent();
 
-    public interface IStoppableEvent {
-
-        bool IsPropagationStopped { get; }
+        EventParam DeliverEvent();
     }
 }

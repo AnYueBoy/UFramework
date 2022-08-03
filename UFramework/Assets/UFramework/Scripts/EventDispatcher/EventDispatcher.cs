@@ -3,77 +3,100 @@
  * @Date: 2022-01-13 16:43:23 
  * @Description: 事件派发
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UFramework.Exception;
 using UFramework.Util;
+using UnityEngine;
 
-namespace UFramework.EventDispatcher {
-    public class EventDispatcher : IEventDispatcher {
+namespace UFramework.EventDispatcher
+{
+    public class EventDispatcher : IEventDispatcher
+    {
+        private readonly Dictionary<string, IList<EventHandler<EventParam>>> handlerDic;
 
-        private readonly Dictionary<string, IList<EventHandler<EventParam>>> listeners;
-
-        public EventDispatcher () {
-            listeners = new Dictionary<string, IList<EventHandler<EventParam>>> ();
+        public EventDispatcher()
+        {
+            handlerDic = new Dictionary<string, IList<EventHandler<EventParam>>>();
         }
 
-        public virtual bool AddListener (string eventName, EventHandler<EventParam> handler) {
-            if (string.IsNullOrEmpty (eventName) || handler == null) {
+        public bool AddListener(string eventName, EventHandler<EventParam> handler)
+        {
+            if (string.IsNullOrEmpty(eventName) || handler == null)
+            {
                 return false;
             }
 
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
-                listeners[eventName] = handlers = new List<EventHandler<EventParam>> ();
-            } else if (handlers.Contains (handler)) {
+            if (!handlerDic.TryGetValue(eventName, out IList<EventHandler<EventParam>> handlerList))
+            {
+                handlerDic[eventName] = handlerList = new List<EventHandler<EventParam>>();
+            }
+
+            if (handlerList.Contains(handler))
+            {
+                Debug.LogWarning(
+                    $"Repeat event handler been added. eventName: {eventName}, handler {handler.GetType().Name}");
                 return false;
             }
 
-            handlers.Add (handler);
+            handlerList.Add(handler);
             return true;
         }
 
-        public void Raise (string eventName, object sender, EventParam e = null) {
-            Guard.Requires<LogicException> (!(sender is EventArgs), $"Passed event args for the parameter {sender},Did you make a wrong method call?");
-            e = e??new EventParam ();
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
+        public void Raise(string eventName, object sender, EventParam e = null)
+        {
+            if (!handlerDic.TryGetValue(eventName, out IList<EventHandler<EventParam>> handlers))
+            {
                 return;
             }
 
-            foreach (EventHandler<EventParam> listener in handlers) {
-                if (e is IStoppableEvent stoppableEvent && stoppableEvent.IsPropagationStopped) {
+            e = e ?? new EventParam();
+
+            foreach (EventHandler<EventParam> listener in handlers)
+            {
+                if (e.IsStopEvent)
+                {
+                    listener(sender, e);
                     break;
                 }
 
-                listener (sender, e);
+                listener(sender, e);
             }
-
         }
 
-        public virtual EventHandler<EventParam>[] GetListeners (string eventName) {
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
-                return Array.Empty<EventHandler<EventParam>> ();
+        public IList<EventHandler<EventParam>> GetListeners(string eventName)
+        {
+            if (handlerDic.ContainsKey(eventName))
+            {
+                return handlerDic[eventName];
             }
 
-            return handlers.ToArray ();
+            return new List<EventHandler<EventParam>>();
         }
 
-        public bool HasListener (string eventName) {
-            return listeners.ContainsKey (eventName);
+        public bool HasListener(string eventName)
+        {
+            return handlerDic.ContainsKey(eventName);
         }
 
-        public bool RemoveListener (string eventName, EventHandler<EventParam> handler = null) {
-            if (handler == null) {
-                return listeners.Remove (eventName);
+        public bool RemoveListener(string eventName, EventHandler<EventParam> handler = null)
+        {
+            if (handler == null)
+            {
+                return handlerDic.Remove(eventName);
             }
 
-            if (!listeners.TryGetValue (eventName, out IList<EventHandler<EventParam>> handlers)) {
+            if (!handlerDic.TryGetValue(eventName, out IList<EventHandler<EventParam>> handlers))
+            {
                 return false;
             }
 
-            bool status = handlers.Remove (handler);
-            if (handlers.Count <= 0) {
-                listeners.Remove (eventName);
+            bool status = handlers.Remove(handler);
+            if (handlers.Count <= 0)
+            {
+                handlerDic.Remove(eventName);
             }
 
             return status;

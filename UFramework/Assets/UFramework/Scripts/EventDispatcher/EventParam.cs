@@ -5,14 +5,34 @@
  */
 
 using System;
-namespace UFramework.EventDispatcher {
-    public class EventParam {
-        private readonly object[] data;
 
-        public EventParam (params object[] data) {
+namespace UFramework.EventDispatcher
+{
+    public class EventParam : EventArgs, IStoppableEvent
+    {
+        private readonly object[] data;
+        private bool isStopEvent;
+
+        public EventParam(params object[] data)
+        {
             this.data = data;
+            isStopEvent = false;
         }
 
         public object[] Value => data;
+
+        public bool IsStopEvent => isStopEvent;
+
+        public EventParam StopEvent()
+        {
+            isStopEvent = true;
+            return this;
+        }
+
+        public EventParam DeliverEvent()
+        {
+            isStopEvent = false;
+            return this;
+        }
     }
 }

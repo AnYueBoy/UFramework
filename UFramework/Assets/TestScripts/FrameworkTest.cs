@@ -3,43 +3,38 @@ using UFramework.Core;
 using UFramework.EventDispatcher;
 using UnityEngine;
 
-public class FrameworkTest : MonoBehaviour {
-
+public class FrameworkTest : MonoBehaviour
+{
     public UFramework.Core.Application application;
-    private void Awake () {
-        App.OnNewApplication += (IApplication application) => {
-            Debug.Log ("框架创建");
-        };
-        application = UFramework.Core.Application.New ();
-        application.Bootstrap (new SystemProviderBootstrap (this));
 
-        Debug.Log ($"runtimeId: {App.GetRuntimeId()}");
-    }
-    private void Start () {
-        application.Init ();
+    private void Awake()
+    {
+        App.OnNewApplication += (IApplication application) => { Debug.Log("框架创建"); };
+        application = UFramework.Core.Application.New();
+        application.Bootstrap(new SystemProviderBootstrap(this));
 
-        var log1 = App.Make<LogManager> ("Are you ready?");
-        var log2 = App.Make<LogManager> ("Log2");
-        if (log1 == log2) {
-            Debug.Log ("same instance");
-        } else {
-            Debug.Log ("not same instacne");
-        }
-
-        Debug.Log ($"id: {    UFramework.Core.Application.Version}");
+        Debug.Log($"runtimeId: {App.GetRuntimeId()}");
     }
 
-    private void OnEnable () {
-        App.Make<IEventDispatcher> ().AddListener ("TestEvent", handlerEvent);
+    private void Start()
+    {
+        application.Init();
     }
 
-    private void handlerEvent (object sender, EventParam e) {
-        object value1 = e.Value[0];
-        Debug.Log ($"sender {sender} params: {e.Value[0]}");
+    private void OnEnable()
+    {
+        App.Make<IEventDispatcher>().AddListener("TestEvent", EventOne);
+        App.Make<IEventDispatcher>().AddListener("TestEvent", EventTwo);
+        App.Make<IEventDispatcher>().Raise("TestEvent", this, new EventParam("事件触发", "1").StopEvent());
     }
 
-    public void clickEvent () {
-        App.Make<IEventDispatcher> ().Raise ("TestEvent", this, new EventParam (1, "12"));
+    private void EventOne(object sender, EventParam param)
+    {
+        Debug.LogWarning($"param{param.Value[0]} one");
     }
 
+    private void EventTwo(object sender, EventParam param)
+    {
+        Debug.LogWarning($"param{param.Value[0]} two");
+    }
 }
