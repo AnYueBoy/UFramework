@@ -121,7 +121,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &632196060
+--- !u!1 &480115056
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,8 +129,110 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 632196062}
-  - component: {fileID: 632196061}
+  - component: {fileID: 480115058}
+  - component: {fileID: 480115057}
+  m_Layer: 0
+  m_Name: TypeSpecificsOndinTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &480115057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480115056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4890c372ce7e1a543b6834fe7811c040, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  singleObject: {fileID: 0}
+  assetsList: []
+  Object: {fileID: 0}
+  AutoPopulatedWhenInspected: []
+  AllPrefabsWithLayerName: []
+  PrefabsStartingWithRock: []
+  GameObjectsWithTag: []
+  MyRigidbodyPrefabs: []
+  AnyAllMaterials: {fileID: 0}
+  ListOfAllMaterials: []
+  NoTreeView: {fileID: 0}
+  ScriptableObjectsFromFolder: {fileID: 0}
+  ScriptableObjectsFromMultipleFolders: {fileID: 0}
+  AssetDatabaseSearchFilters: {fileID: 0}
+  DisableListAddButtonBehaviour: []
+  DisableListElementBehaviour: []
+  ExcludeExistingValuesInList: []
+  DisableUniqueListBehaviour: []
+  ExpandAllMenuItems: []
+  CustomDropdownTitle: []
+  ChildOrSelfTransform: {fileID: 0}
+  ChildGameObject: {fileID: 0}
+  Lights: []
+  ColorOptions: {r: 0, g: 0, b: 0, a: 0}
+  ColorArray: []
+  ColorPalettes: []
+  SomeColor: {r: 0, g: 0, b: 0, a: 0}
+  SomeEnumField: 0
+  sceneTool: 0
+  DefaultEnumBitmask: 0
+  SomeEnumOtherField: 0
+  unityProjectPath: 
+  RelativeToParentPath: 
+  ScriptFiles: 
+  AbsolutePath: 
+  ExistingPath: 
+  UnityProjectPath: 
+  InlineObject: {fileID: 0}
+  Item:
+    A: 
+    B: 0
+    Hidden: 0
+  Table:
+  - A: 
+    B: 0
+    Hidden: 0
+  - A: 
+    B: 0
+    Hidden: 0
+  - A: 
+    B: 0
+    Hidden: 0
+  Hidden: {fileID: 0}
+  Shown: {fileID: 0}
+  UnityMultilineField: 
+  WideMultilineTextField: 
+  regularPreviewFiled: {fileID: 0}
+  sceneObject: {fileID: 0}
+--- !u!4 &480115058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480115056}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 722637828}
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &517830706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 517830708}
+  - component: {fileID: 517830707}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -138,13 +240,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &632196061
+--- !u!108 &517830707
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632196060}
+  m_GameObject: {fileID: 517830706}
   m_Enabled: 1
   serializedVersion: 10
   m_Type: 1
@@ -199,13 +301,13 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!4 &632196062
+--- !u!4 &517830708
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632196060}
+  m_GameObject: {fileID: 517830706}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -213,7 +315,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1718249703
+--- !u!1 &535593324
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,10 +323,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1718249706}
-  - component: {fileID: 1718249705}
-  - component: {fileID: 1718249704}
-  - component: {fileID: 1718249707}
+  - component: {fileID: 535593327}
+  - component: {fileID: 535593326}
+  - component: {fileID: 535593325}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -232,21 +333,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1718249704
+--- !u!81 &535593325
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1718249703}
+  m_GameObject: {fileID: 535593324}
   m_Enabled: 1
---- !u!20 &1718249705
+--- !u!20 &535593326
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1718249703}
+  m_GameObject: {fileID: 535593324}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -283,13 +384,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1718249706
+--- !u!4 &535593327
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1718249703}
+  m_GameObject: {fileID: 535593324}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -297,15 +398,129 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1718249707
+--- !u!1 &722637827
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 722637828}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &722637828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722637827}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 480115058}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1104410813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1104410815}
+  - component: {fileID: 1104410814}
+  m_Layer: 0
+  m_Name: EssentialsOdinTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1104410814
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1718249703}
+  m_GameObject: {fileID: 1104410813}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e72381989b7bcc49ad6c4541f6f3148, type: 3}
+  m_Script: {fileID: 11500000, guid: cb280b92ccee0854fa049bf2b0fa3996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onlyAssets: []
+  onlyScenesObjects:
+  - {fileID: 517830706}
+  customDrawerStatic: 1.03
+  from: 1.62
+  to: 10
+  customDrawerInstance: 3.96
+  appendRange: 5.33
+  customDrawerArrayNodeLabel:
+  - 1.62
+  - 1.62
+  - 8.99
+  filed: 0
+  colorInt: 20
+  wideColor: {r: 0.702, g: 0.451, b: 0.059, a: 1}
+  property: 
+  otherProperty: 
+  requireNode: {fileID: 0}
+  dynamicNode: {fileID: 0}
+  perks:
+  - name: Old Sage
+    effect:
+    - skill: 4
+      valuel: 2
+    - skill: 3
+      valuel: 1
+  - name: Criminal
+    effect:
+    - skill: 2
+      valuel: 3
+    - skill: 2
+      valuel: 4
+  - name: Born
+    effect:
+    - skill: 5
+      valuel: 2
+    - skill: 4
+      valuel: 3
+  assetNode: {fileID: 0}
+  someSize1: 256
+  someSize2: 256
+  someSize3: 256
+  someMonoBehaviour: {fileID: 1104410814}
+  FilteredEnum: 57
+  IntTreview: 02000000020000000700000003000000
+  UniqueGameobjectList:
+  - {fileID: 517830706}
+  - {fileID: 1104410813}
+  - {fileID: 535593324}
+  UniqueGameobjectListMode2:
+  - {fileID: 517830706}
+  - {fileID: 535593324}
+  - {fileID: 1104410813}
+--- !u!4 &1104410815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104410813}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
