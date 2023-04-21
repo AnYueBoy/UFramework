@@ -486,6 +486,18 @@ namespace LitJson
             }
             else if (reader.Token == JsonToken.ObjectStart)
             {
+                // 需要考虑被集合包裹下多态的情况
+                if (TypeIsPolymorphismAttribute(value_type))
+                {
+                    reader.Read(); // __ASSEMBLY__
+                    reader.Read();
+                    string assembly = (string)reader.Value;
+                    reader.Read(); // __TYPE__
+                    reader.Read();
+                    string type = (string)reader.Value;
+                    value_type = Assembly.Load(assembly).GetType(type);
+                }
+
                 AddObjectMetadata(value_type);
                 ObjectMetadata t_data = object_metadata[value_type];
 
