@@ -351,7 +351,7 @@ namespace LitJson
 
         private static object ReadValue(Type inst_type, JsonReader reader, bool skipFirstRead = false)
         {
-            if (skipFirstRead)
+            if (!skipFirstRead)
             {
                 reader.Read();
             }
@@ -519,7 +519,7 @@ namespace LitJson
                                 Type t = Assembly.Load(assembly).GetType(type);
                                 reader.Token = JsonToken.ObjectStart;
                                 ((FieldInfo)prop_data.Info).SetValue(
-                                    instance, ReadValue(prop_data.Type, reader, true));
+                                    instance, ReadValue(t, reader, true));
                             }
                             else
                             {
