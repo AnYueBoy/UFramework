@@ -349,7 +349,8 @@ namespace LitJson
             return op;
         }
 
-        private static object ReadValue(Type inst_type, JsonReader reader, bool skipFirstRead = false)
+        private static object ReadValue(Type inst_type, JsonReader reader, bool skipFirstRead = false,
+            bool isUsePolymorphism = false)
         {
             if (!skipFirstRead)
             {
@@ -466,7 +467,7 @@ namespace LitJson
 
                 while (true)
                 {
-                    object item = ReadValue(elem_type, reader);
+                    object item = ReadValue(elem_type, reader, skipFirstRead, isUsePolymorphism);
                     if (item == null && reader.Token == JsonToken.ArrayEnd)
                         break;
 
@@ -486,8 +487,8 @@ namespace LitJson
             }
             else if (reader.Token == JsonToken.ObjectStart)
             {
-                // 需要考虑被集合包裹下多态的情况
-                if (TypeIsPolymorphismAttribute(value_type))
+                // 仅在开启多态特性时进行反射处理(反射会消耗性能) 需要考虑被集合包裹下多态的情况
+                if (isUsePolymorphism && TypeIsPolymorphismAttribute(value_type))
                 {
                     reader.Read(); // __ASSEMBLY__
                     reader.Read();
@@ -519,7 +520,8 @@ namespace LitJson
 
                         if (prop_data.IsField)
                         {
-                            if (TypeIsPolymorphismAttribute(prop_data.Type))
+                            // 仅在开启多态特性时进行反射处理(反射会消耗性能)
+                            if (isUsePolymorphism && TypeIsPolymorphismAttribute(prop_data.Type))
                             {
                                 reader.Read(); // ObjectStart
                                 reader.Read(); // __ASSEMBLY__
@@ -531,12 +533,12 @@ namespace LitJson
                                 Type t = Assembly.Load(assembly).GetType(type);
                                 reader.Token = JsonToken.ObjectStart;
                                 ((FieldInfo)prop_data.Info).SetValue(
-                                    instance, ReadValue(t, reader, true));
+                                    instance, ReadValue(t, reader, true, true));
                             }
                             else
                             {
                                 ((FieldInfo)prop_data.Info).SetValue(
-                                    instance, ReadValue(prop_data.Type, reader));
+                                    instance, ReadValue(prop_data.Type, reader, skipFirstRead, isUsePolymorphism));
                             }
                         }
                         else
@@ -547,10 +549,10 @@ namespace LitJson
                             if (p_info.CanWrite)
                                 p_info.SetValue(
                                     instance,
-                                    ReadValue(prop_data.Type, reader),
+                                    ReadValue(prop_data.Type, reader, skipFirstRead, isUsePolymorphism),
                                     null);
                             else
-                                ReadValue(prop_data.Type, reader);
+                                ReadValue(prop_data.Type, reader, skipFirstRead, isUsePolymorphism);
                         }
                     }
                     else
@@ -585,7 +587,7 @@ namespace LitJson
 
                         ((IDictionary)instance).Add(
                             property, ReadValue(
-                                t_data.ElementType, reader));
+                                t_data.ElementType, reader, skipFirstRead, isUsePolymorphism));
                     }
                 }
             }
@@ -805,7 +807,7 @@ namespace LitJson
 
         private static void WriteValue(object obj, JsonWriter writer,
             bool writer_is_private,
-            int depth)
+            int depth, bool isUsePolymorphism = false)
         {
             if (depth > max_nesting_depth)
                 throw new JsonException(
@@ -870,7 +872,7 @@ namespace LitJson
                 writer.WriteArrayStart();
 
                 foreach (object elem in (Array)obj)
-                    WriteValue(elem, writer, writer_is_private, depth + 1);
+                    WriteValue(elem, writer, writer_is_private, depth + 1, isUsePolymorphism);
 
                 writer.WriteArrayEnd();
 
@@ -881,7 +883,7 @@ namespace LitJson
             {
                 writer.WriteArrayStart();
                 foreach (object elem in (IList)obj)
-                    WriteValue(elem, writer, writer_is_private, depth + 1);
+                    WriteValue(elem, writer, writer_is_private, depth + 1, isUsePolymorphism);
                 writer.WriteArrayEnd();
 
                 return;
@@ -897,7 +899,7 @@ namespace LitJson
                         : Convert.ToString(entry.Key, CultureInfo.InvariantCulture);
                     writer.WritePropertyName(propertyName);
                     WriteValue(entry.Value, writer, writer_is_private,
-                        depth + 1);
+                        depth + 1, isUsePolymorphism);
                 }
 
                 writer.WriteObjectEnd();
@@ -951,8 +953,8 @@ namespace LitJson
 
             writer.WriteObjectStart();
 
-            // 有多态标签，则记录实际的类型
-            if (TypeIsPolymorphismAttribute(obj_type))
+            // 仅在开启多态特性时使用 有多态标签，则记录实际的类型
+            if (isUsePolymorphism && TypeIsPolymorphismAttribute(obj_type))
             {
                 writer.WritePropertyName("__ASSEMBLY__");
                 writer.Write(obj_type.Assembly.FullName);
@@ -966,7 +968,7 @@ namespace LitJson
                 {
                     writer.WritePropertyName(p_data.Info.Name);
                     WriteValue(((FieldInfo)p_data.Info).GetValue(obj),
-                        writer, writer_is_private, depth + 1);
+                        writer, writer_is_private, depth + 1, isUsePolymorphism);
                 }
                 else
                 {
@@ -976,7 +978,7 @@ namespace LitJson
                     {
                         writer.WritePropertyName(p_data.Info.Name);
                         WriteValue(p_info.GetValue(obj, null),
-                            writer, writer_is_private, depth + 1);
+                            writer, writer_is_private, depth + 1, isUsePolymorphism);
                     }
                 }
             }
@@ -994,7 +996,17 @@ namespace LitJson
                 static_writer.Reset();
 
                 WriteValue(obj, static_writer, true, 0);
+                return static_writer.ToString();
+            }
+        }
 
+        public static string ToJson(object obj, bool isUsePolymorphism)
+        {
+            lock (static_writer_lock)
+            {
+                static_writer.Reset();
+
+                WriteValue(obj, static_writer, true, 0, isUsePolymorphism);
                 return static_writer.ToString();
             }
         }
@@ -1041,6 +1053,13 @@ namespace LitJson
             JsonReader reader = new JsonReader(json);
 
             return (T)ReadValue(typeof(T), reader);
+        }
+
+        public static T ToObject<T>(string json, bool isUsePolymorphism)
+        {
+            JsonReader reader = new JsonReader(json);
+
+            return (T)ReadValue(typeof(T), reader, false, isUsePolymorphism);
         }
 
         public static object ToObject(string json, Type ConvertType)
