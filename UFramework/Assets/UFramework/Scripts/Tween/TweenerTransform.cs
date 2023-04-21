@@ -5,55 +5,60 @@
  */
 
 using System.Collections.Generic;
-using UFramework.Tween.Core;
 using UnityEngine;
-namespace UFramework.Tween {
 
-    public class TweenerTransform<T> : Tweener<T> {
-
-        public void PathTween (float dt, TweenerCore<Vector3> tweenerCore) {
-            this.timer += dt;
-            if (this.timer > tweenerCore.duration) {
-                this.TweenerCompleted ();
+namespace UFramework.Tween
+{
+    public class TweenerTransform<T> : Tweener<T>
+    {
+        public void PathTween(float dt, TweenerCore<Vector3> tweenerCore)
+        {
+            timer += dt;
+            if (timer > tweenerCore.duration)
+            {
+                TweenerCompleted();
                 return;
             }
 
-            float time = Mathf.Min (tweenerCore.duration, this.timer);
-            float ratioValue = EaseManager.GetEaseFuncValue (tweenerCore.easeTye, time, tweenerCore.duration);
+            float time = Mathf.Min(tweenerCore.duration, timer);
+            float ratioValue = EaseManager.GetEaseFuncValue(tweenerCore.easeTye, time, tweenerCore.duration);
             float curMoveDistance = tweenerCore.changeValue.x * ratioValue;
 
-            List<Vector3> pathList = this.GetExtraData<List<Vector3>> ();
+            List<Vector3> pathList = GetExtraData<List<Vector3>>();
             float cumulativeDis = 0;
-            for (int i = 0; i < pathList.Count - 1; i++) {
+            for (int i = 0; i < pathList.Count - 1; i++)
+            {
                 Vector3 prePos = pathList[i];
                 Vector3 curPos = pathList[i + 1];
                 float curPointDistance = (curPos - prePos).magnitude;
                 cumulativeDis += curPointDistance;
 
-                if (curMoveDistance < cumulativeDis) {
+                if (curMoveDistance < cumulativeDis)
+                {
                     Vector3 dir = curPos - prePos;
                     dir = dir.normalized;
                     float preStageDistance = cumulativeDis - curPointDistance;
                     Vector3 endPos = prePos + (curMoveDistance - preStageDistance) * dir;
-                    tweenerCore.setter (endPos);
+                    tweenerCore.setter(endPos);
                     break;
                 }
             }
         }
 
-        public void MoveTween (float dt, TweenerCore<Vector3> tweenerCore) {
-            this.timer += dt;
-            if (this.timer > tweenerCore.duration) {
-                this.TweenerCompleted ();
+        public void MoveTween(float dt, TweenerCore<Vector3> tweenerCore)
+        {
+            timer += dt;
+            if (timer > tweenerCore.duration)
+            {
+                TweenerCompleted();
                 return;
             }
 
-            float time = Mathf.Min (tweenerCore.duration, this.timer);
-            float ratioValue = EaseManager.GetEaseFuncValue (tweenerCore.easeTye, time, tweenerCore.duration);
+            float time = Mathf.Min(tweenerCore.duration, timer);
+            float ratioValue = EaseManager.GetEaseFuncValue(tweenerCore.easeTye, time, tweenerCore.duration);
 
             Vector3 endPos = tweenerCore.changeValue * ratioValue + tweenerCore.beginValue;
-            tweenerCore.setter (endPos);
+            tweenerCore.setter(endPos);
         }
-
     }
 }
