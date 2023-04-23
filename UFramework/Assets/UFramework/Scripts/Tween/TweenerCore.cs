@@ -12,23 +12,43 @@ namespace UFramework.Tween
 
         public TweenSetter<T> setter;
 
-        public EaseType easeTye;
+        public EaseType easeType;
 
         public T beginValue;
 
         public T changeValue;
 
-        public float duration;
+        public T endValue;
+
+        public readonly float duration;
 
         public Action completedCallback;
 
-        public TweenerCore(TweenGetter<T> getter, TweenSetter<T> setter, float duration)
+        /// <summary>
+        /// 当前执行的次数
+        /// </summary>
+        public int curExecuteCount;
+
+        /// <summary>
+        /// 需要执行的次数
+        /// </summary>
+        public int needExecuteCount;
+
+        /// <summary>
+        /// 循环类型
+        /// </summary>
+        public LoopType loopType;
+
+        public TweenerCore(TweenGetter<T> getter, TweenSetter<T> setter, T endValue, float duration)
         {
             this.getter = getter;
             this.setter = setter;
             this.duration = duration;
             beginValue = getter();
-            easeTye = EaseType.LINER;
+            this.endValue = endValue;
+            easeType = EaseType.LINER;
+            curExecuteCount = needExecuteCount = 1;
+            loopType = LoopType.ReStart;
         }
     }
 }

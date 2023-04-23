@@ -6,30 +6,48 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UFramework.Tween
 {
     public class TweenManager : ITweenManager
     {
-        private HashSet<ITweener> tweeners = new HashSet<ITweener>();
-
-        private HashSet<ITweener> removeList = new HashSet<ITweener>();
+        private List<ITweener> curTweenerList = new List<ITweener>();
+        private List<ITweener> curRemoveTweenerList = new List<ITweener>();
 
         private Dictionary<Type, List<ITweener>> tweenerPool = new Dictionary<Type, List<ITweener>>();
 
         public void LocalUpdate(float dt)
         {
-            foreach (ITweener tweener in tweeners)
+            // 不受timescale=0 影响的dt
+            float unscaleTime = Time.unscaledDeltaTime;
+            var curActiveScene = SceneManager.GetActiveScene().name;
+            for (int i = curTweenerList.Count - 1; i >= 0; i--)
             {
-                tweener.LocalUpdate(dt);
+                var tweener = curTweenerList[i];
+                if (!tweener.BindSceneName.Equals(curActiveScene))
+                {
+                    RemoveTweener(tweener);
+                    continue;
+                }
+
+                if (tweener.TimeScaleAffected())
+                {
+                    tweener.LocalUpdate(dt);
+                }
+                else
+                {
+                    tweener.LocalUpdate(unscaleTime);
+                }
             }
 
-            foreach (ITweener removeTweener in removeList)
+            foreach (ITweener removeTweener in curRemoveTweenerList)
             {
-                tweeners.Remove(removeTweener);
+                curTweenerList.Remove(removeTweener);
             }
 
-            removeList.Clear();
+            curRemoveTweenerList.Clear();
         }
 
         public T2 SpawnTweener<T1, T2>() where T2 : Tweener<T1>, new()
@@ -56,16 +74,16 @@ namespace UFramework.Tween
                 }
             }
 
-            tweener.Init((Tweener<T1> tweenerInstance) => { RemoveTween<T2>(tweenerInstance); });
+            tweener.Init();
 
-            tweeners.Add(tweener);
+            curTweenerList.Add(tweener);
             return tweener;
         }
 
-        private void RemoveTween<T>(ITweener tweener)
+        public void RemoveTweener(ITweener tweener)
         {
-            removeList.Add(tweener);
-            Type poolType = typeof(T);
+            curRemoveTweenerList.Add(tweener);
+            Type poolType = tweener.TweenerType;
             List<ITweener> tweenerList = tweenerPool[poolType];
             tweenerList.Add(tweener);
         }
