@@ -18,7 +18,7 @@ namespace UFramework.Tween
         /// </summary>
         ITweener SetEase(EaseType easeType);
 
-        ITweener SetLoop(int count = 0, LoopType loopType = LoopType.YoYo);
+        ITweener SetLoop(int count = 0, LoopType loopType = LoopType.ReStart);
 
         ITweener OnCompleted(Action callback);
 

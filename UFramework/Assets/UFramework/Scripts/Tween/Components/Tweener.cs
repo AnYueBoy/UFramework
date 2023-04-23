@@ -36,9 +36,11 @@ namespace UFramework.Tween
         /// </summary>
         private bool timeScaleAffected;
 
-        public void Init()
+        public void Init(string bindSceneName,Type tweenerType)
         {
             timeScaleAffected = true;
+            BindSceneName = bindSceneName;
+            TweenerType = tweenerType;
         }
 
         public ITweener SetInitialValue(T value)
@@ -91,7 +93,7 @@ namespace UFramework.Tween
             return this;
         }
 
-        public ITweener SetLoop(int count = 0, LoopType loopType = LoopType.YoYo)
+        public ITweener SetLoop(int count = 0, LoopType loopType = LoopType.ReStart)
         {
             tweenerCore.needExecuteCount = count;
             tweenerCore.loopType = loopType;

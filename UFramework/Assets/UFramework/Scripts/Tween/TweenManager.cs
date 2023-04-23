@@ -53,7 +53,7 @@ namespace UFramework.Tween
         public T2 SpawnTweener<T1, T2>() where T2 : Tweener<T1>, new()
         {
             Type type = typeof(T2);
-            T2 tweener = null;
+            T2 tweener;
             if (!tweenerPool.ContainsKey(type))
             {
                 List<ITweener> tweenerList = new List<ITweener>();
@@ -74,7 +74,7 @@ namespace UFramework.Tween
                 }
             }
 
-            tweener.Init();
+            tweener.Init(SceneManager.GetActiveScene().name, type);
 
             curTweenerList.Add(tweener);
             return tweener;

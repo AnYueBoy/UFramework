@@ -1,6 +1,8 @@
+using System;
 using UFramework.Bootstarp;
 using UFramework.Core;
 using UFramework.EventDispatcher;
+using UFramework.Tween;
 using UnityEngine;
 
 public class FrameworkTest : MonoBehaviour
@@ -14,11 +16,13 @@ public class FrameworkTest : MonoBehaviour
         application.Bootstrap(new SystemProviderBootstrap(this));
 
         Debug.Log($"runtimeId: {App.GetRuntimeId()}");
+        
+        application.Init();
+
     }
 
     private void Start()
     {
-        application.Init();
     }
 
     private void OnEnable()
@@ -26,6 +30,11 @@ public class FrameworkTest : MonoBehaviour
         App.Make<IEventDispatcher>().AddListener("TestEvent", EventOne);
         App.Make<IEventDispatcher>().AddListener("TestEvent", EventTwo);
         App.Make<IEventDispatcher>().Raise("TestEvent", this, new EventParam("事件触发", "1").StopEvent());
+    }
+
+    private void Update()
+    {
+        App.Make<ITweenManager>().LocalUpdate(Time.deltaTime);
     }
 
     private void EventOne(object sender, EventParam param)
