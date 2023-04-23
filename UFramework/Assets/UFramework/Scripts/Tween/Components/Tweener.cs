@@ -41,7 +41,7 @@ namespace UFramework.Tween
             timeScaleAffected = true;
         }
 
-        public ITweener SetInitialValue<T1>(T1 value) where T1 : T
+        public ITweener SetInitialValue(T value)
         {
             tweenerCore.beginValue = value;
             tweenerCore.setter(value);

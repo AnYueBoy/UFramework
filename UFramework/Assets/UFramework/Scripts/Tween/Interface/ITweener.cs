@@ -16,8 +16,6 @@ namespace UFramework.Tween
         /// <summary>
         /// 设置初始值
         /// </summary>
-        ITweener SetInitialValue<T>(T value);
-
         ITweener SetEase(EaseType easeType);
 
         ITweener SetLoop(int count = 0, LoopType loopType = LoopType.YoYo);
@@ -37,5 +35,10 @@ namespace UFramework.Tween
         void TweenerKill();
 
         void ResetTweener();
+    }
+
+    interface ITweener<T> : ITweener
+    {
+        ITweener SetInitialValue(T value);
     }
 }
