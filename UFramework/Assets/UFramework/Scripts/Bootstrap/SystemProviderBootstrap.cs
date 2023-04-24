@@ -1,42 +1,50 @@
 using UFramework.Core;
+using UFramework.Coroutine;
 using UFramework.GameCommon;
 using UFramework.LogSystem;
 using UFramework.Promise;
 using UFramework.Tween;
 using UFramework.Util;
 using UnityEngine;
-namespace UFramework.Bootstarp {
 
-    public class SystemProviderBootstrap : IBootstrap {
-
+namespace UFramework.Bootstarp
+{
+    public class SystemProviderBootstrap : IBootstrap
+    {
         private IServiceProvider[] unityProviderArray;
 
-        public SystemProviderBootstrap (Component component) {
-            unityProviderArray = component.GetComponentsInChildren<IServiceProvider> ();
+        public SystemProviderBootstrap(Component component)
+        {
+            unityProviderArray = component.GetComponentsInChildren<IServiceProvider>();
         }
-        public void Bootstrap () {
 
-            IServiceProvider[] systemProviderArray = new IServiceProvider[] {
-                new ProviderPromise (),
-                new ProviderTweener (),
-                new ProviderGameCommon (),
-                new ProviderLogManager ()
+        public void Bootstrap()
+        {
+            IServiceProvider[] systemProviderArray = new IServiceProvider[]
+            {
+                new ProviderPromise(),
+                new ProviderTweener(),
+                new ProviderGameCommon(),
+                new ProviderLogManager(),
+                new ProviderCoroutine(),
             };
 
-            IServiceProvider[] providerArray = Arr.Merge<IServiceProvider> (unityProviderArray, systemProviderArray);
+            IServiceProvider[] providerArray = Arr.Merge<IServiceProvider>(unityProviderArray, systemProviderArray);
 
-            foreach (IServiceProvider provider in providerArray) {
-                if (provider == null) {
+            foreach (IServiceProvider provider in providerArray)
+            {
+                if (provider == null)
+                {
                     continue;
                 }
 
-                if (App.IsRegistered (provider)) {
+                if (App.IsRegistered(provider))
+                {
                     continue;
                 }
 
-                App.Register (provider);
+                App.Register(provider);
             }
         }
     }
-
 }

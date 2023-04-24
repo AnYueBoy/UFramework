@@ -1,6 +1,7 @@
 using System;
 using UFramework.Bootstarp;
 using UFramework.Core;
+using UFramework.Coroutine;
 using UFramework.EventDispatcher;
 using UFramework.Tween;
 using UnityEngine;
@@ -35,6 +36,7 @@ public class FrameworkTest : MonoBehaviour
     private void Update()
     {
         App.Make<ITweenManager>().LocalUpdate(Time.deltaTime);
+        App.Make<ICoroutineManager>().LocalUpdate(Time.deltaTime);
     }
 
     private void EventOne(object sender, EventParam param)
