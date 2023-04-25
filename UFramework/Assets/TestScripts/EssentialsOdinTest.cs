@@ -151,7 +151,7 @@ public class EssentialsOdinTest : MonoBehaviour
 
     #region Read Only
 
-    [ReadOnly, ShowInInspector] private string readyOnlyContent = "This is read only content";
+    // [ReadOnly, ShowInInspector] private string readyOnlyContent = "This is read only content";
 
     #endregion
 
@@ -159,7 +159,7 @@ public class EssentialsOdinTest : MonoBehaviour
 
     [Required] public GameObject requireNode;
     [Required("$dynamicMessage")] public GameObject dynamicNode;
-    private string dynamicMessage = "DynamicMessage";
+    // private string dynamicMessage = "DynamicMessage";
 
     #endregion
 

@@ -9,7 +9,7 @@ public class CoroutineTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        App.Make<ICoroutineManager>().StartCoroutine(WaitCoroutine());
+        App.Make<ICoroutineManager>().StartCoroutine(WaitTaskCoroutine());
     }
 
     // Update is called once per frame
@@ -24,5 +24,13 @@ public class CoroutineTest : MonoBehaviour
         Debug.Log("等待一帧");
         yield return new UFramework.Coroutine.WaitForSeconds(3);
         Debug.Log("等待3秒");
+    }
+
+    IEnumerator WaitTaskCoroutine()
+    {
+        Debug.Log("等待开始");
+        Debug.Log("等待测试");
+        yield return new WaitForFrames(2);
+        Debug.Log("等待结束");
     }
 }
