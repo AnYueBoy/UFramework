@@ -9,7 +9,7 @@ using UFramework.Core;
 
 namespace UFramework.Tween
 {
-    public class Tweener<T> : ITweener
+    public class Tweener<T> : ITweener, ITweener<T>
     {
         /// <summary>
         /// tweener 执行的核心数据
@@ -18,7 +18,15 @@ namespace UFramework.Tween
 
         protected float timer;
 
+        /// <summary>
+        /// 执行函数
+        /// </summary>
         private Action<float, TweenerCore<T>> executeHandler;
+
+        /// <summary>
+        /// 更新函数
+        /// </summary>
+        private Action<T> updateHandler;
 
         private object extraData;
 
@@ -36,7 +44,7 @@ namespace UFramework.Tween
         /// </summary>
         private bool timeScaleAffected;
 
-        public void Init(string bindSceneName,Type tweenerType)
+        public void Init(string bindSceneName, Type tweenerType)
         {
             timeScaleAffected = true;
             BindSceneName = bindSceneName;
@@ -51,6 +59,12 @@ namespace UFramework.Tween
             return this;
         }
 
+        public ITweener OnUpdate(Action<T> updateCallback)
+        {
+            updateHandler = updateCallback;
+            return this;
+        }
+
         public void SetExecuteAction(Action<float, TweenerCore<T>> actionHandler)
         {
             executeHandler = actionHandler;
@@ -59,6 +73,11 @@ namespace UFramework.Tween
         public void LocalUpdate(float dt)
         {
             executeHandler?.Invoke(dt, tweenerCore);
+            if (updateHandler != null)
+            {
+                var curValue = tweenerCore.getter();
+                updateHandler.Invoke(curValue);
+            }
         }
 
         public bool TimeScaleAffected()
@@ -100,6 +119,9 @@ namespace UFramework.Tween
             return this;
         }
 
+        /// <summary>
+        /// 反转初始值与终点值
+        /// </summary>
         private void InvertBeginEndValue()
         {
             var tempValue = tweenerCore.beginValue;
@@ -162,6 +184,7 @@ namespace UFramework.Tween
             tweenerCore = null;
             timer = 0;
             executeHandler = null;
+            updateHandler = null;
             extraData = null;
             calculateValueCallback = null;
         }

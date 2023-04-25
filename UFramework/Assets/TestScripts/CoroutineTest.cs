@@ -6,13 +6,11 @@ using UnityEngine;
 
 public class CoroutineTest : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
         App.Make<ICoroutineManager>().StartCoroutine(WaitTaskCoroutine());
     }
 
-    // Update is called once per frame
     void Update()
     {
     }

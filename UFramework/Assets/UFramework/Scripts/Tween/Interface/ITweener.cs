@@ -18,8 +18,14 @@ namespace UFramework.Tween
         /// </summary>
         ITweener SetEase(EaseType easeType);
 
+        /// <summary>
+        /// 设置循环
+        /// </summary>
         ITweener SetLoop(int count = 0, LoopType loopType = LoopType.ReStart);
 
+        /// <summary>
+        /// 完成回调
+        /// </summary>
         ITweener OnCompleted(Action callback);
 
         /// <summary>
@@ -39,6 +45,14 @@ namespace UFramework.Tween
 
     interface ITweener<T> : ITweener
     {
+        /// <summary>
+        /// 设置初始值
+        /// </summary>
         ITweener SetInitialValue(T value);
+
+        /// <summary>
+        /// 设置更新函数
+        /// </summary>
+        ITweener OnUpdate(Action<T> updateCallback);
     }
 }

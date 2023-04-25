@@ -4,6 +4,7 @@
  * @Description: TweenExtension
  */
 
+using System;
 using System.Collections.Generic;
 using UFramework.Core;
 using UnityEngine;
@@ -309,6 +310,73 @@ namespace UFramework.Tween
             tweener.calculateValueCallback?.Invoke();
             tweener.SetTweenCore(tweenerCore);
             tweener.SetExecuteAction(tweener.FillAmountTweener);
+            return tweener;
+        }
+
+        #endregion
+
+        #region Value
+
+        public static TweenerValue<float> TweenerValue(Func<float> getter, Action<float> setter, float endValue,
+            float duration)
+        {
+            var tweener = App.Make<ITweenManager>().SpawnTweener<float, TweenerValue<float>>();
+            var tweenerCore = new TweenerCore<float>(
+                () => getter(),
+                value => setter(value),
+                endValue,
+                duration
+            );
+
+            tweener.calculateValueCallback = () =>
+            {
+                tweenerCore.changeValue = tweenerCore.endValue - tweenerCore.beginValue;
+            };
+            tweener.calculateValueCallback?.Invoke();
+            tweener.SetTweenCore(tweenerCore);
+            tweener.SetExecuteAction(tweener.ValueTween);
+            return tweener;
+        }
+
+        public static TweenerValue<Vector3> TweenerValue(Func<Vector3> getter, Action<Vector3> setter, Vector3 endValue,
+            float duration)
+        {
+            var tweener = App.Make<ITweenManager>().SpawnTweener<Vector3, TweenerValue<Vector3>>();
+            var tweenerCore = new TweenerCore<Vector3>(
+                () => getter(),
+                value => setter(value),
+                endValue,
+                duration
+            );
+
+            tweener.calculateValueCallback = () =>
+            {
+                tweenerCore.changeValue = tweenerCore.endValue - tweenerCore.beginValue;
+            };
+            tweener.calculateValueCallback?.Invoke();
+            tweener.SetTweenCore(tweenerCore);
+            tweener.SetExecuteAction(tweener.ValueTween);
+            return tweener;
+        }
+
+        public static TweenerValue<Vector2> TweenerValue(Func<Vector2> getter, Action<Vector2> setter, Vector2 endValue,
+            float duration)
+        {
+            var tweener = App.Make<ITweenManager>().SpawnTweener<Vector2, TweenerValue<Vector2>>();
+            var tweenerCore = new TweenerCore<Vector2>(
+                () => getter(),
+                value => setter(value),
+                endValue,
+                duration
+            );
+
+            tweener.calculateValueCallback = () =>
+            {
+                tweenerCore.changeValue = tweenerCore.endValue - tweenerCore.beginValue;
+            };
+            tweener.calculateValueCallback?.Invoke();
+            tweener.SetTweenCore(tweenerCore);
+            tweener.SetExecuteAction(tweener.ValueTween);
             return tweener;
         }
 
