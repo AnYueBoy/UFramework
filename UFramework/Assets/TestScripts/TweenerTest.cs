@@ -10,12 +10,14 @@ public class TweenerTest : MonoBehaviour
 
     void Start()
     {
-        imageTrans.TweenerLocalMove(new Vector3(0, 100, 0), 2.0f).SetInitialValue(Vector3.zero)
-            .SetEase(EaseType.LINER).SetLoop(-1, LoopType.YoYo);
+        TweenValueTest();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void TweenValueTest()
     {
+        float tweenValue = 10;
+        TweenerExtension.TweenerValue(() => tweenValue, value => tweenValue = value, 0, 2.0f)
+            .OnUpdate(value => { Debug.Log($"curValue: {value}"); })
+            .OnCompleted(() => { Debug.Log($"endValue: {tweenValue}"); });
     }
 }
