@@ -111,17 +111,23 @@ namespace UFramework.Tween
         public static TweenerTransform<Vector3> TweenerLocalMoveY(this Transform target, float endY, float duration)
         {
             var tweener = App.Make<ITweenManager>().SpawnTweener<Vector3, TweenerTransform<Vector3>>();
-            var endPos = target.localPosition;
-            endPos.y = endY;
+            Func<Vector3> tweenerEndValueCallback = () =>
+            {
+                var endPos = target.localPosition;
+                endPos.y = endY;
+                return endPos;
+            };
+
             var tweenerCore = new TweenerCore<Vector3>(
                 () => target.localPosition,
                 value => target.localPosition = value,
-                endPos,
+                tweenerEndValueCallback(),
                 duration
             );
 
             tweener.calculateValueCallback = () =>
             {
+                tweenerCore.endValue = tweenerEndValueCallback();
                 tweenerCore.changeValue = tweenerCore.endValue - tweenerCore.beginValue;
             };
             tweener.calculateValueCallback?.Invoke();
@@ -377,6 +383,32 @@ namespace UFramework.Tween
             tweener.calculateValueCallback?.Invoke();
             tweener.SetTweenCore(tweenerCore);
             tweener.SetExecuteAction(tweener.ValueTween);
+            return tweener;
+        }
+
+        #endregion
+
+        #region Timer
+
+        public static TweenerTimer<float> TweenerTimer(float duration)
+        {
+            var tweener = App.Make<ITweenManager>().SpawnTweener<float, TweenerTimer<float>>();
+            float startTime = 0;
+            float endTime = duration;
+            var tweenerCore = new TweenerCore<float>(
+                () => startTime,
+                value => endTime = value,
+                endTime,
+                duration
+            );
+
+            tweener.calculateValueCallback = () =>
+            {
+                tweenerCore.changeValue = tweenerCore.endValue - tweenerCore.beginValue;
+            };
+            tweener.calculateValueCallback?.Invoke();
+            tweener.SetTweenCore(tweenerCore);
+            tweener.SetExecuteAction(tweener.TimerTween);
             return tweener;
         }
 

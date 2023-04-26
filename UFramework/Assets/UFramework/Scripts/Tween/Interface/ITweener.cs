@@ -9,12 +9,17 @@ namespace UFramework.Tween
         /// </summary>
         string BindSceneName { get; set; }
 
+        /// <summary>
+        /// Tweener类型
+        /// </summary>
         Type TweenerType { get; set; }
+
+        TweenerState TweenerState { get; }
 
         void LocalUpdate(float dt);
 
         /// <summary>
-        /// 设置初始值
+        /// 设置缓动曲线
         /// </summary>
         ITweener SetEase(EaseType easeType);
 
@@ -24,9 +29,19 @@ namespace UFramework.Tween
         ITweener SetLoop(int count = 0, LoopType loopType = LoopType.ReStart);
 
         /// <summary>
-        /// 完成回调
+        /// 设置完成回调
         /// </summary>
         ITweener OnCompleted(Action callback);
+
+        /// <summary>
+        /// 完成回调
+        /// </summary>
+        event Action CompletedEvent;
+
+        /// <summary>
+        /// 更新设置值与获取值
+        /// </summary>
+        void UpdateGetterValue();
 
         /// <summary>
         /// 是否受时间放缩参数影响
@@ -37,6 +52,10 @@ namespace UFramework.Tween
         /// 是否受时间放缩因子影响
         /// </summary>
         ITweener SetTimeScaleAffected(bool timeScaleAffected);
+
+        void Pause();
+
+        void Resume();
 
         void TweenerKill();
 

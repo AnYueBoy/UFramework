@@ -34,6 +34,9 @@ namespace UFramework.Tween
 
         public string BindSceneName { get; set; }
 
+        private TweenerState _tweenerState;
+        public TweenerState TweenerState => _tweenerState;
+
         /// <summary>
         /// 重计算数据
         /// </summary>
@@ -49,6 +52,7 @@ namespace UFramework.Tween
             timeScaleAffected = true;
             BindSceneName = bindSceneName;
             TweenerType = tweenerType;
+            Resume();
         }
 
         public ITweener SetInitialValue(T value)
@@ -80,6 +84,16 @@ namespace UFramework.Tween
             }
         }
 
+        public void UpdateGetterValue()
+        {
+            if (tweenerCore.getter != null)
+            {
+                tweenerCore.beginValue = tweenerCore.getter();
+            }
+
+            calculateValueCallback?.Invoke();
+        }
+
         public bool TimeScaleAffected()
         {
             return timeScaleAffected;
@@ -89,6 +103,16 @@ namespace UFramework.Tween
         {
             this.timeScaleAffected = timeScaleAffected;
             return this;
+        }
+
+        public void Pause()
+        {
+            _tweenerState = TweenerState.Yied;
+        }
+
+        public void Resume()
+        {
+            _tweenerState = TweenerState.Working;
         }
 
         public void SetTweenCore(TweenerCore<T> tweenCore)
@@ -132,9 +156,11 @@ namespace UFramework.Tween
 
         public ITweener OnCompleted(Action callback)
         {
-            tweenerCore.completedCallback = callback;
+            CompletedEvent += callback;
             return this;
         }
+
+        public event Action CompletedEvent;
 
         protected void TriggerCompleted()
         {
@@ -142,7 +168,7 @@ namespace UFramework.Tween
             // 重置时间计时器
             timer = 0;
             // 触发自定义完成回调
-            tweenerCore.completedCallback?.Invoke();
+            CompletedEvent?.Invoke();
             tweenerCore.curExecuteCount++;
             // 如果循环类型为YoYo则反转开始结束值
             if (tweenerCore.loopType == LoopType.YoYo)
@@ -164,10 +190,12 @@ namespace UFramework.Tween
             }
 
             // 自定义完成回调置空
-            tweenerCore.completedCallback = null;
+            CompletedEvent = null;
 
             // 执行函数置空
             executeHandler = null;
+
+            _tweenerState = TweenerState.Reset;
 
             // 回收
             App.Make<ITweenManager>().RemoveTweener(this);
@@ -187,6 +215,7 @@ namespace UFramework.Tween
             updateHandler = null;
             extraData = null;
             calculateValueCallback = null;
+            _tweenerState = TweenerState.Reset;
         }
     }
 }

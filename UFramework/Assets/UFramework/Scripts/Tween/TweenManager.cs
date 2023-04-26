@@ -32,6 +32,11 @@ namespace UFramework.Tween
                     continue;
                 }
 
+                if (tweener.TweenerState != TweenerState.Working)
+                {
+                    continue;
+                }
+
                 if (tweener.TimeScaleAffected())
                 {
                     tweener.LocalUpdate(dt);

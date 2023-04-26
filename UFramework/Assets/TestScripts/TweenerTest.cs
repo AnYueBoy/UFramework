@@ -10,7 +10,8 @@ public class TweenerTest : MonoBehaviour
 
     void Start()
     {
-        TweenValueTest();
+        // TweenValueTest();
+        TweeneSequenceTest();
     }
 
     private void TweenValueTest()
@@ -19,5 +20,13 @@ public class TweenerTest : MonoBehaviour
         TweenerExtension.TweenerValue(() => tweenValue, value => tweenValue = value, 0, 2.0f)
             .OnUpdate(value => { Debug.Log($"curValue: {value}"); })
             .OnCompleted(() => { Debug.Log($"endValue: {tweenValue}"); });
+    }
+
+    private void TweeneSequenceTest()
+    {
+        var s = new TweenerSequence();
+        s.Append(imageTrans.TweenerLocalMove(Vector3.right * 100, 2.0f).SetInitialValue(Vector3.zero))
+            .AppendInterval(1.5f)
+            .Append(imageTrans.TweenerLocalMoveY(100, 2.0f)).AppendCallback(() => { Debug.Log("队列结束"); });
     }
 }

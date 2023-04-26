@@ -22,8 +22,6 @@ namespace UFramework.Tween
 
         public readonly float duration;
 
-        public Action completedCallback;
-
         /// <summary>
         /// 当前执行的次数
         /// </summary>
