@@ -11,6 +11,11 @@ namespace UFramework.Tween
             lastTweener = null;
         }
 
+        public void Init()
+        {
+            lastTweener = null;
+        }
+
         public ITweenerSequence Append(ITweener tweener)
         {
             if (lastTweener != null)

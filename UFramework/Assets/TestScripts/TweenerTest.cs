@@ -35,7 +35,7 @@ public class TweenerTest : MonoBehaviour
 
     private void TweeneSequenceTest1()
     {
-        var s = new TweenerSequence();
+        var s = TweenerExtension.Sequence();
         s.Append(imageTrans.TweenerLocalMove(Vector3.right * 100, 2.0f))
             .Append(imageTrans.TweenerLocalMoveY(100, 2.0f))
             .Append(imageTrans.TweenerMove(Vector3.zero, 2.0f))

@@ -413,5 +413,23 @@ namespace UFramework.Tween
         }
 
         #endregion
+
+        #region Sequence
+
+        private static ITweenerSequence _tweenerSequence;
+
+        public static ITweenerSequence Sequence()
+        {
+            if (_tweenerSequence == null)
+            {
+                _tweenerSequence = new TweenerSequence();
+            }
+
+            _tweenerSequence.Init();
+
+            return _tweenerSequence;
+        }
+
+        #endregion
     }
 }
