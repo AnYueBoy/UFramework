@@ -91,6 +91,7 @@ namespace UFramework.Tween
             Type poolType = tweener.TweenerType;
             List<ITweener> tweenerList = tweenerPool[poolType];
             tweenerList.Add(tweener);
+            tweener.ResetTweener();
         }
     }
 }

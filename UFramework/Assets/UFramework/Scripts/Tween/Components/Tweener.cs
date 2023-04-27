@@ -195,6 +195,12 @@ namespace UFramework.Tween
             // 执行函数置空
             executeHandler = null;
 
+            // 更新函数置空
+            updateHandler = null;
+            
+            // 额外数据置空
+            extraData = null;
+
             _tweenerState = TweenerState.Reset;
 
             // 回收
