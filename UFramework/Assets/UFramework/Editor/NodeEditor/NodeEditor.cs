@@ -3,238 +3,305 @@ using UFramework.AI.BehaviourTree;
 using UnityEditor;
 using UnityEngine;
 
-public class NodeEditor : EditorWindow {
-    private List<Node> nodes;
-    private List<Connection> connections;
-    private GUIStyle nodeStyle;
-    private GUIStyle selectedNodeStyle;
-    private GUIStyle inPointStyle;
-    private GUIStyle outPointStyle;
-    private ConnectionPoint selectedInPoint;
-    private ConnectionPoint selectedOutPoint;
-    private Vector2 offset;
-    private Vector2 drag;
+namespace UFramework.NodeEditor
+{
+    public class NodeEditor : EditorWindow
+    {
+        private List<Node> nodes;
+        private List<Connection> connections;
+        private GUIStyle nodeStyle;
+        private GUIStyle selectedNodeStyle;
+        private GUIStyle inPointStyle;
+        private GUIStyle outPointStyle;
+        private ConnectionPoint selectedInPoint;
+        private ConnectionPoint selectedOutPoint;
+        private Vector2 offset;
+        private Vector2 drag;
 
-    [MenuItem ("UFramework/NodeEditor")]
-    private static void ShowWindow () {
-        var window = GetWindow<NodeEditor> ();
-        window.titleContent = new GUIContent ("NodeEditor");
-        window.Show ();
-    }
-
-    private void OnEnable () {
-        nodeStyle = new GUIStyle ();
-        Texture2D texture = EditorGUIUtility.Load ("builtin skins/darkskin/images/node1.png") as Texture2D;
-        nodeStyle.normal.background = texture;
-        nodeStyle.border = new RectOffset (12, 12, 12, 12);
-
-        selectedNodeStyle = new GUIStyle ();
-        selectedNodeStyle.normal.background = EditorGUIUtility.Load ("builtin skins/darkskin/images/node1 on.png") as Texture2D;
-        selectedNodeStyle.border = new RectOffset (12, 12, 12, 12);
-
-        inPointStyle = new GUIStyle ();
-        inPointStyle.normal.background = EditorGUIUtility.Load ("builtin skins/darkskin/images/btn left.png") as Texture2D;
-        inPointStyle.active.background = EditorGUIUtility.Load ("builtin skins/darkskin/images/btn left on.png") as Texture2D;
-        inPointStyle.border = new RectOffset (4, 4, 12, 12);
-
-        outPointStyle = new GUIStyle ();
-        outPointStyle.normal.background = EditorGUIUtility.Load ("builtin skins/darkskin/images/btn right.png") as Texture2D;
-        outPointStyle.active.background = EditorGUIUtility.Load ("builtin skins/darkskin/images/btn right on.png") as Texture2D;
-        outPointStyle.border = new RectOffset (4, 4, 12, 12);
-    }
-
-    private void OnGUI () {
-        this.DrawGrid (20, 0.2f, Color.gray);
-        this.DrawGrid (100, 0.4f, Color.gray);
-        this.DrawNodes ();
-        this.DrawConnections ();
-        this.DrawConnectionLine (Event.current);
-        this.ProcessNodesEvents (Event.current);
-        this.ProcessEvents (Event.current);
-        if (GUI.changed) Repaint ();
-    }
-
-    private void DrawGrid (float gridSpacing, float gridOpacity, Color gridColor) {
-        int widthDivs = Mathf.CeilToInt (position.width / gridSpacing);
-        int heightDivs = Mathf.CeilToInt (position.height / gridSpacing);
-        Handles.BeginGUI ();
-        Handles.color = new Color (gridColor.r, gridColor.g, gridColor.b, gridOpacity);
-        offset += drag / 2;
-        Vector3 newOffset = new Vector3 (offset.x % gridSpacing, offset.y % gridSpacing, 0);
-        for (int i = 0; i < widthDivs; i++) {
-            Handles.DrawLine (new Vector3 (gridSpacing * i, -gridSpacing, 0) + newOffset, new Vector3 (gridSpacing * i, position.height, 0f) + newOffset);
+        [MenuItem("UFramework/NodeEditor")]
+        private static void ShowWindow()
+        {
+            var window = GetWindow<NodeEditor>();
+            window.titleContent = new GUIContent("NodeEditor");
+            window.Show();
         }
 
-        for (int i = 0; i < heightDivs; i++) {
-            Handles.DrawLine (new Vector3 (-gridSpacing, gridSpacing * i, 0) + newOffset, new Vector3 (position.width, gridSpacing * i, 0) + newOffset);
-        }
-        Handles.color = Color.white;
-        Handles.EndGUI ();
-    }
+        private void OnEnable()
+        {
+            nodeStyle = new GUIStyle();
+            Texture2D texture = EditorGUIUtility.Load("builtin skins/darkskin/images/node1.png") as Texture2D;
+            nodeStyle.normal.background = texture;
+            nodeStyle.border = new RectOffset(12, 12, 12, 12);
 
-    private void DrawNodes () {
-        if (this.nodes == null) {
-            return;
-        }
+            selectedNodeStyle = new GUIStyle();
+            selectedNodeStyle.normal.background =
+                EditorGUIUtility.Load("builtin skins/darkskin/images/node1 on.png") as Texture2D;
+            selectedNodeStyle.border = new RectOffset(12, 12, 12, 12);
 
-        for (int i = 0; i < nodes.Count; i++) {
-            nodes[i].Draw ();
-        }
-    }
+            inPointStyle = new GUIStyle();
+            inPointStyle.normal.background =
+                EditorGUIUtility.Load("builtin skins/darkskin/images/btn left.png") as Texture2D;
+            inPointStyle.active.background =
+                EditorGUIUtility.Load("builtin skins/darkskin/images/btn left on.png") as Texture2D;
+            inPointStyle.border = new RectOffset(4, 4, 12, 12);
 
-    private void DrawConnections () {
-        if (connections == null) {
-            return;
-        }
-
-        for (int i = 0; i < connections.Count; i++) {
-            connections[i].Draw ();
-        }
-    }
-
-    private void DrawConnectionLine (Event e) {
-        if (selectedInPoint != null && selectedOutPoint == null) {
-            Handles.DrawBezier (
-                selectedInPoint.rect.center,
-                e.mousePosition,
-                selectedInPoint.rect.center + Vector2.left * 50f,
-                e.mousePosition - Vector2.left * 50f,
-                Color.white,
-                null,
-                2f
-            );
-
-            GUI.changed = true;
+            outPointStyle = new GUIStyle();
+            outPointStyle.normal.background =
+                EditorGUIUtility.Load("builtin skins/darkskin/images/btn right.png") as Texture2D;
+            outPointStyle.active.background =
+                EditorGUIUtility.Load("builtin skins/darkskin/images/btn right on.png") as Texture2D;
+            outPointStyle.border = new RectOffset(4, 4, 12, 12);
         }
 
-        if (selectedOutPoint != null && selectedInPoint == null) {
-            Handles.DrawBezier (
-                selectedOutPoint.rect.center,
-                e.mousePosition,
-                selectedOutPoint.rect.center - Vector2.left * 50f,
-                e.mousePosition + Vector2.left * 50f,
-                Color.white,
-                null,
-                2f
-            );
-
-            GUI.changed = true;
+        private void OnGUI()
+        {
+            DrawGrid(20, 0.2f, Color.gray);
+            DrawGrid(100, 0.4f, Color.gray);
+            DrawNodes();
+            DrawConnections();
+            DrawConnectionLine(Event.current);
+            ProcessNodesEvents(Event.current);
+            ProcessEvents(Event.current);
+            if (GUI.changed) Repaint();
         }
-    }
 
-    private void ProcessEvents (Event e) {
-        drag = Vector2.zero;
-        switch (e.type) {
-            case EventType.MouseDown:
-                if (e.button == 0) {
-                    ClearConnectionSelection ();
-                }
-                if (e.button == 1) {
-                    this.ProcessContextMenu (e.mousePosition);
-                }
-                break;
+        private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
+        {
+            int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
+            int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
+            Handles.BeginGUI();
+            Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
+            offset += drag / 2;
+            Vector3 newOffset = new Vector3(offset.x % gridSpacing, offset.y % gridSpacing, 0);
+            for (int i = 0; i < widthDivs; i++)
+            {
+                Handles.DrawLine(new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset,
+                    new Vector3(gridSpacing * i, position.height, 0f) + newOffset);
+            }
 
-            case EventType.MouseDrag:
-                if (e.button == 0) {
-                    OnDrag (e.delta);
-                }
-                break;
+            for (int i = 0; i < heightDivs; i++)
+            {
+                Handles.DrawLine(new Vector3(-gridSpacing, gridSpacing * i, 0) + newOffset,
+                    new Vector3(position.width, gridSpacing * i, 0) + newOffset);
+            }
+
+            Handles.color = Color.white;
+            Handles.EndGUI();
         }
-    }
 
-    private void OnDrag (Vector2 delta) {
-        drag = delta;
-        if (nodes != null) {
-            for (int i = 0; i < nodes.Count; i++) {
-                nodes[i].Drag (delta);
+        private void DrawNodes()
+        {
+            if (nodes == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                nodes[i].Draw();
             }
         }
-        GUI.changed = true;
-    }
 
-    private void ProcessNodesEvents (Event e) {
-        if (nodes == null) {
-            return;
+        private void DrawConnections()
+        {
+            if (connections == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < connections.Count; i++)
+            {
+                connections[i].Draw();
+            }
         }
 
-        for (int i = nodes.Count - 1; i >= 0; i--) {
-            bool guiChanged = nodes[i].ProcessEvents (e);
-            if (guiChanged) {
+        private void DrawConnectionLine(Event e)
+        {
+            if (selectedInPoint != null && selectedOutPoint == null)
+            {
+                Handles.DrawBezier(
+                    selectedInPoint.rect.center,
+                    e.mousePosition,
+                    selectedInPoint.rect.center + Vector2.left * 50f,
+                    e.mousePosition - Vector2.left * 50f,
+                    Color.white,
+                    null,
+                    2f
+                );
+
+                GUI.changed = true;
+            }
+
+            if (selectedOutPoint != null && selectedInPoint == null)
+            {
+                Handles.DrawBezier(
+                    selectedOutPoint.rect.center,
+                    e.mousePosition,
+                    selectedOutPoint.rect.center - Vector2.left * 50f,
+                    e.mousePosition + Vector2.left * 50f,
+                    Color.white,
+                    null,
+                    2f
+                );
+
                 GUI.changed = true;
             }
         }
-    }
 
-    private void ProcessContextMenu (Vector2 mousePosition) {
-        GenericMenu genericMenu = new GenericMenu ();
-        genericMenu.AddItem (new GUIContent ("Add Item"), false, () => OClickAddNode (mousePosition));
-        genericMenu.ShowAsContext ();
-    }
+        private void ProcessEvents(Event e)
+        {
+            drag = Vector2.zero;
+            switch (e.type)
+            {
+                case EventType.MouseDown:
+                    if (e.button == 0)
+                    {
+                        ClearConnectionSelection();
+                    }
 
-    private void OClickAddNode (Vector2 mousePosition) {
-        if (nodes == null) {
-            nodes = new List<Node> ();
-        }
-        nodes.Add (new Node (mousePosition, 100, 120, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle, OnClickInPoint, OnClickOutPoint, OnClickRemoveNode));
-    }
+                    if (e.button == 1)
+                    {
+                        ProcessContextMenu(e.mousePosition);
+                    }
 
-    private void OnClickInPoint (ConnectionPoint inPoint) {
-        selectedInPoint = inPoint;
-        if (selectedOutPoint == null) {
-            return;
-        }
+                    break;
 
-        if (selectedOutPoint.node != selectedInPoint.node) {
-            this.CreateConnection ();
-        }
-        this.ClearConnectionSelection ();
-    }
-    private void OnClickOutPoint (ConnectionPoint outPoint) {
-        selectedOutPoint = outPoint;
-        if (selectedInPoint == null) {
-            return;
-        }
-        if (selectedOutPoint.node != selectedInPoint.node) {
-            this.CreateConnection ();
-        }
-        this.ClearConnectionSelection ();
-    }
+                case EventType.MouseDrag:
+                    if (e.button == 0)
+                    {
+                        OnDrag(e.delta);
+                    }
 
-    private void OnClickRemoveConnection (Connection connection) {
-        connections.Remove (connection);
-    }
-
-    private void CreateConnection () {
-        if (connections == null) {
-            connections = new List<Connection> ();
-        }
-
-        connections.Add (new Connection (selectedInPoint, selectedOutPoint, OnClickRemoveConnection));
-    }
-
-    private void ClearConnectionSelection () {
-        selectedInPoint = selectedOutPoint = null;
-    }
-
-    private void OnClickRemoveNode (Node node) {
-        nodes.Remove (node);
-
-        if (connections == null) {
-            return;
-        }
-
-        List<Connection> connectionsToRemove = new List<Connection> ();
-        for (int i = 0; i < connections.Count; i++) {
-            if (connections[i].inPoint == node.inPoint ||
-                connections[i].outPoint == node.outPoint) {
-                connectionsToRemove.Add (connections[i]);
+                    break;
             }
         }
 
-        for (var i = 0; i < connectionsToRemove.Count; i++) {
-            connections.Remove (connectionsToRemove[i]);
+        private void OnDrag(Vector2 delta)
+        {
+            drag = delta;
+            if (nodes != null)
+            {
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    nodes[i].Drag(delta);
+                }
+            }
+
+            GUI.changed = true;
         }
 
-        connectionsToRemove = null;
+        private void ProcessNodesEvents(Event e)
+        {
+            if (nodes == null)
+            {
+                return;
+            }
+
+            for (int i = nodes.Count - 1; i >= 0; i--)
+            {
+                bool guiChanged = nodes[i].ProcessEvents(e);
+                if (guiChanged)
+                {
+                    GUI.changed = true;
+                }
+            }
+        }
+
+        private void ProcessContextMenu(Vector2 mousePosition)
+        {
+            GenericMenu genericMenu = new GenericMenu();
+            genericMenu.AddItem(new GUIContent("Add Item"), false, () => OClickAddNode(mousePosition));
+            genericMenu.ShowAsContext();
+        }
+
+        private void OClickAddNode(Vector2 mousePosition)
+        {
+            if (nodes == null)
+            {
+                nodes = new List<Node>();
+            }
+
+            nodes.Add(new Node(mousePosition, 100, 120, nodeStyle, selectedNodeStyle, inPointStyle, outPointStyle,
+                OnClickInPoint, OnClickOutPoint, OnClickRemoveNode));
+        }
+
+        private void OnClickInPoint(ConnectionPoint inPoint)
+        {
+            selectedInPoint = inPoint;
+            if (selectedOutPoint == null)
+            {
+                return;
+            }
+
+            if (selectedOutPoint.node != selectedInPoint.node)
+            {
+                CreateConnection();
+            }
+
+            ClearConnectionSelection();
+        }
+
+        private void OnClickOutPoint(ConnectionPoint outPoint)
+        {
+            selectedOutPoint = outPoint;
+            if (selectedInPoint == null)
+            {
+                return;
+            }
+
+            if (selectedOutPoint.node != selectedInPoint.node)
+            {
+                CreateConnection();
+            }
+
+            ClearConnectionSelection();
+        }
+
+        private void OnClickRemoveConnection(Connection connection)
+        {
+            connections.Remove(connection);
+        }
+
+        private void CreateConnection()
+        {
+            if (connections == null)
+            {
+                connections = new List<Connection>();
+            }
+
+            connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection));
+        }
+
+        private void ClearConnectionSelection()
+        {
+            selectedInPoint = selectedOutPoint = null;
+        }
+
+        private void OnClickRemoveNode(Node node)
+        {
+            nodes.Remove(node);
+
+            if (connections == null)
+            {
+                return;
+            }
+
+            List<Connection> connectionsToRemove = new List<Connection>();
+            for (int i = 0; i < connections.Count; i++)
+            {
+                if (connections[i].inPoint == node.inPoint ||
+                    connections[i].outPoint == node.outPoint)
+                {
+                    connectionsToRemove.Add(connections[i]);
+                }
+            }
+
+            for (var i = 0; i < connectionsToRemove.Count; i++)
+            {
+                connections.Remove(connectionsToRemove[i]);
+            }
+
+            connectionsToRemove = null;
+        }
     }
 }

@@ -4,7 +4,11 @@
  * @Description: 连接点类型
  */
 
-public enum ConnectionPointType {
-    In,
-    Out
+namespace UFramework.NodeEditor
+{
+    public enum ConnectionPointType
+    {
+        In,
+        Out
+    }
 }
