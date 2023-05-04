@@ -189,19 +189,7 @@ namespace UFramework.Tween
                 return;
             }
 
-            // 自定义完成回调置空
-            CompletedEvent = null;
-
-            // 执行函数置空
-            executeHandler = null;
-
-            // 更新函数置空
-            updateHandler = null;
-            
-            // 额外数据置空
-            extraData = null;
-
-            _tweenerState = TweenerState.Reset;
+            ResetTweener();
 
             // 回收
             App.Make<ITweenManager>().RemoveTweener(this);
@@ -217,8 +205,16 @@ namespace UFramework.Tween
         {
             tweenerCore = null;
             timer = 0;
+            // 自定义完成回调置空
+            CompletedEvent = null;
+
+            // 执行函数置空
             executeHandler = null;
+
+            // 更新函数置空
             updateHandler = null;
+
+            // 额外数据置空
             extraData = null;
             calculateValueCallback = null;
             _tweenerState = TweenerState.Reset;
