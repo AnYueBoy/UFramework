@@ -149,6 +149,31 @@ namespace UFramework.Core.Container
         void Extend(string service, Func<object, IContainer, object> closure);
 
         /// <summary>
+        /// 注册Resolving回调函数
+        /// </summary>
+        IContainer OnResolving(Action<IBindData, object> closure);
+
+        /// <summary>
+        /// 注册AfterResolving函数
+        /// </summary>
+        IContainer OnAfterResolving(Action<IBindData, object> closure);
+
+        /// <summary>
+        /// 注册Release函数
+        /// </summary>
+        IContainer OnRelease(Action<IBindData, object> closure);
+
+        /// <summary>
+        /// 注册一个当类型查找失败时的处理函数
+        /// </summary>
+        IContainer OnFindType(Func<string, Type> func, int priority = int.MaxValue);
+
+        /// <summary>
+        /// 注册服务的重新绑定事件的回调。
+        /// </summary>
+        IContainer OnRebound(string service, Action<object> callback);
+
+        /// <summary>
         /// 将类型转为服务名
         /// </summary>
         string Type2Service(Type type);
