@@ -74,17 +74,18 @@ namespace UFramework.Core.Container
 
         internal object TriggerResolving(object instance)
         {
-            // TODO: 使用容器的触发方法
+            // 使用容器的触发方法
+            return Core.Container.Container.Trigger(this, instance, resolving);
         }
 
         internal object TriggerAfterResolving(object instance)
         {
-            // TODO:
+            return Core.Container.Container.Trigger(this, instance, afterResolving);
         }
 
         internal object TriggerRelease(object instance)
         {
-            // TODO:
+            return Core.Container.Container.Trigger(this, instance, release);
         }
 
         protected override void ReleaseBind()
