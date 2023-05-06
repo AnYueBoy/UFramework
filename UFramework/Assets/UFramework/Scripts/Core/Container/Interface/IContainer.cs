@@ -74,7 +74,7 @@ namespace UFramework.Core.Container
         /// <param name="method">方法名</param>
         /// <param name="target">唤起对象</param>
         /// <param name="called">唤起对象调用的方法信息</param>
-        IMethodBind BindMethod(string method, object target, MemberInfo called);
+        IMethodBind BindMethod(string method, object target, MethodInfo called);
 
         /// <summary>
         /// 从容器中解绑方法

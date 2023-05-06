@@ -91,7 +91,10 @@ namespace UFramework.Core.Container
         /// </summary>
         private readonly Dictionary<string, List<Action<object>>> rebound;
 
-        // TODO: 方法的ioc容器
+        /// <summary>
+        /// 方法的ioc容器
+        /// </summary>
+        private readonly MethodContainer methodContainer;
 
         /// <summary>
         /// 表示跳过的对象以跳过某些依赖项注入。
@@ -139,7 +142,7 @@ namespace UFramework.Core.Container
             BuildStack = new Stack<string>(32);
             UserParamsStack = new Stack<object[]>(32);
             skipped = new object();
-            // TODO: 方法的ioc容器
+            methodContainer = new MethodContainer(this);
             flushing = false;
             instanceId = 0;
         }
@@ -286,7 +289,7 @@ namespace UFramework.Core.Container
             }
             else
             {
-                // TODO:
+                TriggerOnRebound(service);
             }
 
             return bindData;
@@ -333,28 +336,41 @@ namespace UFramework.Core.Container
 
         #region Method
 
-        public IMethodBind BindMethod(string method, object target, MemberInfo called)
+        public IMethodBind BindMethod(string method, object target, MethodInfo called)
         {
-            throw new NotImplementedException();
+            GuardFlushing();
+            GuardMethodName(method);
+            return methodContainer.Bind(method, target, called);
         }
 
         public void UnbindMethod(object target)
         {
-            throw new NotImplementedException();
+            methodContainer.Unbind(target);
         }
 
         public object Invoke(string method, params object[] userParams)
         {
-            throw new NotImplementedException();
+            GuardConstruct(nameof(Invoke));
+            return methodContainer.Invoke(method, userParams);
         }
 
         public object Call(object target, MethodInfo methodInfo, params object[] userParams)
         {
-            throw new NotImplementedException();
+            Guard.Requires<ArgumentNullException>(methodInfo != null);
+            if (!methodInfo.IsStatic)
+            {
+                Guard.Requires<ArgumentNullException>(target != null);
+            }
+
+            GuardConstruct(nameof(Call));
+
+            var parameter = methodInfo.GetParameters();
+            var bindData = GetBindFillable(target != null ? Type2Service(target.GetType()) : null);
+            userParams = GetDependencies(bindData, parameter, userParams) ?? Array.Empty<object>();
+            return methodInfo.Invoke(target, userParams);
         }
 
         #endregion
-
 
         public void Tag(string tag, params string[] services)
         {
@@ -773,7 +789,7 @@ namespace UFramework.Core.Container
                 BuildStack.Clear();
                 UserParamsStack.Clear();
                 rebound.Clear();
-                // TODO:方法ioc容器Flush
+                methodContainer.Flush();
                 instanceTiming.Clear();
                 instanceId = 0;
             }
@@ -841,13 +857,10 @@ namespace UFramework.Core.Container
         /// <summary>
         /// 根据类型创建一个实例生成的闭包
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="concrete"></param>
-        /// <returns></returns>
         protected virtual Func<IContainer, object[], object> WrapperTypeBuilder(string service, Type concrete)
         {
-            // TODO:
-            return null;
+            return (container, userParams) =>
+                ((Container)container).CreateInstance(GetBindFillable(service), concrete, userParams);
         }
 
         #region Guard
@@ -895,6 +908,10 @@ namespace UFramework.Core.Container
             {
                 throw MakeBuildFailedException(makeService, SpeculatedServiceType(makeService), null);
             }
+        }
+
+        protected virtual void GuardMethodName(string method)
+        {
         }
 
         #endregion
