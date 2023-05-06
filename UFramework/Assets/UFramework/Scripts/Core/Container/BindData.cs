@@ -36,7 +36,7 @@ namespace UFramework.Core.Container
         {
             AssertDestroyed();
             Guard.ParameterNotNull(alias, nameof(alias));
-            // TODO:使用容器的别名方法
+            Container.Alias(alias, Service);
             return this;
         }
 
@@ -44,8 +44,7 @@ namespace UFramework.Core.Container
         {
             AssertDestroyed();
             Guard.ParameterNotNull(tag, nameof(tag));
-            // TODO: 容器的Tag方法
-
+            Container.Tag(tag,Service);
             return this;
         }
 
@@ -90,7 +89,7 @@ namespace UFramework.Core.Container
 
         protected override void ReleaseBind()
         {
-            // TODO: 使用容器释放方法
+            ((Container)Container).Unbind(this);
         }
 
         /// <summary>
