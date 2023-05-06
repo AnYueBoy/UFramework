@@ -146,8 +146,12 @@ namespace UFramework.Core.Container
 
         public object this[string service]
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => Make(service);
+            set
+            {
+                GetBind(service)?.Unbind();
+                Bind(service, (container, args) => value, false);
+            }
         }
 
         public IBindData GetBind(string service)
@@ -351,10 +355,6 @@ namespace UFramework.Core.Container
 
         #endregion
 
-        public void Unbind()
-        {
-            throw new NotImplementedException();
-        }
 
         public void Tag(string tag, params string[] services)
         {
@@ -592,10 +592,6 @@ namespace UFramework.Core.Container
             }
         }
 
-        public void Flush()
-        {
-            throw new NotImplementedException();
-        }
 
         public object Make(string service, params object[] userParams)
         {
@@ -630,33 +626,163 @@ namespace UFramework.Core.Container
 
         public void Extend(string service, Func<object, IContainer, object> closure)
         {
-            throw new NotImplementedException();
+            Guard.Requires<ArgumentNullException>(closure != null);
+            GuardFlushing();
+
+            service = string.IsNullOrEmpty(service) ? string.Empty : AliasToService(service);
+
+            if (!string.IsNullOrEmpty(service) && instances.TryGetValue(service, out object instance))
+            {
+                //如果实例已经存在，则应用扩展。
+                //扩展将不再添加到永久扩展列表中。
+                var old = instance;
+                instances[service] = instance = closure(instance, this);
+                if (!old.Equals(instance))
+                {
+                    instancesReverse.Remove(old);
+                    instancesReverse.Add(instance, service);
+                }
+
+                TriggerOnRebound(service, instance);
+                return;
+            }
+
+            if (!extenders.TryGetValue(service, out List<Func<object, IContainer, object>> extender))
+            {
+                extenders[service] = extender = new List<Func<object, IContainer, object>>();
+            }
+
+            extender.Add(closure);
+
+            if (!string.IsNullOrEmpty(service) && IsResolved(service))
+            {
+                TriggerOnRebound(service);
+            }
         }
 
-        public IContainer OnResolving(Action<IBindData, object> closure)
+        /// <summary>
+        /// 删除指定服务的所有扩展。
+        /// </summary>
+        public void ClearExtenders(string service)
         {
-            throw new NotImplementedException();
-        }
+            GuardFlushing();
+            service = AliasToService(service);
+            extenders.Remove(service);
+            if (!IsResolved(service))
+            {
+                return;
+            }
 
-        public IContainer OnAfterResolving(Action<IBindData, object> closure)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IContainer OnRelease(Action<IBindData, object> closure)
-        {
-            throw new NotImplementedException();
+            Release(service);
+            TriggerOnRebound(service);
         }
 
         public IContainer OnFindType(Func<string, Type> func, int priority = Int32.MaxValue)
         {
-            throw new NotImplementedException();
+            Guard.Requires<ArgumentNullException>(func != null);
+            GuardFlushing();
+            findType.Add(func, priority);
+            return this;
+        }
+
+        public IContainer OnRelease(Action<IBindData, object> closure)
+        {
+            AddClosure(closure, release);
+            return this;
+        }
+
+        public IContainer OnResolving(Action<IBindData, object> closure)
+        {
+            AddClosure(closure, resolving);
+            return this;
+        }
+
+        public IContainer OnAfterResolving(Action<IBindData, object> closure)
+        {
+            AddClosure(closure, afterResolving);
+            return this;
         }
 
         public IContainer OnRebound(string service, Action<object> callback)
         {
-            throw new NotImplementedException();
+            Guard.Requires<ArgumentNullException>(callback != null);
+            GuardFlushing();
+
+            service = AliasToService(service);
+            if (!IsResolved(service) && !CanMake(service))
+            {
+                throw new LogicException("在你想使用重绑定（关注）之前，你需要绑定(Bind) 或 实例化(Instance)服务");
+            }
+
+            if (!rebound.TryGetValue(service, out List<Action<object>> list))
+            {
+                rebound[service] = list = new List<Action<object>>();
+            }
+
+            list.Add(callback);
+            return this;
         }
+
+        public void Unbind(string service)
+        {
+            service = AliasToService(service);
+            var bind = GetBind(service);
+            bind?.Unbind();
+        }
+
+        internal void Unbind(IBindable bindable)
+        {
+            GuardFlushing();
+            Release(bindable.Service);
+            if (aliasesReverse.TryGetValue(bindable.Service, out List<string> serviceList))
+            {
+                foreach (var alias in serviceList)
+                {
+                    aliases.Remove(alias);
+                }
+
+                aliasesReverse.Remove(bindable.Service);
+            }
+
+            bindings.Remove(bindable.Service);
+        }
+
+        public void Flush()
+        {
+            try
+            {
+                flushing = true;
+                foreach (var service in instanceTiming.GetIterator(false))
+                {
+                    Release(service);
+                }
+
+                Guard.Requires<AssertException>(instances.Count <= 0);
+
+                tags.Clear();
+                aliases.Clear();
+                aliasesReverse.Clear();
+                instances.Clear();
+                bindings.Clear();
+                resolving.Clear();
+                release.Clear();
+                extenders.Clear();
+                resolved.Clear();
+                findType.Clear();
+                findTypeCache.Clear();
+                BuildStack.Clear();
+                UserParamsStack.Clear();
+                rebound.Clear();
+                // TODO:方法ioc容器Flush
+                instanceTiming.Clear();
+                instanceId = 0;
+            }
+            finally
+            {
+                flushing = false;
+            }
+        }
+
 
         public string Type2Service(Type type)
         {

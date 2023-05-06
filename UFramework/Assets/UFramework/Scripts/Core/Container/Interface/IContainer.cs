@@ -84,7 +84,7 @@ namespace UFramework.Core.Container
         /// <summary>
         /// 从容器中解绑服务
         /// </summary>
-        void Unbind();
+        void Unbind(string service);
 
         /// <summary>
         /// 为给定的一组服务指定Tag
