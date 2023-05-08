@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using UFramework.Container;
+using UFramework.Core.Container;
 using UFramework.EventDispatcher;
 using UFramework.Exception;
 using UFramework.Util;

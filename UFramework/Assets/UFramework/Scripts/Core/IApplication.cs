@@ -1,9 +1,9 @@
-using UFramework.Container;
+using UFramework.Core.Container;
 using UFramework.EventDispatcher;
 
 namespace UFramework.Core
 {
-    public interface IApplication : IContainer
+    public interface IApplication : IContainer 
     {
         bool IsMainThread { get; }
 
