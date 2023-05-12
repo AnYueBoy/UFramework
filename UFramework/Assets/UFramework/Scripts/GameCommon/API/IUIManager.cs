@@ -1,22 +1,17 @@
 using UnityEngine;
-namespace UFramework.GameCommon {
 
-    public interface IUIManager {
+namespace UFramework.GameCommon
+{
+    public interface IUIManager
+    {
+        void Init(RectTransform boardRoot, RectTransform dialogRoot);
 
-        void Init (Transform uiRoot);
+        T ShowBoard<T>(params object[] args) where T : class, IView, new();
 
-        void ShowBoard (string uiName, params object[] args);
+        T ShowDialog<T>(params object[] args) where T : class, IView, new();
+        
+        T CloseView<T>() where T : class, IView, new();
 
-        void ShowBoard<T> (params object[] args) where T : BaseUI;
-
-        void ShowDialog (string uiName, params object[] args);
-
-        void ShowDialog<T> (params object[] args) where T : BaseUI;
-
-        void CloseDialog (string uiName);
-
-        void CloseDialog<T> () where T : BaseUI;
-
-        void HideAll ();
+        void HideAll();
     }
 }

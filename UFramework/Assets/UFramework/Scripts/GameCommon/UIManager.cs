@@ -1,107 +1,100 @@
-﻿/*
- * @Author: l hy 
- * @Date: 2020-03-07 17:13:07 
- * @Description: 界面管理器 
- * @Last Modified by: l hy
- * @Last Modified time: 2021-05-05 10:30:58
- */
+﻿using System;
 using System.Collections.Generic;
 using UFramework.Core;
 using UnityEngine;
-namespace UFramework.GameCommon {
 
-    public class UIManager : IUIManager {
+namespace UFramework.GameCommon
+{
+    public class UIManager : IUIManager
+    {
+        private Dictionary<Type, ViewUI> viewDic = new Dictionary<Type, ViewUI>();
 
-        private Dictionary<string, BaseUI> uiDic = new Dictionary<string, BaseUI> ();
+        private ViewUI currentBoard;
 
-        private BaseUI currentBoard = null;
+        private RectTransform boardRoot;
+        private RectTransform dialogRoot;
 
-        private Transform uiRoot;
-
-        public void Init (Transform uiRoot) {
-            this.uiRoot = uiRoot;
-            this.currentBoard = null;
+        public void Init(RectTransform boardRoot, RectTransform dialogRoot)
+        {
+            this.boardRoot = boardRoot;
+            this.dialogRoot = dialogRoot;
         }
 
-        public void ShowBoard (string uiName, params object[] args) {
-            BaseUI targetUI = this.getUI (uiName);
-            if (currentBoard != null && this.currentBoard == targetUI) {
-                return;
+        private T GetView<T>() where T : class, IView, new()
+        {
+            Type viewType = typeof(T);
+            if (viewDic.TryGetValue(viewType, out var viewUI))
+            {
+                return viewUI as T;
             }
 
-            targetUI = this.showUI (uiName, args);
+            T view = new T();
+            GameObject viewNode = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(view.ViewPath);
+            view = viewNode.GetComponent<T>();
+            viewDic.Add(viewType, view as ViewUI);
+            return view;
+        }
 
-            if (this.currentBoard != null) {
-                this.currentBoard.gameObject.SetActive (false);
+        public T ShowBoard<T>(params object[] args) where T : class, IView, new()
+        {
+            // 关闭上一个Board
+            if (currentBoard != null)
+            {
+                currentBoard.gameObject.SetActive(false);
             }
 
-            this.currentBoard = targetUI;
+            T board = GetView<T>();
+            currentBoard = board as ViewUI;
+            currentBoard.gameObject.SetActive(true);
+            currentBoard.ViewRect.SetParent(boardRoot);
+            currentBoard.ViewRect.sizeDelta = Vector2.zero;
+            currentBoard.ViewRect.localScale = Vector3.one;
+            currentBoard.OnShow(args);
+            return board;
         }
 
-        public void ShowBoard<T> (params object[] args) where T : BaseUI {
-            this.ShowBoard (typeof (T).ToString (), args);
+        public T ShowDialog<T>(params object[] args) where T : class, IView, new()
+        {
+            T dialogView = GetView<T>();
+            var dialog = dialogView as ViewUI;
+            dialog.gameObject.SetActive(true);
+            dialog.ViewRect.SetParent(dialogRoot);
+            dialog.ViewRect.sizeDelta = Vector2.zero;
+            dialog.ViewRect.localScale = Vector3.one;
+            dialog.OnShow(args);
+            return dialogView;
         }
 
-        public void HideAll () {
-            foreach (BaseUI targerUI in this.uiDic.Values) {
-                if (targerUI == null) {
+        public T CloseView<T>() where T : class, IView, new()
+        {
+            return HideView<T>();
+        }
+
+        private T HideView<T>() where T : class, IView, new()
+        {
+            Type viewType = typeof(T);
+            if (!viewDic.TryGetValue(viewType, out var viewUI))
+            {
+                Debug.LogError($"需要关闭的ui不存在 {viewType}");
+                return null;
+            }
+
+            viewUI.gameObject.SetActive(false);
+            return viewUI as T;
+        }
+
+        public void HideAll()
+        {
+            foreach (var keyValue in viewDic)
+            {
+                var view = keyValue.Value;
+                if (!view.gameObject.activeSelf)
+                {
                     continue;
                 }
-                this.hideUI (targerUI.name);
+
+                view.gameObject.SetActive(false);
             }
         }
-
-        public void ShowDialog (string uiName, params object[] args) {
-            this.showUI (uiName, args);
-        }
-
-        public void ShowDialog<T> (params object[] args) where T : BaseUI {
-            this.ShowDialog (typeof (T).ToString (), args);
-        }
-
-        public void CloseDialog (string uiName) {
-            this.hideUI (uiName);
-        }
-
-        public void CloseDialog<T> () where T : BaseUI {
-            this.CloseDialog (typeof (T).ToString ());
-        }
-
-        private void hideUI (string uiName) {
-            BaseUI targetUI = this.getUI (uiName);
-            if (targetUI != null) {
-                targetUI.gameObject.SetActive (false);
-            }
-        }
-
-        private BaseUI getUI (string uiName) {
-            if (this.uiDic.ContainsKey (uiName)) {
-                return this.uiDic[uiName];
-            }
-
-            return null;
-        }
-
-        private BaseUI showUI (string uiName, params object[] args) {
-            BaseUI targetUI = this.getUI (uiName);
-            if (targetUI != null) {
-                targetUI.gameObject.SetActive (true);
-            } else {
-                string url = "UI/" + uiName;
-                GameObject prefab = App.Make<IAssetsManager> ().GetAssetByUrlSync<GameObject> (url);
-
-                GameObject uiNode = App.Make<IObjectPool> ().RequestInstance (prefab);
-                RectTransform rectTransform = uiNode.GetComponent<RectTransform> ();
-                rectTransform.SetParent (this.uiRoot, false);
-                targetUI = uiNode.GetComponent<BaseUI> ();
-                this.uiDic.Add (uiName, targetUI);
-                uiNode.SetActive (true);
-            }
-
-            targetUI.OnShow (args);
-
-            return targetUI;
-        }
-
     }
 }
