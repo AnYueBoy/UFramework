@@ -3,6 +3,7 @@ using UFramework.Bootstarp;
 using UFramework.Core;
 using UFramework.Coroutine;
 using UFramework.EventDispatcher;
+using UFramework.GameCommon;
 using UFramework.Tween;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ public class FrameworkTest : MonoBehaviour
 
     private void Start()
     {
+        App.Make<IUIManager>().ShowView<GameBoard>(UILayer.Lower);
     }
 
     private void OnEnable()

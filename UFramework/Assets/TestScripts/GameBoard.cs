@@ -1,21 +1,17 @@
 ﻿using UFramework.GameCommon;
-using UnityEngine;
 
-public class GameBoard : MonoBehaviour
+public class GameBoard : IView
 {
-    // Start is called before the first frame update
-    void Start()
+    public string ViewPath => "UI/GameBoard"; 
+    public string ViewName { get; }
+    public RuntimeComponent UIInstance { get; set; }
+    public UILayer UILayer { get; set; }
+    public void OnShow(params object[] param)
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnClose()
     {
-        
-    }
-
-    public void backHallBoard(){
-        SceneLoadManager.GetInstance().LoadAppointScene("HallBoard");
     }
 }
