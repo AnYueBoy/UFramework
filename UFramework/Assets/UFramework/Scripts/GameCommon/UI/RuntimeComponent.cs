@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UFramework.GameCommon
@@ -18,3 +20,4 @@ namespace UFramework.GameCommon
         public BindData[] bindDataArray;
     }
 }
+#endif

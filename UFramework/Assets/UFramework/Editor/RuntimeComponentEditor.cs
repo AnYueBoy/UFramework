@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using UnityEditorInternal;
+using UnityEngine.UI;
 
 namespace UFramework.GameCommon
 {
@@ -50,8 +52,9 @@ namespace UFramework.GameCommon
             StringBuilder sb = new StringBuilder();
             sb.Append("using UnityEngine;\n");
             sb.Append("using UnityEngine.UI;\n");
+            sb.Append("//此代码由程序自动生成切勿修改\n");
 
-            sb.Append("\tpublic partial class " + classUIName + " : MonoBehaviour\n");
+            sb.Append("\tpublic partial class " + classUIName + "\n");
             sb.Append("{\n");
 
             int dataCount = bindDataList.count;
@@ -73,12 +76,12 @@ namespace UFramework.GameCommon
             if (!File.Exists(uiFilePath))
             {
                 StringBuilder sbUI = new StringBuilder();
-                sb.Append("using UnityEngine;\n");
-                sb.Append("using UnityEngine.UI;\n");
+                sbUI.Append("using UnityEngine;\n");
+                sbUI.Append("using UnityEngine.UI;\n");
 
-                sb.Append("\tpublic partial class " + classUIName + " : MonoBehaviour\n");
-                sb.Append("{\n");
-                sb.Append("\n}");
+                sbUI.Append("\tpublic partial class " + classUIName + " : MonoBehaviour\n");
+                sbUI.Append("{\n");
+                sbUI.Append("\n}");
                 File.WriteAllText(uiFilePath, sbUI.ToString());
             }
 
@@ -87,6 +90,33 @@ namespace UFramework.GameCommon
             File.WriteAllText(extensionFilePath, sb.ToString());
 
             AssetDatabase.Refresh();
+
+            Assembly assembly = Assembly.Load("Assembly-CSharp");
+            Type type = assembly.GetType(classUIName);
+            var component = context.gameObject.GetComponent(type);
+            if (component != null)
+            {
+                DestroyImmediate(component);
+            }
+
+            component = context.gameObject.AddComponent(type);
+
+            for (int i = 0; i < dataCount; i++)
+            {
+                SerializedProperty addData =
+                    bindDataList.serializedProperty.GetArrayElementAtIndex(i);
+
+                string variableName = addData.FindPropertyRelative("variableName").stringValue;
+                object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
+                var componentType = component.GetType();
+                var componentProperty =
+                    componentType.GetField(variableName, BindingFlags.NonPublic | BindingFlags.Instance);
+                componentProperty.SetValue(component, referenceObject);
+            }
+
+            EditorUtility.SetDirty(context);
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
         }
 
         private void OnDragUpdate()
@@ -253,5 +283,9 @@ namespace UFramework.GameCommon
         public string[] types = { };
         public Component[] components = { };
         public GameObject gameObject;
+    }
+
+    public class CompTest : MonoBehaviour
+    {
     }
 }
