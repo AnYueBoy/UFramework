@@ -1,84 +1,257 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
-using UFramework.GameCommon;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.UI;
+using System.IO;
+using System.Text;
+using UnityEditorInternal;
 
-[CustomEditor(typeof(RuntimeComponent))]
-public class RuntimeComponentEditor : Editor
+namespace UFramework.GameCommon
 {
-    public override void OnInspectorGUI()
+    using UnityEditor;
+    using UnityEngine;
+
+    [CustomEditor(typeof(RuntimeComponent))]
+    public class RuntimeComponentEditor : Editor
     {
-        base.OnInspectorGUI();
+        private SerializedProperty bindData;
+        private ReorderableList bindDataList;
+        private RuntimeComponent _runtimeComponent;
 
-        OnDragUpdate();
-    }
-
-    private void OnDragUpdate()
-    {
-        Event e = Event.current;
-        GUI.color = Color.green;
-        //绘制一个监听区域
-        var dragArea = GUILayoutUtility.GetRect(0f, 30f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-        GUIContent title = new GUIContent("拖动组件对象到此进行快速绑定");
-        GUI.Box(dragArea, title);
-        // DrawTypes();
-
-        switch (e.type)
+        private void OnEnable()
         {
-            case EventType.DragUpdated:
-            case EventType.DragPerform:
+            bindData = serializedObject.FindProperty("bindDataArray");
+            bindDataList = new ReorderableList(serializedObject, bindData, true, true, true, true);
 
-                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-                if (e.type == EventType.DragPerform)
+            bindDataList.drawHeaderCallback = DrawHeader;
+            bindDataList.drawElementCallback = DrawListItems;
+        }
+
+        private ObjectInfo curOperateObject;
+        private List<Rect> typeRectList;
+
+        public override void OnInspectorGUI()
+        {
+            OnDragUpdate();
+
+            serializedObject.Update();
+            bindDataList.DoLayoutList();
+            serializedObject.ApplyModifiedProperties();
+
+            if (GUILayout.Button("生成绑定代码"))
+            {
+                GenerateBindCode();
+            }
+        }
+
+        private void GenerateBindCode()
+        {
+            var context = serializedObject.targetObject as RuntimeComponent;
+            var classUIName = context.gameObject.name + "UI";
+            var classExtensionName = classUIName + "Extension";
+            StringBuilder sb = new StringBuilder();
+            sb.Append("using UnityEngine;\n");
+            sb.Append("using UnityEngine.UI;\n");
+
+            sb.Append("\tpublic partial class " + classUIName + " : MonoBehaviour\n");
+            sb.Append("{\n");
+
+            int dataCount = bindDataList.count;
+            for (int i = 0; i < dataCount; i++)
+            {
+                SerializedProperty addData =
+                    bindDataList.serializedProperty.GetArrayElementAtIndex(i);
+
+                string variableName = addData.FindPropertyRelative("variableName").stringValue;
+                object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
+                string variableTypeName = referenceObject.GetType().Name;
+
+                sb.Append("[SerializeField] private " + variableTypeName + " " + variableName + ";\n");
+            }
+
+            sb.Append("\n}");
+
+            string uiFilePath = UFrameworkConfig.GetSerializedObject().codeGeneratePath + classUIName + ".cs";
+            if (!File.Exists(uiFilePath))
+            {
+                StringBuilder sbUI = new StringBuilder();
+                sb.Append("using UnityEngine;\n");
+                sb.Append("using UnityEngine.UI;\n");
+
+                sb.Append("\tpublic partial class " + classUIName + " : MonoBehaviour\n");
+                sb.Append("{\n");
+                sb.Append("\n}");
+                File.WriteAllText(uiFilePath, sbUI.ToString());
+            }
+
+            string extensionFilePath =
+                UFrameworkConfig.GetSerializedObject().codeGeneratePath + classExtensionName + ".cs";
+            File.WriteAllText(extensionFilePath, sb.ToString());
+
+            AssetDatabase.Refresh();
+        }
+
+        private void OnDragUpdate()
+        {
+            Event e = Event.current;
+            GUI.color = Color.green;
+            //绘制一个监听区域
+            var dragArea = GUILayoutUtility.GetRect(0f, 30f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            GUIContent title = new GUIContent("拖动组件对象到此进行快速绑定");
+            GUI.Box(dragArea, title);
+            DrawTypes();
+
+            switch (e.type)
+            {
+                case EventType.DragUpdated:
+                case EventType.DragPerform:
+                    if (curOperateObject == null)
+                    {
+                        curOperateObject = BuildObjectInfo(DragAndDrop.objectReferences[0] as GameObject);
+                    }
+
+                    var index = GetContainsIndex(e.mousePosition);
+                    if (index <= -1)
+                    {
+                        break;
+                    }
+
+                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                    if (e.type == EventType.DragPerform)
+                    {
+                        if (curOperateObject != null)
+                        {
+                            // 添加数据
+                            int addIndex = bindDataList.count;
+                            bindDataList.serializedProperty.InsertArrayElementAtIndex(addIndex);
+
+                            SerializedProperty addData =
+                                bindDataList.serializedProperty.GetArrayElementAtIndex(addIndex);
+                            addData.FindPropertyRelative("variableName").stringValue = curOperateObject.gameObject.name;
+                            addData.FindPropertyRelative("bindObject").objectReferenceValue =
+                                curOperateObject.components[index];
+
+                            serializedObject.ApplyModifiedProperties();
+                        }
+
+                        DragAndDrop.AcceptDrag();
+                    }
+
+                    e.Use();
+                    break;
+
+                case EventType.DragExited:
+                    curOperateObject = null;
+                    typeRectList = new List<Rect>();
+                    break;
+
+                default:
+                    break;
+            }
+
+            GUI.color = Color.white;
+        }
+
+        private void DrawTypes()
+        {
+            if (curOperateObject == null)
+            {
+                return;
+            }
+
+            GUILayout.BeginVertical();
+            var allTypes = curOperateObject.types;
+
+            typeRectList = new List<Rect>();
+            for (var i = 0; i < allTypes.Length; i++)
+            {
+                var r = GUILayoutUtility.GetRect(0f, 30f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                typeRectList.Add(r);
+                GUI.color = r.Contains(Event.current.mousePosition) ? Color.green : Color.white;
+                GUI.Box(r, allTypes[i]);
+                Repaint();
+            }
+
+            GUILayout.EndVertical();
+        }
+
+        private int GetContainsIndex(Vector2 mousePos)
+        {
+            if (typeRectList == null || typeRectList.Count <= 0)
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < typeRectList.Count; i++)
+            {
+                var rect = typeRectList[i];
+                if (rect.Contains(mousePos))
                 {
-                    var obj = DragAndDrop.objectReferences;
-                    Debug.Log($"obj name: {obj[0].name}");
-                    GameObject gameObject = obj[0] as GameObject;
-                    var allComponent = gameObject.GetComponents(typeof(Component));
-
-                    DragAndDrop.AcceptDrag();
+                    return i;
                 }
+            }
 
-                e.Use();
-                break;
-
-            case EventType.DragExited:
-
-                break;
-
-            default:
-                break;
+            return -1;
         }
 
-        GUI.color = Color.white;
-    }
-
-    private readonly Type[] allTypes = new Type[] { typeof(CanvasGroup), typeof(Image) };
-
-    private List<Type> types = new List<Type>();
-
-    private void DrawTypes()
-    {
-        GUILayout.BeginVertical();
-
-        for (var i = 0; i < allTypes.Length; i++)
+        private ObjectInfo BuildObjectInfo(GameObject obj)
         {
-            var r = GUILayoutUtility.GetRect(0f, 30f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-            // m_typeRects[i] = r;
-            GUI.color = r.Contains(Event.current.mousePosition) ? Color.green : Color.white;
-            GUI.Box(r, allTypes[i].Name);
-            Repaint();
+            var info = new ObjectInfo();
+
+            var types = new List<string>();
+            var components = new List<Component>();
+
+            info.gameObject = obj;
+
+            var allComponent = obj.GetComponents(typeof(Component));
+
+            foreach (var component in allComponent)
+            {
+                types.Add(component.GetType().Name);
+                components.Add(component);
+            }
+
+            info.components = components.ToArray();
+            info.types = types.ToArray();
+
+            return info;
         }
 
-        GUILayout.EndVertical();
+        #region ReorderableList
+
+        private void DrawHeader(Rect rect)
+        {
+            EditorGUI.LabelField(rect, "Components");
+        }
+
+        private readonly float itemWidth = 150;
+        private readonly float itemInterval = 20;
+
+        private void DrawListItems(Rect rect, int index, bool isActive, bool isFocused)
+        {
+            SerializedProperty element = bindDataList.serializedProperty.GetArrayElementAtIndex(index);
+            EditorGUI.PropertyField(
+                new Rect(rect.x, rect.y, itemWidth, EditorGUIUtility.singleLineHeight),
+                element.FindPropertyRelative("variableName"), GUIContent.none);
+
+            EditorGUI.PropertyField(
+                new Rect(rect.x + itemWidth + itemInterval, rect.y, itemWidth, EditorGUIUtility.singleLineHeight),
+                element.FindPropertyRelative("bindObject"), GUIContent.none);
+        }
+
+        #endregion
     }
 
 
-    [Button("生成绑定代码")]
-    private void GenerateBindCode()
+    [Serializable]
+    public class BindData
     {
+        public string variableName;
+        public Object bindObject;
+    }
+
+    public class ObjectInfo
+    {
+        public string[] types = { };
+        public Component[] components = { };
+        public GameObject gameObject;
     }
 }

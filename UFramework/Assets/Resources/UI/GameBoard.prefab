@@ -202,3 +202,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb05049e232f4048ad3cbe24ef462374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  varName: {fileID: 0}
+  bindDataArray:
+  - variableName: BG
+    bindObject: {fileID: 8965894187184456062}
+  - variableName: Text
+    bindObject: {fileID: 8965894188478919749}
