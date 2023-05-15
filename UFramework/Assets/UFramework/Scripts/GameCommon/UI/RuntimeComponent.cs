@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace UFramework.GameCommon
 {
@@ -12,7 +13,7 @@ namespace UFramework.GameCommon
         {
             _rectTrans = GetComponent<RectTransform>();
         }
-        
-     
+
+
     }
 }

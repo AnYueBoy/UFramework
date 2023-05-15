@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UFramework.GameCommon;
 using UnityEditor;
 using UnityEngine;
@@ -34,6 +36,9 @@ public class RuntimeComponentEditor : Editor
                 {
                     var obj = DragAndDrop.objectReferences;
                     Debug.Log($"obj name: {obj[0].name}");
+                    GameObject gameObject = obj[0] as GameObject;
+                    var allComponent = gameObject.GetComponents(typeof(Component));
+
                     DragAndDrop.AcceptDrag();
                 }
 
@@ -53,6 +58,8 @@ public class RuntimeComponentEditor : Editor
 
     private readonly Type[] allTypes = new Type[] { typeof(CanvasGroup), typeof(Image) };
 
+    private List<Type> types = new List<Type>();
+
     private void DrawTypes()
     {
         GUILayout.BeginVertical();
@@ -67,5 +74,11 @@ public class RuntimeComponentEditor : Editor
         }
 
         GUILayout.EndVertical();
+    }
+
+
+    [Button("生成绑定代码")]
+    private void GenerateBindCode()
+    {
     }
 }
