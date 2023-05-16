@@ -3,12 +3,12 @@
 public class GameBoard : IView
 {
     public string ViewPath => "UI/GameBoard";
-    public string ViewName { get; }
     public ViewUI UIInstance { get; set; }
     public UILayer UILayer { get; set; }
 
     public void OnShow(params object[] param)
     {
+        (UIInstance as GameBoardUI).text.text = "测试注入";
     }
 
     public void OnClose()

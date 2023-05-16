@@ -10,11 +10,6 @@ namespace UFramework.GameCommon
         string ViewPath { get; }
 
         /// <summary>
-        /// 界面名称
-        /// </summary>
-        string ViewName { get; }
-
-        /// <summary>
         /// ui实例
         /// </summary>
         ViewUI UIInstance { get; set; }
