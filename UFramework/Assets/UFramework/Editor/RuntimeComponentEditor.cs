@@ -54,7 +54,7 @@ namespace UFramework.GameCommon
             sb.Append("using UnityEngine.UI;\n");
             sb.Append("//此代码由程序自动生成切勿修改\n");
 
-            sb.Append("\tpublic partial class " + classUIName + "\n");
+            sb.Append("public partial class " + classUIName + "\n");
             sb.Append("{\n");
 
             int dataCount = bindDataList.count;
@@ -67,7 +67,7 @@ namespace UFramework.GameCommon
                 object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
                 string variableTypeName = referenceObject.GetType().Name;
 
-                sb.Append("[SerializeField] private " + variableTypeName + " " + variableName + ";\n");
+                sb.Append("\t public " + variableTypeName + " " + variableName + ";\n");
             }
 
             sb.Append("\n}");
@@ -79,7 +79,7 @@ namespace UFramework.GameCommon
                 sbUI.Append("using UnityEngine;\n");
                 sbUI.Append("using UnityEngine.UI;\n");
 
-                sbUI.Append("\tpublic partial class " + classUIName + " : MonoBehaviour\n");
+                sbUI.Append("public partial class " + classUIName + " : MonoBehaviour\n");
                 sbUI.Append("{\n");
                 sbUI.Append("\n}");
                 File.WriteAllText(uiFilePath, sbUI.ToString());
