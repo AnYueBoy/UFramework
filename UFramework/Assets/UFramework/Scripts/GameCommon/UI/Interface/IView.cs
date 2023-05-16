@@ -17,7 +17,7 @@ namespace UFramework.GameCommon
         /// <summary>
         /// ui实例
         /// </summary>
-        RuntimeComponent UIInstance { get; set; }
+        ViewUI UIInstance { get; set; }
 
         /// <summary>
         /// ui序偶在层级

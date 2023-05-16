@@ -94,7 +94,7 @@ namespace UFramework.GameCommon
                 sbUI.Append("using UnityEngine;\n");
                 sbUI.Append("using UnityEngine.UI;\n");
 
-                sbUI.Append("public partial class " + classUIName + " : MonoBehaviour\n");
+                sbUI.Append("public partial class " + classUIName + " : ViewUI\n");
                 sbUI.Append("{\n");
                 sbUI.Append("\n}");
                 File.WriteAllText(uiFilePath, sbUI.ToString());
