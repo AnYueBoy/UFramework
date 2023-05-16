@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8965894187184456062}
   - component: {fileID: 8965894187184456063}
   m_Layer: 5
-  m_Name: BG
+  m_Name: bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 8965894188478919748}
   - component: {fileID: 8965894188478919749}
   m_Layer: 5
-  m_Name: Text
+  m_Name: text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -203,8 +203,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   varName: {fileID: 0}
-  bindDataArray:
-  - variableName: BG
-    bindObject: {fileID: 8965894187184456062}
-  - variableName: Text
-    bindObject: {fileID: 8965894188478919749}
+  bindDataArray: []

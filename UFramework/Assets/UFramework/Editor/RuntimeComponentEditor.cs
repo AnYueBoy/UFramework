@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using UnityEditor.Callbacks;
 using UnityEditorInternal;
 using UnityEngine.UI;
 
@@ -30,6 +31,14 @@ namespace UFramework.GameCommon
         private ObjectInfo curOperateObject;
         private List<Rect> typeRectList;
 
+        private static bool isReloadScriptCompleted;
+
+        [DidReloadScripts]
+        static void OnScriptReloadCompleted()
+        {
+            isReloadScriptCompleted = true;
+        }
+
         public override void OnInspectorGUI()
         {
             OnDragUpdate();
@@ -41,6 +50,12 @@ namespace UFramework.GameCommon
             if (GUILayout.Button("生成绑定代码"))
             {
                 GenerateBindCode();
+            }
+
+            if (isReloadScriptCompleted && EditorPrefs.HasKey("ClassName"))
+            {
+                isReloadScriptCompleted = false;
+                AddObjectReference();
             }
         }
 
@@ -88,9 +103,17 @@ namespace UFramework.GameCommon
             string extensionFilePath =
                 UFrameworkConfig.GetSerializedObject().codeGeneratePath + classExtensionName + ".cs";
             File.WriteAllText(extensionFilePath, sb.ToString());
-
+            isReloadScriptCompleted = false;
+            EditorPrefs.SetString("ClassName", classUIName);
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
 
+        private void AddObjectReference()
+        {
+            var classUIName = EditorPrefs.GetString("ClassName");
+            EditorPrefs.DeleteKey("ClassName");
+            var context = serializedObject.targetObject as RuntimeComponent;
             Assembly assembly = Assembly.Load("Assembly-CSharp");
             Type type = assembly.GetType(classUIName);
             var component = context.gameObject.GetComponent(type);
@@ -100,7 +123,7 @@ namespace UFramework.GameCommon
             }
 
             component = context.gameObject.AddComponent(type);
-
+            int dataCount = bindDataList.count;
             for (int i = 0; i < dataCount; i++)
             {
                 SerializedProperty addData =
@@ -110,13 +133,11 @@ namespace UFramework.GameCommon
                 object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
                 var componentType = component.GetType();
                 var componentProperty =
-                    componentType.GetField(variableName, BindingFlags.NonPublic | BindingFlags.Instance);
+                    componentType.GetField(variableName);
                 componentProperty.SetValue(component, referenceObject);
             }
 
             EditorUtility.SetDirty(context);
-            AssetDatabase.Refresh();
-            AssetDatabase.SaveAssets();
         }
 
         private void OnDragUpdate()
