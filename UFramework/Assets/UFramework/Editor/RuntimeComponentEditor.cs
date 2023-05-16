@@ -93,6 +93,7 @@ namespace UFramework.GameCommon
                 StringBuilder sbUI = new StringBuilder();
                 sbUI.Append("using UnityEngine;\n");
                 sbUI.Append("using UnityEngine.UI;\n");
+                sbUI.Append("using UFramework.GameCommon;\n");
 
                 sbUI.Append("public partial class " + classUIName + " : ViewUI\n");
                 sbUI.Append("{\n");
