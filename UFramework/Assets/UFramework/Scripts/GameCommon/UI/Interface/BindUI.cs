@@ -2,7 +2,7 @@
 
 namespace UFramework.GameCommon
 {
-    public abstract class ViewUI : MonoBehaviour
+    public abstract class BindUI : MonoBehaviour
     {
         private RectTransform _rectTransform;
         public RectTransform RectTrans => _rectTransform;

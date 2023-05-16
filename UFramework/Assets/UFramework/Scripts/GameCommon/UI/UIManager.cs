@@ -33,7 +33,7 @@ namespace UFramework.GameCommon
             GameObject viewPrefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(view.ViewPath);
             // 实例化对应UI实例
             GameObject viewNode = App.Make<IObjectPool>().RequestInstance(viewPrefab);
-            var iviewUI = viewNode.GetComponent<ViewUI>();
+            var iviewUI = viewNode.GetComponent<BindUI>();
             // 设置ui实例
             view.UIInstance = iviewUI;
             view.UIInstance.Init();

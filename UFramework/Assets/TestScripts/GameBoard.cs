@@ -3,7 +3,7 @@
 public class GameBoard : IView
 {
     public string ViewPath => "UI/GameBoard";
-    public ViewUI UIInstance { get; set; }
+    public BindUI UIInstance { get; set; }
     public UILayer UILayer { get; set; }
 
     public void OnShow(params object[] param)

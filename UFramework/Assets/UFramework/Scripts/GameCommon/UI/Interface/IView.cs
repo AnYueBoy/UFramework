@@ -12,7 +12,7 @@ namespace UFramework.GameCommon
         /// <summary>
         /// ui实例
         /// </summary>
-        ViewUI UIInstance { get; set; }
+        BindUI UIInstance { get; set; }
 
         /// <summary>
         /// ui序偶在层级
