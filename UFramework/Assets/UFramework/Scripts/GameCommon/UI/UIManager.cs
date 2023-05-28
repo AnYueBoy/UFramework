@@ -87,6 +87,20 @@ namespace UFramework.GameCommon
             }
         }
 
+        public void LocalUpdate(float dt)
+        {
+            foreach (var views in viewDic)
+            {
+                var view = views.Value;
+                if (!view.UIInstance.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                view.LocalUpdate(dt);
+            }
+        }
+
         private RectTransform GetUIRoot(UILayer uiLayer)
         {
             if (uiLayer == UILayer.Lower)

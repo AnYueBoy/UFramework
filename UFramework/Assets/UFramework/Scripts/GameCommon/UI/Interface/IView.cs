@@ -21,6 +21,8 @@ namespace UFramework.GameCommon
 
         void OnShow(params object[] param);
 
+        void LocalUpdate(float dt);
+
         void OnClose();
     }
 }

@@ -9,5 +9,7 @@ namespace UFramework.GameCommon
         T CloseView<T>() where T : class, IView, new();
 
         void HideAll();
+
+        void LocalUpdate(float dt);
     }
 }

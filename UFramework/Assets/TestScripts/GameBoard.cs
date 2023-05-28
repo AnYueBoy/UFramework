@@ -11,6 +11,10 @@ public class GameBoard : IView
         (UIInstance as GameBoardUI).text.text = "测试注入";
     }
 
+    public void LocalUpdate(float dt)
+    {
+    }
+
     public void OnClose()
     {
     }
