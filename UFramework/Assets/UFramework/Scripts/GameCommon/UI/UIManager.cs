@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UFramework.Core;
 using UnityEngine;
 
@@ -8,6 +9,10 @@ namespace UFramework.GameCommon
     public class UIManager : IUIManager
     {
         private readonly Dictionary<Type, IView> viewDic = new Dictionary<Type, IView>();
+
+        private HashSet<IView> currentLowerViews = new HashSet<IView>();
+        private HashSet<IView> currentTopViews = new HashSet<IView>();
+        private List<IView> currentTipViews = new List<IView>();
 
         private RectTransform lowerRoot;
         private RectTransform topRoot;
@@ -51,6 +56,23 @@ namespace UFramework.GameCommon
             view.UIInstance.gameObject.SetActive(true);
             view.UILayer = uiLayer;
             view.OnShow(args);
+            if (uiLayer == UILayer.Lower)
+            {
+                currentLowerViews.Add(view);
+            }
+            else if (uiLayer == UILayer.Top)
+            {
+                currentTopViews.Add(view);
+            }
+            else if (uiLayer == UILayer.Tip)
+            {
+                currentTipViews.Add(view);
+            }
+            else
+            {
+                Debug.LogError($"添加view时产生了错误的UILayer:{uiLayer}");
+            }
+
             return view;
         }
 
@@ -70,6 +92,23 @@ namespace UFramework.GameCommon
 
             view.UIInstance.gameObject.SetActive(false);
             view.OnClose();
+            if (view.UILayer == UILayer.Lower)
+            {
+                currentLowerViews.Remove(view);
+            }
+            else if (view.UILayer == UILayer.Top)
+            {
+                currentTopViews.Remove(view);
+            }
+            else if (view.UILayer == UILayer.Tip)
+            {
+                currentTipViews.Remove(view);
+            }
+            else
+            {
+                Debug.LogError($"移除view时产生了错误的UILayer:{view.UILayer}");
+            }
+
             return view as T;
         }
 
@@ -99,6 +138,71 @@ namespace UFramework.GameCommon
 
                 view.LocalUpdate(dt);
             }
+        }
+
+        public IView GetCurrentView()
+        {
+            if (currentTipViews.Count > 0)
+            {
+                return currentTipViews[0];
+            }
+
+            if (currentTopViews.Count > 0)
+            {
+                return currentTopViews.First();
+            }
+
+            if (currentLowerViews.Count > 0)
+            {
+                return currentLowerViews.First();
+            }
+
+            return null;
+        }
+
+        public IView GetCurrentViewExcludeTip()
+        {
+            if (currentTopViews.Count > 0)
+            {
+                return currentTopViews.First();
+            }
+
+            if (currentLowerViews.Count > 0)
+            {
+                return currentLowerViews.First();
+            }
+
+            return null;
+        }
+
+        public IView GetCurrentLowerView()
+        {
+            if (currentLowerViews.Count > 0)
+            {
+                return currentLowerViews.First();
+            }
+
+            return null;
+        }
+
+        public IView GetCurrentTopView()
+        {
+            if (currentTopViews.Count > 0)
+            {
+                return currentTopViews.First();
+            }
+
+            return null;
+        }
+
+        public IView GetCurrentTipView()
+        {
+            if (currentTipViews.Count > 0)
+            {
+                return currentTipViews[0];
+            }
+
+            return null;
         }
 
         private RectTransform GetUIRoot(UILayer uiLayer)
