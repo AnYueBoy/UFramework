@@ -12,9 +12,6 @@ namespace UFramework.GameCommon
 
         public void Init()
         {
-            var nodeManager = App.Make<INodeManager>();
-            var root = nodeManager.LowerRoot;
-            Debug.Log("");
         }
     }
 }
