@@ -19,6 +19,11 @@ namespace UFramework.GameCommon
         /// </summary>
         UILayer UILayer { get; set; }
 
+        /// <summary>
+        /// 仅在IView构建时调用一次
+        /// </summary>
+        void OnInit();
+
         void OnShow(params object[] param);
 
         void LocalUpdate(float dt);

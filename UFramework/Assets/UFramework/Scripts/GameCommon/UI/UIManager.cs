@@ -42,6 +42,7 @@ namespace UFramework.GameCommon
             // 设置ui实例
             view.UIInstance = iviewUI;
             view.UIInstance.Init();
+            view.OnInit();
             viewDic.Add(viewType, view);
             return view;
         }
