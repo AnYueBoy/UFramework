@@ -65,8 +65,7 @@ namespace UFramework.GameCommon
             var classUIName = context.gameObject.name + "UI";
             var classExtensionName = classUIName + "Extension";
             StringBuilder sb = new StringBuilder();
-            sb.Append("using UnityEngine;\n");
-            sb.Append("using UnityEngine.UI;\n");
+            HashSet<string> allNameSpace = new HashSet<string>();
             sb.Append("//此代码由程序自动生成切勿修改\n");
 
             sb.Append("public partial class " + classUIName + "\n");
@@ -80,12 +79,21 @@ namespace UFramework.GameCommon
 
                 string variableName = addData.FindPropertyRelative("variableName").stringValue;
                 object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
+                // 变量名称
                 string variableTypeName = referenceObject.GetType().Name;
+                // 变量名称所在命名空间
+                string namespaceStr = referenceObject.GetType().Namespace;
+                allNameSpace.Add("using " + namespaceStr + ";\n");
 
                 sb.Append("\t public " + variableTypeName + " " + variableName + ";\n");
             }
 
             sb.Append("\n}");
+
+            foreach (string namespaceStr in allNameSpace)
+            {
+                sb.Insert(0, namespaceStr);
+            }
 
             string uiFilePath = UFrameworkConfig.GetSerializedObject().codeGeneratePath + classUIName + ".cs";
             if (!File.Exists(uiFilePath))
