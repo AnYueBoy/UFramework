@@ -83,7 +83,10 @@ namespace UFramework.GameCommon
                 string variableTypeName = referenceObject.GetType().Name;
                 // 变量名称所在命名空间
                 string namespaceStr = referenceObject.GetType().Namespace;
-                allNameSpace.Add("using " + namespaceStr + ";\n");
+                if (!string.IsNullOrEmpty(namespaceStr))
+                {
+                    allNameSpace.Add("using " + namespaceStr + ";\n");
+                }
 
                 sb.Append("\t public " + variableTypeName + " " + variableName + ";\n");
             }
@@ -313,9 +316,5 @@ namespace UFramework.GameCommon
         public string[] types = { };
         public Component[] components = { };
         public GameObject gameObject;
-    }
-
-    public class CompTest : MonoBehaviour
-    {
     }
 }

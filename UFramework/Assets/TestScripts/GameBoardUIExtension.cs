@@ -6,5 +6,6 @@ public partial class GameBoardUI
 	 public Image bg;
 	 public Text text;
 	 public EventTrigger GameBoard;
+	 public LayerTest testx;
 
 }
