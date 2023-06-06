@@ -25,6 +25,8 @@ namespace UFramework.GameCommon
 
             bindDataList.drawHeaderCallback = DrawHeader;
             bindDataList.drawElementCallback = DrawListItems;
+            bindDataList.onAddCallback = AddData;
+            bindDataList.onRemoveCallback = RemoveData;
         }
 
         private ObjectInfo curOperateObject;
@@ -194,6 +196,7 @@ namespace UFramework.GameCommon
                                 curOperateObject.gameObject;
 
                             serializedObject.ApplyModifiedProperties();
+                            UpdateLinkReference();
                         }
 
                         DragAndDrop.AcceptDrag();
@@ -299,6 +302,37 @@ namespace UFramework.GameCommon
             EditorGUI.PropertyField(
                 new Rect(rect.x + itemWidth + itemInterval, rect.y, itemWidth, EditorGUIUtility.singleLineHeight),
                 element.FindPropertyRelative("bindComponent"), GUIContent.none);
+        }
+
+        private void AddData(ReorderableList list)
+        {
+            // 不允许通过手动添加数组中元素来进行组件的绑定
+
+            // int addIndex = bindDataList.count;
+            // bindDataList.serializedProperty.InsertArrayElementAtIndex(addIndex);
+            // SerializedProperty addData =
+            //     bindDataList.serializedProperty.GetArrayElementAtIndex(addIndex);
+            // addData.FindPropertyRelative("variableName").stringValue = "";
+            // addData.FindPropertyRelative("bindComponent").objectReferenceValue = null;
+            // addData.FindPropertyRelative("bindObject").objectReferenceValue = null;
+            // serializedObject.ApplyModifiedProperties();
+
+            // UpdateLinkReference();
+        }
+
+        private void RemoveData(ReorderableList list)
+        {
+            int removeIndex = bindDataList.count - 1;
+            bindDataList.serializedProperty.DeleteArrayElementAtIndex(removeIndex);
+            serializedObject.ApplyModifiedProperties();
+            UpdateLinkReference();
+        }
+
+        private void UpdateLinkReference()
+        {
+            var runtimeComp = serializedObject.targetObject as RuntimeComponent;
+            var test = bindData;
+            runtimeComp.UpdateReference();
         }
 
         #endregion

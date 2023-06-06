@@ -18,6 +18,11 @@ namespace UFramework.GameCommon
 
         private void OnEnable()
         {
+            UpdateReference();
+        }
+
+        public void UpdateReference()
+        {
             showBindDataList = bindDataArray;
         }
 
