@@ -10,15 +10,19 @@ namespace UFramework.GameCommon
     {
         public BindData[] bindDataArray;
 
+
         [InitializeOnLoadMethod]
         private static void Load()
         {
             EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyWindowItemOnGUI;
         }
 
+        private static Texture2D linkTexture;
+
         private void OnEnable()
         {
             UpdateReference();
+            linkTexture = EditorGUIUtility.IconContent("d_UnityEditor.FindDependencies").image as Texture2D;
         }
 
         public void UpdateReference()
@@ -36,7 +40,9 @@ namespace UFramework.GameCommon
             }
 
             int dataCount = showBindDataList.Length;
+            var originColor = GUI.color;
 
+            GUI.color = Color.green;
             for (int index = 0; index < dataCount; index++)
             {
                 var data = showBindDataList[index];
@@ -44,14 +50,15 @@ namespace UFramework.GameCommon
                 if (bindObject.GetInstanceID() == instanceID)
                 {
                     var r = new Rect(selectionRect);
-                    r.x = 34;
-                    r.width = 80;
-                    GUIStyle style = new GUIStyle();
-                    style.normal.textColor = Color.yellow;
-                    style.active.textColor = Color.red;
-                    GUI.Label(r, "★", style);
+                    r.x = 35;
+                    r.width = 16;
+                    r.height = 16;
+                    GUI.DrawTexture(r, linkTexture);
                 }
             }
+            
+            GUI.color = originColor;
+
         }
     }
 }
