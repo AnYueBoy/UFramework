@@ -1,23 +1,53 @@
 ﻿#if UNITY_EDITOR
 
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UFramework.GameCommon
 {
+    [ExecuteAlways]
     public class RuntimeComponent : MonoBehaviour
     {
-        [SerializeField] private Text varName;
-        private RectTransform _rectTrans;
+        public BindData[] bindDataArray;
 
-        public RectTransform RectTrans => _rectTrans;
-
-        public void Init()
+        [InitializeOnLoadMethod]
+        private static void Load()
         {
-            _rectTrans = GetComponent<RectTransform>();
+            EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyWindowItemOnGUI;
         }
 
-        public BindData[] bindDataArray;
+        private void OnEnable()
+        {
+            showBindDataList = bindDataArray;
+        }
+
+        private static BindData[] showBindDataList;
+
+        private static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
+        {
+            if (showBindDataList == null)
+            {
+                return;
+            }
+
+            int dataCount = showBindDataList.Length;
+
+            for (int index = 0; index < dataCount; index++)
+            {
+                var data = showBindDataList[index];
+                var bindObject = data.bindObject;
+                if (bindObject.GetInstanceID() == instanceID)
+                {
+                    var r = new Rect(selectionRect);
+                    r.x = 34;
+                    r.width = 80;
+                    GUIStyle style = new GUIStyle();
+                    style.normal.textColor = Color.yellow;
+                    style.active.textColor = Color.red;
+                    GUI.Label(r, "★", style);
+                }
+            }
+        }
     }
 }
 #endif

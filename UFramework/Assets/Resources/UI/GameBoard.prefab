@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2975753515710931224
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 89980025949174273}
+  m_Layer: 5
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &89980025949174273
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2975753515710931224}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8965894188754602777}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8965894187184456033
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,7 +199,7 @@ GameObject:
   - component: {fileID: -7528913850325004805}
   - component: {fileID: 6572722686220023591}
   - component: {fileID: 6454880844671210556}
-  - component: {fileID: 5296341970713193335}
+  - component: {fileID: 9166608678201891850}
   m_Layer: 5
   m_Name: GameBoard
   m_TagString: Finish
@@ -185,6 +220,7 @@ RectTransform:
   m_Children:
   - {fileID: 8965894187184456032}
   - {fileID: 8965894188478919750}
+  - {fileID: 89980025949174273}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -205,16 +241,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb05049e232f4048ad3cbe24ef462374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  varName: {fileID: 0}
   bindDataArray:
   - variableName: bg
-    bindObject: {fileID: 8965894187184456063}
+    bindComponent: {fileID: 8965894187184456063}
+    bindObject: {fileID: 8965894187184456033}
   - variableName: text
-    bindObject: {fileID: 8965894188478919749}
-  - variableName: GameBoard
-    bindObject: {fileID: 6572722686220023591}
-  - variableName: testx
-    bindObject: {fileID: 6454880844671210556}
+    bindComponent: {fileID: 8965894188478919749}
+    bindObject: {fileID: 8965894188478919751}
+  - variableName: GameObject
+    bindComponent: {fileID: 89980025949174273}
+    bindObject: {fileID: 2975753515710931224}
+  - variableName: GameObject (1)
+    bindComponent: {fileID: 0}
+    bindObject: {fileID: 0}
 --- !u!114 &6572722686220023591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,7 +280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
---- !u!114 &5296341970713193335
+--- !u!114 &9166608678201891850
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -255,5 +294,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bg: {fileID: 8965894187184456063}
   text: {fileID: 8965894188478919749}
-  GameBoard: {fileID: 6572722686220023591}
-  testx: {fileID: 0}
+  GameObject: {fileID: 89980025949174273}

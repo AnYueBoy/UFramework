@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using UnityEditor.Callbacks;
 using UnityEditorInternal;
-using UnityEngine.UI;
 
 namespace UFramework.GameCommon
 {
@@ -78,7 +77,7 @@ namespace UFramework.GameCommon
                     bindDataList.serializedProperty.GetArrayElementAtIndex(i);
 
                 string variableName = addData.FindPropertyRelative("variableName").stringValue;
-                object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
+                object referenceObject = addData.FindPropertyRelative("bindComponent").objectReferenceValue;
                 // 变量名称
                 string variableTypeName = referenceObject.GetType().Name;
                 // 变量名称所在命名空间
@@ -142,7 +141,7 @@ namespace UFramework.GameCommon
                     bindDataList.serializedProperty.GetArrayElementAtIndex(i);
 
                 string variableName = addData.FindPropertyRelative("variableName").stringValue;
-                object referenceObject = addData.FindPropertyRelative("bindObject").objectReferenceValue;
+                object referenceObject = addData.FindPropertyRelative("bindComponent").objectReferenceValue;
                 var componentType = component.GetType();
                 var componentProperty =
                     componentType.GetField(variableName);
@@ -189,8 +188,10 @@ namespace UFramework.GameCommon
                             SerializedProperty addData =
                                 bindDataList.serializedProperty.GetArrayElementAtIndex(addIndex);
                             addData.FindPropertyRelative("variableName").stringValue = curOperateObject.gameObject.name;
-                            addData.FindPropertyRelative("bindObject").objectReferenceValue =
+                            addData.FindPropertyRelative("bindComponent").objectReferenceValue =
                                 curOperateObject.components[index];
+                            addData.FindPropertyRelative("bindObject").objectReferenceValue =
+                                curOperateObject.gameObject;
 
                             serializedObject.ApplyModifiedProperties();
                         }
@@ -297,10 +298,15 @@ namespace UFramework.GameCommon
 
             EditorGUI.PropertyField(
                 new Rect(rect.x + itemWidth + itemInterval, rect.y, itemWidth, EditorGUIUtility.singleLineHeight),
-                element.FindPropertyRelative("bindObject"), GUIContent.none);
+                element.FindPropertyRelative("bindComponent"), GUIContent.none);
         }
 
         #endregion
+
+        private void OnDestroy()
+        {
+            // showBindDataList = null;
+        }
     }
 
 
@@ -308,6 +314,11 @@ namespace UFramework.GameCommon
     public class BindData
     {
         public string variableName;
+
+        // 绑定的组件
+        public Object bindComponent;
+
+        // 绑定组件所依赖的节点
         public Object bindObject;
     }
 
