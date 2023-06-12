@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: -7528913850325004805}
   - component: {fileID: 6572722686220023591}
   - component: {fileID: 6454880844671210556}
-  - component: {fileID: 2673560703957587164}
+  - component: {fileID: 6290223335071806552}
   m_Layer: 5
   m_Name: GameBoard
   m_TagString: Finish
@@ -281,12 +281,12 @@ MonoBehaviour:
   - variableName: bg
     bindComponent: {fileID: 8965894187184456063}
     bindObject: {fileID: 8965894187184456033}
+  - variableName: text
+    bindComponent: {fileID: 8965894188478919749}
+    bindObject: {fileID: 8965894188478919751}
   - variableName: GameObject
     bindComponent: {fileID: 89980025949174273}
     bindObject: {fileID: 2975753515710931224}
-  - variableName: "\u8282\u70B9"
-    bindComponent: {fileID: 7268363284369216146}
-    bindObject: {fileID: 7533007668472054504}
 --- !u!114 &6572722686220023591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
---- !u!114 &2673560703957587164
+--- !u!114 &6290223335071806552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

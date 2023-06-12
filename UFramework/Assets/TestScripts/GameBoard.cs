@@ -12,7 +12,7 @@ public class GameBoard : IView
 
     public void OnShow(params object[] param)
     {
-        (UIInstance as GameBoardUI).text.text = "测试注入";
+        // (UIInstance as GameBoardUI).text.text = "测试注入";
     }
 
     public void LocalUpdate(float dt)
