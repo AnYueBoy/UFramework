@@ -147,6 +147,8 @@ namespace UFramework.Core.Container
             instanceId = 0;
         }
 
+        #region 服务实例Make的部分过程
+
         public object this[string service]
         {
             get => Make(service);
@@ -210,6 +212,9 @@ namespace UFramework.Core.Container
             name = name.Trim();
             return aliases.ContainsKey(name);
         }
+
+        #endregion
+
 
         public IContainer Alias(string alias, string service)
         {
@@ -403,6 +408,75 @@ namespace UFramework.Core.Container
 
             return Arr.Map(services, service => Make(service));
         }
+
+        public void Unbind(string service)
+        {
+            service = AliasToService(service);
+            var bind = GetBind(service);
+            bind?.Unbind();
+        }
+
+        internal void Unbind(IBindable bindable)
+        {
+            GuardFlushing();
+            Release(bindable.Service);
+            if (aliasesReverse.TryGetValue(bindable.Service, out List<string> serviceList))
+            {
+                foreach (var alias in serviceList)
+                {
+                    aliases.Remove(alias);
+                }
+
+                aliasesReverse.Remove(bindable.Service);
+            }
+
+            bindings.Remove(bindable.Service);
+        }
+
+        public void Flush()
+        {
+            try
+            {
+                flushing = true;
+                foreach (var service in instanceTiming.GetIterator(false))
+                {
+                    Release(service);
+                }
+
+                Guard.Requires<AssertException>(instances.Count <= 0);
+
+                tags.Clear();
+                aliases.Clear();
+                aliasesReverse.Clear();
+                instances.Clear();
+                bindings.Clear();
+                resolving.Clear();
+                release.Clear();
+                extenders.Clear();
+                resolved.Clear();
+                findType.Clear();
+                findTypeCache.Clear();
+                BuildStack.Clear();
+                UserParamsStack.Clear();
+                rebound.Clear();
+                methodContainer.Flush();
+                instanceTiming.Clear();
+                instanceId = 0;
+            }
+            finally
+            {
+                flushing = false;
+            }
+        }
+
+
+        public string Type2Service(Type type)
+        {
+            return type.ToString();
+        }
+
+
+        #region 服务实例Make的部分过程
 
         public object Instance(string service, object instance)
         {
@@ -626,6 +700,7 @@ namespace UFramework.Core.Container
                 }
             }
 
+            // 没有全局扩展器时 返回实例，有全局扩展器时还需要 全局扩展器对实例进行修饰
             if (!extenders.TryGetValue(string.Empty, out list))
             {
                 return instance;
@@ -739,72 +814,6 @@ namespace UFramework.Core.Container
             return this;
         }
 
-        public void Unbind(string service)
-        {
-            service = AliasToService(service);
-            var bind = GetBind(service);
-            bind?.Unbind();
-        }
-
-        internal void Unbind(IBindable bindable)
-        {
-            GuardFlushing();
-            Release(bindable.Service);
-            if (aliasesReverse.TryGetValue(bindable.Service, out List<string> serviceList))
-            {
-                foreach (var alias in serviceList)
-                {
-                    aliases.Remove(alias);
-                }
-
-                aliasesReverse.Remove(bindable.Service);
-            }
-
-            bindings.Remove(bindable.Service);
-        }
-
-        public void Flush()
-        {
-            try
-            {
-                flushing = true;
-                foreach (var service in instanceTiming.GetIterator(false))
-                {
-                    Release(service);
-                }
-
-                Guard.Requires<AssertException>(instances.Count <= 0);
-
-                tags.Clear();
-                aliases.Clear();
-                aliasesReverse.Clear();
-                instances.Clear();
-                bindings.Clear();
-                resolving.Clear();
-                release.Clear();
-                extenders.Clear();
-                resolved.Clear();
-                findType.Clear();
-                findTypeCache.Clear();
-                BuildStack.Clear();
-                UserParamsStack.Clear();
-                rebound.Clear();
-                methodContainer.Flush();
-                instanceTiming.Clear();
-                instanceId = 0;
-            }
-            finally
-            {
-                flushing = false;
-            }
-        }
-
-
-        public string Type2Service(Type type)
-        {
-            return type.ToString();
-        }
-
         /// <summary>
         /// 将别名转为服务名称
         /// </summary>
@@ -862,59 +871,6 @@ namespace UFramework.Core.Container
             return (container, userParams) =>
                 ((Container)container).CreateInstance(GetBindFillable(service), concrete, userParams);
         }
-
-        #region Guard
-
-        private void GuardFlushing()
-        {
-            if (flushing)
-            {
-                throw new LogicException("容器正在重置");
-            }
-        }
-
-        protected virtual void GuardServiceName(string service)
-        {
-            foreach (var c in ServiceBanChars)
-            {
-                if (service.IndexOf(c) > 0)
-                {
-                    throw new LogicException($"服务名称{service} 包含禁用字符 {c},请用别名替代");
-                }
-            }
-        }
-
-        /// <summary>
-        /// 验证构造是否可用
-        /// </summary>
-        protected virtual void GuardConstruct(string method)
-        {
-        }
-
-        protected virtual void GuardUserParamsCount(int count)
-        {
-            if (count > 255)
-            {
-                throw new LogicException($"用户参数的数量必须小于等于255");
-            }
-        }
-
-        /// <summary>
-        /// 确保指定的实例有效。
-        /// </summary>
-        protected virtual void GuardResolveInstance(object instance, string makeService)
-        {
-            if (instance == null)
-            {
-                throw MakeBuildFailedException(makeService, SpeculatedServiceType(makeService), null);
-            }
-        }
-
-        protected virtual void GuardMethodName(string method)
-        {
-        }
-
-        #endregion
 
 
         /// <summary>
@@ -1123,28 +1079,31 @@ namespace UFramework.Core.Container
             }
 
             var results = new object[baseParams.Length];
-            // 获取用于筛选参数的参数匹配器
+            // 获取用于筛选IParams参数的参数匹配器
             var matcher = GetParamsMatcher(ref userParams);
 
             for (int i = 0; i < baseParams.Length; i++)
             {
                 var baseParam = baseParams[i];
 
-                //参数匹配用于匹配参数。
-                //参数匹配器是第一个执行的，因为它们的匹配精度是最准确的。
+                // 参数匹配用于匹配参数。
+                // 参数匹配器是第一个执行的，因为它们的匹配精度是最准确的。
                 // 从参数匹配器中获取到了匹配参数
+                // 优先对 IParams参数进行匹配
+                // eg: construct (IParams,object[]) userPrams(object[],IParams)
                 var param = matcher?.Invoke(baseParam);
 
                 //当容器发现开发人员使用object或object[]作为
                 //依赖参数类型，尝试压缩注入用户参数。
-                param = param ?? GetCompactInjectUserParams(baseParam, ref userParams);
+                param ??= GetCompactInjectUserParams(baseParam, ref userParams);
 
                 //从用户参数中选择适当的参数并注入
                 //它们按相对顺序排列。
-                param = param ?? GetDependenciesFromUserParams(baseParam, ref userParams);
+                param ??= GetDependenciesFromUserParams(baseParam, ref userParams);
 
                 string needService = null;
 
+                // eg:construct(IParams,string) userParams(IParams)
                 if (param == null)
                 {
                     //尝试通过依赖项注入容器生成所需的参数。
@@ -1192,6 +1151,7 @@ namespace UFramework.Core.Container
                 return null;
             }
 
+            // 获取用户参数列表中参数类型为IParams的参数数组
             var tables = GetParamsTypeInUserParams(ref userParams);
             return tables.Length <= 0 ? null : MakeParamsMatcher(tables);
         }
@@ -1529,6 +1489,61 @@ namespace UFramework.Core.Container
         {
             return instance == null || type.IsInstanceOfType(instance);
         }
+
+        #endregion
+
+        #region Guard
+
+        private void GuardFlushing()
+        {
+            if (flushing)
+            {
+                throw new LogicException("容器正在重置");
+            }
+        }
+
+        protected virtual void GuardServiceName(string service)
+        {
+            foreach (var c in ServiceBanChars)
+            {
+                if (service.IndexOf(c) > 0)
+                {
+                    throw new LogicException($"服务名称{service} 包含禁用字符 {c},请用别名替代");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 验证构造是否可用
+        /// </summary>
+        protected virtual void GuardConstruct(string method)
+        {
+        }
+
+        protected virtual void GuardUserParamsCount(int count)
+        {
+            if (count > 255)
+            {
+                throw new LogicException($"用户参数的数量必须小于等于255");
+            }
+        }
+
+        /// <summary>
+        /// 确保指定的实例有效。
+        /// </summary>
+        protected virtual void GuardResolveInstance(object instance, string makeService)
+        {
+            if (instance == null)
+            {
+                throw MakeBuildFailedException(makeService, SpeculatedServiceType(makeService), null);
+            }
+        }
+
+        protected virtual void GuardMethodName(string method)
+        {
+        }
+
+        #endregion
 
         #region Exception
 
