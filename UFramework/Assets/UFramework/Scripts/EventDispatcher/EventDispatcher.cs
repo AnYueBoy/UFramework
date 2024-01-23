@@ -1,6 +1,6 @@
 /*
- * @Author: l hy 
- * @Date: 2022-01-13 16:43:23 
+ * @Author: l hy
+ * @Date: 2022-01-13 16:43:23
  * @Description: 事件派发
  */
 
@@ -52,7 +52,7 @@ namespace UFramework.EventDispatcher
                 return;
             }
 
-            e = e ?? new EventParam();
+            e ??= new EventParam();
 
             foreach (EventHandler<EventParam> listener in handlers)
             {

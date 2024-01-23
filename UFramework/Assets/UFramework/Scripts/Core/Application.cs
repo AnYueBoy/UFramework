@@ -30,21 +30,21 @@ namespace UFramework.Core
 
             dispatchMapping = new Dictionary<Type, string>()
             {
-                {typeof(AfterBootEventArgs), ApplicationEvents.OnAfterBoot},
-                {typeof(AfterInitEventArgs), ApplicationEvents.OnAfterInit},
-                {typeof(AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate},
-                {typeof(BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot},
-                {typeof(BeforeInitEventArgs), ApplicationEvents.OnBeforeInit},
-                {typeof(BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate},
-                {typeof(BootingEventArgs), ApplicationEvents.OnBooting},
-                {typeof(InitProviderEventArgs), ApplicationEvents.OnInitProvider},
-                {typeof(RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider},
-                {typeof(StartCompletedEventArgs), ApplicationEvents.OnStartCompleted},
+                { typeof(AfterBootEventArgs), ApplicationEvents.OnAfterBoot },
+                { typeof(AfterInitEventArgs), ApplicationEvents.OnAfterInit },
+                { typeof(AfterTerminateEventArgs), ApplicationEvents.OnAfterTerminate },
+                { typeof(BeforeBootEventArgs), ApplicationEvents.OnBeforeBoot },
+                { typeof(BeforeInitEventArgs), ApplicationEvents.OnBeforeInit },
+                { typeof(BeforeTerminateEventArgs), ApplicationEvents.OnBeforeTerminate },
+                { typeof(BootingEventArgs), ApplicationEvents.OnBooting },
+                { typeof(InitProviderEventArgs), ApplicationEvents.OnInitProvider },
+                { typeof(RegisterProviderEventArgs), ApplicationEvents.OnRegisterProvider },
+                { typeof(StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
             };
 
-            // We use closures to save the current context state
-            // Do not change to: OnFindType(Type.GetType) This
-            // causes the active assembly to be not the expected scope.
+            // 我们使用闭包来保存当前上下文状态。
+            // 不要更改为：OnFindType（Type.GetType）。
+            // 这会导致活动程序集不是预期的作用域
             OnFindType(finder => { return Type.GetType(finder); });
 
             DebugLevel = DebugLevel.Production;
@@ -52,14 +52,12 @@ namespace UFramework.Core
         }
 
         /// <summary>
-        /// Gets the UFramework Application version.
+        /// 获取框架应用程序的版本
         /// </summary>
-        /// 
-
         public static string Version => version;
 
         /// <summary>
-        /// Gets indicates the application startup process.
+        /// 获取当前应用程序所在的进程。
         /// </summary>
         public StartProcess Process { get; private set; }
 
@@ -87,7 +85,7 @@ namespace UFramework.Core
         }
 
         /// <summary>
-        /// Sets the event dispatcher.
+        /// 设置事件派发器
         /// </summary>
         public void SetDispatcher(IEventDispatcher dispatcher)
         {
@@ -116,7 +114,7 @@ namespace UFramework.Core
         }
 
         /// <summary>
-        /// Bootstrap the given array of bootstrap classes.
+        /// 启动引导程序 
         /// </summary>
         public virtual void Bootstrap(params IBootstrap[] bootstraps)
         {
@@ -143,7 +141,7 @@ namespace UFramework.Core
 
                 if (existed.Contains(bootstrap))
                 {
-                    throw new LogicException($"The bootstrap already exists : {bootstrap}");
+                    throw new LogicException($"引导程序已经存在 : {bootstrap}");
                 }
 
                 existed.Add(bootstrap);
@@ -162,7 +160,7 @@ namespace UFramework.Core
         }
 
         /// <summary>
-        /// Init all of the registered service provider.
+        /// 初始化所有注册的服务提供者 
         /// </summary>
         public virtual void Init()
         {
@@ -247,7 +245,7 @@ namespace UFramework.Core
                 InitProvider(provider);
             }
         }
-        
+
         protected override void GuardConstruct(string method)
         {
             if (registering)
@@ -271,7 +269,7 @@ namespace UFramework.Core
         }
 
         /// <summary>
-        /// Initialize the specified service provider.
+        /// 初始化指定的服务提供者 
         /// </summary>
         protected virtual void InitProvider(IServiceProvider provider)
         {
@@ -289,7 +287,7 @@ namespace UFramework.Core
         {
             if (!dispatchMapping.TryGetValue(args.GetType(), out string eventName))
             {
-                throw new AssertException($"Assertion error: Undefined event {args}");
+                throw new AssertException($"Assertion error: 未定义的事件 {args}");
             }
 
             if (dispatcher == null)

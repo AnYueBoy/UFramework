@@ -1,7 +1,7 @@
 namespace UFramework.Core {
     public interface IBootstrap {
         /// <summary>
-        /// Bootstrap the framework.
+        /// 框架引导程序接口
         /// </summary>
         void Bootstrap ();
     }

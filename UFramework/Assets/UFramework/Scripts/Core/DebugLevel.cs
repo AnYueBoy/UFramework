@@ -1,24 +1,23 @@
-namespace UFramework.Core {
-
+namespace UFramework.Core
+{
     /// <summary>
-    /// Indicates the framework debug level.
+    /// 框架的调试等级
     /// </summary>
-    public enum DebugLevel {
-
+    public enum DebugLevel
+    {
         /// <summary>
-        /// Production environment.
+        /// 生产环境
         /// </summary>
         Production,
 
         /// <summary>
-        /// Between the production environment and the development environment.
+        /// 介于生产环境与开发环境之间
         /// </summary>
         Staging,
 
         /// <summary>
-        /// Development environment.
+        /// 开发环境
         /// </summary>
         Development,
     }
-
 }
