@@ -99,7 +99,7 @@ namespace UFramework.Core
 
         public static bool HasInstance<TService>()
         {
-#if CATLIB_PERFORMANCE
+#if UFRAMEWORK_PERFORMCE
             return Facade<TService>.HasInstance || Handler.HasInstance<TService>();
 #else
             return That.HasInstance<TService>();
@@ -481,7 +481,7 @@ namespace UFramework.Core
 
         public static TService Make<TService>(params object[] userParams)
         {
-#if CATLIB_PERFORMANCE
+#if UFRAMEWORK_PERFORMCE
             return Facade<TService>.Make(userParams);
 #else
             return That.Make<TService>(userParams);
