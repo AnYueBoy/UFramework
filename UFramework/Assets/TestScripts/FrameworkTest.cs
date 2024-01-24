@@ -18,9 +18,8 @@ public class FrameworkTest : MonoBehaviour
         application.Bootstrap(new SystemProviderBootstrap(this));
 
         Debug.Log($"runtimeId: {App.GetRuntimeId()}");
-        
-        application.Init();
 
+        application.Init();
     }
 
     private void Start()
@@ -33,6 +32,14 @@ public class FrameworkTest : MonoBehaviour
         App.Make<IEventDispatcher>().AddListener("TestEvent", EventOne);
         App.Make<IEventDispatcher>().AddListener("TestEvent", EventTwo);
         App.Make<IEventDispatcher>().Raise("TestEvent", this, new EventParam("事件触发", "1").StopEvent());
+        Facade<IEventDispatcher>.That.AddListener("TestInject", TestInject);
+        App.BindMethod("MethodBind", (string param) =>
+        {
+            Debug.LogError($"测试函数绑定 参数:{param}");
+            return null;
+        });
+        App.Bind<TestInject>();
+        Facade<TestInject>.That.TestEvent();
     }
 
     private void Update()
@@ -49,5 +56,10 @@ public class FrameworkTest : MonoBehaviour
     private void EventTwo(object sender, EventParam param)
     {
         Debug.LogWarning($"param{param.Value[0]} two");
+    }
+
+    private void TestInject(object sender, EventParam param)
+    {
+        Debug.LogError($"{param.Value[0]}");
     }
 }
