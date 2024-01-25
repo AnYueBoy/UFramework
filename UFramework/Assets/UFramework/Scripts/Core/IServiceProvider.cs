@@ -1,6 +1,8 @@
-namespace UFramework.Core {
-    public interface IServiceProvider {
-        void Register ();
-        void Init ();
+namespace UFramework
+{
+    public interface IServiceProvider
+    {
+        void Register();
+        void Init();
     }
 }

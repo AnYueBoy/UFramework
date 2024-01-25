@@ -1,12 +1,12 @@
 /*
- * @Author: l hy 
- * @Date: 2022-01-14 14:04:03 
+ * @Author: l hy
+ * @Date: 2022-01-14 14:04:03
  * @Description: 通用事件参数
  */
 
 using System;
 
-namespace UFramework.EventDispatcher
+namespace UFramework
 {
     public class EventParam : EventArgs, IStoppableEvent
     {

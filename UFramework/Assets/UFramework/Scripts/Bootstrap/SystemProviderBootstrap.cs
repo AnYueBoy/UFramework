@@ -1,13 +1,6 @@
-using UFramework.Core;
-using UFramework.Coroutine;
-using UFramework.GameCommon;
-using UFramework.LogSystem;
-using UFramework.Promise;
-using UFramework.Tween;
-using UFramework.Util;
 using UnityEngine;
 
-namespace UFramework.Bootstarp
+namespace UFramework
 {
     public class SystemProviderBootstrap : IBootstrap
     {

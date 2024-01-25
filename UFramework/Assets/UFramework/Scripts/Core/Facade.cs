@@ -1,6 +1,5 @@
-﻿using UFramework.Core.Container;
-
-namespace UFramework.Core
+﻿
+namespace UFramework
 {
     public abstract class Facade<TService>
     {

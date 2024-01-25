@@ -1,8 +1,10 @@
-namespace UFramework.Core {
+namespace UFramework
+{
     /// <summary>
     /// The framework start process type.
     /// </summary>
-    public enum StartProcess {
+    public enum StartProcess
+    {
         /// <summary>
         /// When you create a new Application,
         /// you are in the Construct phase.

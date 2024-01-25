@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UFramework.Exception;
-using UFramework.Util;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     internal sealed class MethodContainer
     {

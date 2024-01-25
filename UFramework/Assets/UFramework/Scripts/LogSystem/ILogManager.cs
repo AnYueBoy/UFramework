@@ -1,9 +1,9 @@
-namespace UFramework.LogSystem {
+namespace UFramework
+{
+    public interface ILogManager
+    {
+        void Init();
 
-    public interface ILogManager {
-
-        void Init ();
-
-        void Quit ();
+        void Quit();
     }
 }

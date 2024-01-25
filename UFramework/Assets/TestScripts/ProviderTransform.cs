@@ -1,11 +1,15 @@
-using UFramework.Core;
+using UFramework;
 using UnityEngine;
-public class ProviderTransform : MonoBehaviour, IServiceProvider {
-    public void Init () {
+
+public class ProviderTransform : MonoBehaviour, IServiceProvider
+{
+    public void Init()
+    {
         // App.Make<ITransformManager> ().GoTransform.gameObject.SetActive (false);
     }
 
-    public void Register () {
-        App.Instance<ITransformManager> (GetComponent<TransformManager> ());
+    public void Register()
+    {
+        App.Instance<ITransformManager>(GetComponent<TransformManager>());
     }
 }

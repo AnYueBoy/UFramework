@@ -1,8 +1,7 @@
 using System;
 using System.Reflection;
-using UFramework.Core.Container;
 
-namespace UFramework.Core
+namespace UFramework
 {
     public abstract class App
     {

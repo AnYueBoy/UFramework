@@ -1,8 +1,6 @@
 ﻿using System;
-using UFramework.Exception;
-using UFramework.Util;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public static class ContainerExtension
     {

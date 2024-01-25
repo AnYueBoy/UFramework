@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     public class CoroutineManager : ICoroutineManager
     {

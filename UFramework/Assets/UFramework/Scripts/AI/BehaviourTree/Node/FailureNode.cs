@@ -1,20 +1,28 @@
-namespace UFramework.AI.BehaviourTree {
+namespace UFramework
+{
+    public class FailureNode : DecoratorNode
+    {
+        public FailureNode(BaseNode child) : base(child)
+        {
+        }
 
-    public class FailureNode : DecoratorNode {
-        public FailureNode (BaseNode child) : base (child) { }
-
-        protected override RunningStatus OnUpdate () {
+        protected override RunningStatus OnUpdate()
+        {
             BaseNode childNode = m_Children[0];
-            RunningStatus runningStatus = childNode.Update (agent, blackBoardMemory, deltaTime);
-            if (runningStatus != RunningStatus.Executing) {
+            RunningStatus runningStatus = childNode.Update(agent, blackBoardMemory, deltaTime);
+            if (runningStatus != RunningStatus.Executing)
+            {
                 return nodeRunningState = RunningStatus.Failed;
-            } else {
+            }
+            else
+            {
                 return nodeRunningState = RunningStatus.Executing;
             }
         }
 
-        protected override void OnReset () {
-            m_Children[0].Reset ();
+        protected override void OnReset()
+        {
+            m_Children[0].Reset();
         }
     }
 }

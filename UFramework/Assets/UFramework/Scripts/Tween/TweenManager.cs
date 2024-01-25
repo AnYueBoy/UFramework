@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class TweenManager : ITweenManager
     {

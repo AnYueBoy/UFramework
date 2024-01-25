@@ -1,7 +1,6 @@
 ﻿using System;
-using UFramework.Util;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     internal sealed class GivenData<TReturn> : IGivenData<TReturn> where TReturn : class, IBindable<TReturn>
     {

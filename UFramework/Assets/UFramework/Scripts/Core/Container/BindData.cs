@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using UFramework.Exception;
-using UFramework.Util;
+using UContainer = UFramework.Container;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public sealed class BindData : Bindable<IBindData>, IBindData
     {
@@ -44,7 +43,7 @@ namespace UFramework.Core.Container
         {
             AssertDestroyed();
             Guard.ParameterNotNull(tag, nameof(tag));
-            Container.Tag(tag,Service);
+            Container.Tag(tag, Service);
             return this;
         }
 
@@ -74,17 +73,17 @@ namespace UFramework.Core.Container
         internal object TriggerResolving(object instance)
         {
             // 使用容器的触发方法
-            return Core.Container.Container.Trigger(this, instance, resolving);
+            return UContainer.Trigger(this, instance, resolving);
         }
 
         internal object TriggerAfterResolving(object instance)
         {
-            return Core.Container.Container.Trigger(this, instance, afterResolving);
+            return UContainer.Trigger(this, instance, afterResolving);
         }
 
         internal object TriggerRelease(object instance)
         {
-            return Core.Container.Container.Trigger(this, instance, release);
+            return UContainer.Trigger(this, instance, release);
         }
 
         protected override void ReleaseBind()

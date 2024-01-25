@@ -1,6 +1,5 @@
-using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public interface IUIManager
     {

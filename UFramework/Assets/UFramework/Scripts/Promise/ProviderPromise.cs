@@ -1,10 +1,14 @@
-using UFramework.Core;
-namespace UFramework.Promise {
-    public class ProviderPromise : IServiceProvider {
-        public void Init () { }
+namespace UFramework
+{
+    public class ProviderPromise : IServiceProvider
+    {
+        public void Init()
+        {
+        }
 
-        public void Register () {
-            App.Singleton<IPromiseTimer, PromiseTimer> ();
+        public void Register()
+        {
+            App.Singleton<IPromiseTimer, PromiseTimer>();
         }
     }
 }

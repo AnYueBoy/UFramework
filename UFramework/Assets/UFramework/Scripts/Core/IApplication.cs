@@ -1,7 +1,4 @@
-using UFramework.Core.Container;
-using UFramework.EventDispatcher;
-
-namespace UFramework.Core
+namespace UFramework
 {
     public interface IApplication : IContainer
     {

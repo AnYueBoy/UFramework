@@ -1,4 +1,4 @@
-﻿namespace UFramework.Coroutine
+﻿namespace UFramework
 {
     /// <summary>
     /// 表示一个可等待对象，如果一个方法返回此类型的实例，则此方法可以使用 `await` 异步等待。

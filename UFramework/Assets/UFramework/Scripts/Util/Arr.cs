@@ -12,45 +12,53 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UFramework.Exception;
 
-namespace UFramework.Util {
+namespace UFramework
+{
     /// <summary>
     /// Array helper.
     /// </summary>
-    public static class Arr {
+    public static class Arr
+    {
         /// <summary>
         /// Combine multiple specified arrays into one array.
         /// </summary>
         /// <typeparam name="T">The type of array.</typeparam>
         /// <param name="sources">The specified array.</param>
         /// <returns>Returns an merged array.</returns>
-        public static T[] Merge<T> (params T[][] sources) {
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T> ();
+        public static T[] Merge<T>(params T[][] sources)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T>();
             }
 
             var totalSize = 0;
-            foreach (var source in sources) {
-                if (source == null || source.Length <= 0) {
+            foreach (var source in sources)
+            {
+                if (source == null || source.Length <= 0)
+                {
                     continue;
                 }
 
                 totalSize += source.Length;
             }
 
-            if (totalSize <= 0) {
-                return Array.Empty<T> ();
+            if (totalSize <= 0)
+            {
+                return Array.Empty<T>();
             }
 
             var merged = new T[totalSize];
             var length = 0;
-            foreach (var source in sources) {
-                if (source == null || source.Length <= 0) {
+            foreach (var source in sources)
+            {
+                if (source == null || source.Length <= 0)
+                {
                     continue;
                 }
 
-                Array.Copy (source, 0, merged, length, source.Length);
+                Array.Copy(source, 0, merged, length, source.Length);
                 length += source.Length;
             }
 
@@ -64,12 +72,14 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="number">The specified number.</param>
         /// <returns>An array of the random value.</returns>
-        public static T[] Rand<T> (T[] sources, int number = 1) {
-            if (sources == null || sources.Length <= 0) {
+        public static T[] Rand<T>(T[] sources, int number = 1)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
                 return new T[number];
             }
 
-            return Slice (Shuffle (sources), 0, Math.Max (number, 1));
+            return Slice(Shuffle(sources), 0, Math.Max(number, 1));
         }
 
         /// <summary>
@@ -79,18 +89,22 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="seed">The random seed.</param>
         /// <returns>Return the disrupted array.</returns>
-        public static T[] Shuffle<T> (T[] sources, int? seed = null) {
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T> ();
+        public static T[] Shuffle<T>(T[] sources, int? seed = null)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T>();
             }
 
             var requested = new T[sources.Length];
-            Array.Copy (sources, requested, sources.Length);
+            Array.Copy(sources, requested, sources.Length);
 
-            var random = InternalHelper.MakeRandom (seed);
-            for (var i = 0; i < requested.Length; i++) {
-                var index = random.Next (0, requested.Length - 1);
-                if (index == i) {
+            var random = InternalHelper.MakeRandom(seed);
+            for (var i = 0; i < requested.Length; i++)
+            {
+                var index = random.Next(0, requested.Length - 1);
+                if (index == i)
+                {
                     continue;
                 }
 
@@ -122,38 +136,46 @@ namespace UFramework.Util {
         /// </param>
         /// <param name="replaceSource">An array inserted at the start position.</param>
         /// <returns>An removed array.</returns>
-        public static T[] Splice<T> (ref T[] sources, int start, int? length = null, T[] replaceSource = null) {
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T> ();
+        public static T[] Splice<T>(ref T[] sources, int start, int? length = null, T[] replaceSource = null)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T>();
             }
 
-            InternalHelper.NormalizationPosition (sources.Length, ref start, ref length);
+            InternalHelper.NormalizationPosition(sources.Length, ref start, ref length);
 
             var candidates = new T[length.Value];
-            if (length.Value == sources.Length) {
-                Array.Copy (sources, candidates, sources.Length);
-                sources = replaceSource ?? Array.Empty<T> ();
+            if (length.Value == sources.Length)
+            {
+                Array.Copy(sources, candidates, sources.Length);
+                sources = replaceSource ?? Array.Empty<T>();
                 return candidates;
             }
 
-            Array.Copy (sources, start, candidates, 0, length.Value);
+            Array.Copy(sources, start, candidates, 0, length.Value);
 
-            if (replaceSource == null || replaceSource.Length == 0) {
+            if (replaceSource == null || replaceSource.Length == 0)
+            {
                 var newSource = new T[sources.Length - length.Value];
-                if (start > 0) {
-                    Array.Copy (sources, 0, newSource, 0, start);
+                if (start > 0)
+                {
+                    Array.Copy(sources, 0, newSource, 0, start);
                 }
 
-                Array.Copy (sources, start + length.Value, newSource, start, sources.Length - (start + length.Value));
+                Array.Copy(sources, start + length.Value, newSource, start, sources.Length - (start + length.Value));
                 sources = newSource;
-            } else {
+            }
+            else
+            {
                 var newSource = new T[sources.Length - length.Value + replaceSource.Length];
-                if (start > 0) {
-                    Array.Copy (sources, 0, newSource, 0, start);
+                if (start > 0)
+                {
+                    Array.Copy(sources, 0, newSource, 0, start);
                 }
 
-                Array.Copy (replaceSource, 0, newSource, start, replaceSource.Length);
-                Array.Copy (sources, start + length.Value, newSource, start + replaceSource.Length,
+                Array.Copy(replaceSource, 0, newSource, start, replaceSource.Length);
+                Array.Copy(sources, start + length.Value, newSource, start + replaceSource.Length,
                     sources.Length - (start + length.Value));
                 sources = newSource;
             }
@@ -167,25 +189,32 @@ namespace UFramework.Util {
         /// <typeparam name="T">The type of array.</typeparam>
         /// <param name="source">The source array.</param>
         /// <param name="position">Crop range, negative numbers are trimmed from back to front.</param>
-        public static void Cut<T> (ref T[] source, int position) {
-            if (source == null || source.Length <= 0 || position == 0) {
+        public static void Cut<T>(ref T[] source, int position)
+        {
+            if (source == null || source.Length <= 0 || position == 0)
+            {
                 return;
             }
 
-            if (Math.Abs (position) >= source.Length) {
-                if (source.Length > 0) {
-                    Array.Resize (ref source, 0);
+            if (Math.Abs(position) >= source.Length)
+            {
+                if (source.Length > 0)
+                {
+                    Array.Resize(ref source, 0);
                 }
 
                 return;
             }
 
-            if (position > 0) {
+            if (position > 0)
+            {
                 var size = source.Length - position;
-                Array.Copy (source, position, source, 0, size);
-                Array.Resize (ref source, size);
-            } else {
-                Array.Resize (ref source, source.Length - Math.Abs (position));
+                Array.Copy(source, position, source, 0, size);
+                Array.Resize(ref source, size);
+            }
+            else
+            {
+                Array.Resize(ref source, source.Length - Math.Abs(position));
             }
         }
 
@@ -198,27 +227,33 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="size">The size of the block.</param>
         /// <returns>Return an array of the block.</returns>
-        public static T[][] Chunk<T> (T[] sources, int size) {
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T[]> ();
+        public static T[][] Chunk<T>(T[] sources, int size)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T[]>();
             }
 
-            size = Math.Max (1, size);
+            size = Math.Max(1, size);
             var requested = new T[(sources.Length / size) + (sources.Length % size == 0 ? 0 : 1)][];
 
             T[] chunks = null;
-            for (var i = 0; i < sources.Length; i++) {
+            for (var i = 0; i < sources.Length; i++)
+            {
                 var position = i / size;
-                if (i % size == 0) {
-                    if (chunks != null) {
+                if (i % size == 0)
+                {
+                    if (chunks != null)
+                    {
                         requested[position - 1] = chunks;
                     }
 
                     chunks = new T[(i + size) <= sources.Length ? size : sources.Length - i];
                 }
 
-                if (chunks == null) {
-                    throw new AssertException ("Unexpected exception");
+                if (chunks == null)
+                {
+                    throw new AssertException("Unexpected exception");
                 }
 
                 chunks[i - (position * size)] = sources[i];
@@ -237,23 +272,27 @@ namespace UFramework.Util {
         /// <param name="value">The filling value.</param>
         /// <param name="sources">The specified array.</param>
         /// <returns>Returns an filled array.</returns>
-        public static T[] Fill<T> (int start, int length, T value, T[] sources = null) {
-            Guard.Requires<ArgumentOutOfRangeException> (start >= 0);
-            Guard.Requires<ArgumentOutOfRangeException> (length > 0);
+        public static T[] Fill<T>(int start, int length, T value, T[] sources = null)
+        {
+            Guard.Requires<ArgumentOutOfRangeException>(start >= 0);
+            Guard.Requires<ArgumentOutOfRangeException>(length > 0);
 
             var count = start + length;
-            var requested = new T[Math.Max (sources?.Length + length ?? count, count)];
+            var requested = new T[Math.Max(sources?.Length + length ?? count, count)];
 
-            if (start > 0 && sources != null) {
-                Array.Copy (sources, requested, Math.Min (sources.Length, start));
+            if (start > 0 && sources != null)
+            {
+                Array.Copy(sources, requested, Math.Min(sources.Length, start));
             }
 
-            for (var i = start; i < count; i++) {
+            for (var i = start; i < count; i++)
+            {
                 requested[i] = value;
             }
 
-            if (sources != null && start < sources.Length) {
-                Array.Copy (sources, start, requested, count, sources.Length - start);
+            if (sources != null && start < sources.Length)
+            {
+                Array.Copy(sources, start, requested, count, sources.Length - start);
             }
 
             return requested;
@@ -269,26 +308,30 @@ namespace UFramework.Util {
         /// <param name="predicate">The callback.</param>
         /// <param name="expected">The predicate expected to removed.</param>
         /// <returns>Returns an removed array.</returns>
-        public static T[] Remove<T> (ref T[] sources, Predicate<T> predicate, bool expected = true) {
-            Guard.Requires<ArgumentNullException> (predicate != null, $"Must set a {predicate}.");
+        public static T[] Remove<T>(ref T[] sources, Predicate<T> predicate, bool expected = true)
+        {
+            Guard.Requires<ArgumentNullException>(predicate != null, $"Must set a {predicate}.");
 
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T> ();
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T>();
             }
 
             var candidateIndex = 0;
             var candidates = new T[sources.Length];
-            for (var i = sources.Length - 1; i >= 0; i--) {
-                if (predicate.Invoke (sources[i]) != expected) {
+            for (var i = sources.Length - 1; i >= 0; i--)
+            {
+                if (predicate.Invoke(sources[i]) != expected)
+                {
                     continue;
                 }
 
                 candidates[candidateIndex++] = sources[i];
-                RemoveAt (ref sources, i);
+                RemoveAt(ref sources, i);
             }
 
-            Array.Reverse (candidates, 0, candidateIndex);
-            Array.Resize (ref candidates, candidateIndex);
+            Array.Reverse(candidates, 0, candidateIndex);
+            Array.Resize(ref candidates, candidateIndex);
             return candidates;
         }
 
@@ -302,21 +345,25 @@ namespace UFramework.Util {
         /// <param name="predicate">The callback.</param>
         /// <param name="expected">The expected value.</param>
         /// <returns>Returns an filtered array.</returns>
-        public static T[] Filter<T> (IEnumerable<T> sources, Predicate<T> predicate, bool expected = true) {
-            Guard.Requires<ArgumentNullException> (predicate != null, $"Must set a {predicate}.");
+        public static T[] Filter<T>(IEnumerable<T> sources, Predicate<T> predicate, bool expected = true)
+        {
+            Guard.Requires<ArgumentNullException>(predicate != null, $"Must set a {predicate}.");
 
-            if (sources == null) {
-                return Array.Empty<T> ();
+            if (sources == null)
+            {
+                return Array.Empty<T>();
             }
 
-            var candidates = new LinkedList<T> ();
-            foreach (var result in sources) {
-                if (predicate.Invoke (result) == expected) {
-                    candidates.AddLast (result);
+            var candidates = new LinkedList<T>();
+            foreach (var result in sources)
+            {
+                if (predicate.Invoke(result) == expected)
+                {
+                    candidates.AddLast(result);
                 }
             }
 
-            return candidates.ToArray ();
+            return candidates.ToArray();
         }
 
         /// <summary>
@@ -328,19 +375,22 @@ namespace UFramework.Util {
         /// <param name="source">The source iterator.</param>
         /// <param name="closure">The closure to process.</param>
         /// <returns>Returns an new array.</returns>
-        public static TReturn[] Map<T, TReturn> (IEnumerable<T> source, Func<T, TReturn> closure) {
-            Guard.Requires<ArgumentNullException> (closure != null, $"Must set a {closure}.");
+        public static TReturn[] Map<T, TReturn>(IEnumerable<T> source, Func<T, TReturn> closure)
+        {
+            Guard.Requires<ArgumentNullException>(closure != null, $"Must set a {closure}.");
 
-            if (source == null) {
-                return Array.Empty<TReturn> ();
+            if (source == null)
+            {
+                return Array.Empty<TReturn>();
             }
 
-            var requested = new List<TReturn> ();
-            foreach (var value in source) {
-                requested.Add (closure.Invoke (value));
+            var requested = new List<TReturn>();
+            foreach (var value in source)
+            {
+                requested.Add(closure.Invoke(value));
             }
 
-            return requested.ToArray ();
+            return requested.ToArray();
         }
 
         /// <summary>
@@ -350,12 +400,14 @@ namespace UFramework.Util {
         /// <typeparam name="T">The type of the array.</typeparam>
         /// <param name="sources">The specified array.</param>
         /// <returns>Returns removed element.</returns>
-        public static T Pop<T> (ref T[] sources) {
-            Guard.Requires<ArgumentNullException> (sources != null, $"{nameof(sources)} should not be null.");
-            Guard.Requires<InvalidOperationException> (sources.Length > 0, $"The number of elements needs to be greater than 0.");
+        public static T Pop<T>(ref T[] sources)
+        {
+            Guard.Requires<ArgumentNullException>(sources != null, $"{nameof(sources)} should not be null.");
+            Guard.Requires<InvalidOperationException>(sources.Length > 0,
+                $"The number of elements needs to be greater than 0.");
 
             var candidate = sources[sources.Length - 1];
-            Array.Resize (ref sources, sources.Length - 1);
+            Array.Resize(ref sources, sources.Length - 1);
             return candidate;
         }
 
@@ -366,14 +418,16 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="elements">The added elements.</param>
         /// <returns>Returns the length of the new array.</returns>
-        public static int Push<T> (ref T[] sources, params T[] elements) {
-            sources = sources ?? Array.Empty<T> ();
-            if (elements == null || elements.Length <= 0) {
+        public static int Push<T>(ref T[] sources, params T[] elements)
+        {
+            sources = sources ?? Array.Empty<T>();
+            if (elements == null || elements.Length <= 0)
+            {
                 return sources.Length;
             }
 
-            Array.Resize (ref sources, sources.Length + elements.Length);
-            Array.Copy (elements, 0, sources, sources.Length - elements.Length, elements.Length);
+            Array.Resize(ref sources, sources.Length + elements.Length);
+            Array.Copy(elements, 0, sources, sources.Length - elements.Length, elements.Length);
             return sources.Length;
         }
 
@@ -388,19 +442,22 @@ namespace UFramework.Util {
         /// <param name="closure">The closure process.</param>
         /// <param name="initial">The initial value.</param>
         /// <returns>Returnd the processed string.</returns>
-        public static string Reduce<T> (IEnumerable<T> sources, Func<object, T, string> closure, object initial = null) {
-            Guard.Requires<ArgumentNullException> (closure != null, $"Must set a {closure}.");
+        public static string Reduce<T>(IEnumerable<T> sources, Func<object, T, string> closure, object initial = null)
+        {
+            Guard.Requires<ArgumentNullException>(closure != null, $"Must set a {closure}.");
 
-            if (sources == null) {
-                return initial?.ToString ();
+            if (sources == null)
+            {
+                return initial?.ToString();
             }
 
             var requested = initial;
-            foreach (var segments in sources) {
-                requested = closure.Invoke (requested, segments);
+            foreach (var segments in sources)
+            {
+                requested = closure.Invoke(requested, segments);
             }
 
-            return requested?.ToString ();
+            return requested?.ToString();
         }
 
         /// <summary>
@@ -420,15 +477,17 @@ namespace UFramework.Util {
         /// <para>If the value is not set, then all elements from the position set by the <paramref name="start"/> parameter to the end of the array are returned.</para>
         /// </param>
         /// <returns>Returns an new array.</returns>
-        public static T[] Slice<T> (T[] sources, int start, int? length = null) {
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T> ();
+        public static T[] Slice<T>(T[] sources, int start, int? length = null)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T>();
             }
 
-            InternalHelper.NormalizationPosition (sources.Length, ref start, ref length);
+            InternalHelper.NormalizationPosition(sources.Length, ref start, ref length);
 
             var requested = new T[length.Value];
-            Array.Copy (sources, start, requested, 0, length.Value);
+            Array.Copy(sources, start, requested, 0, length.Value);
             return requested;
         }
 
@@ -438,14 +497,16 @@ namespace UFramework.Util {
         /// <typeparam name="T">The type of array.</typeparam>
         /// <param name="sources">The specified array.</param>
         /// <returns>Returns the removed value.</returns>
-        public static T Shift<T> (ref T[] sources) {
-            Guard.Requires<ArgumentNullException> (sources != null, $"{nameof(sources)} should not be null.");
-            Guard.Requires<InvalidOperationException> (sources.Length > 0, $"The number of elements needs to be greater than 0.");
+        public static T Shift<T>(ref T[] sources)
+        {
+            Guard.Requires<ArgumentNullException>(sources != null, $"{nameof(sources)} should not be null.");
+            Guard.Requires<InvalidOperationException>(sources.Length > 0,
+                $"The number of elements needs to be greater than 0.");
 
             var candidate = sources[0];
             var newSource = new T[sources.Length - 1];
 
-            Array.Copy (sources, 1, newSource, 0, sources.Length - 1);
+            Array.Copy(sources, 1, newSource, 0, sources.Length - 1);
             sources = newSource;
             return candidate;
         }
@@ -457,16 +518,18 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="elements">The added element.</param>
         /// <returns>Returns the length of the new array.</returns>
-        public static int Unshift<T> (ref T[] sources, params T[] elements) {
-            sources = sources ?? Array.Empty<T> ();
-            if (elements == null || elements.Length <= 0) {
+        public static int Unshift<T>(ref T[] sources, params T[] elements)
+        {
+            sources = sources ?? Array.Empty<T>();
+            if (elements == null || elements.Length <= 0)
+            {
                 return sources.Length;
             }
 
             var newSources = new T[sources.Length + elements.Length];
 
-            Array.Copy (elements, newSources, elements.Length);
-            Array.Copy (sources, 0, newSources, elements.Length, sources.Length);
+            Array.Copy(elements, newSources, elements.Length);
+            Array.Copy(sources, 0, newSources, elements.Length, sources.Length);
 
             sources = newSources;
 
@@ -489,22 +552,25 @@ namespace UFramework.Util {
         /// <para>If the value is not set, then all elements from the position set by the <paramref name="start"/> parameter to the end of the array are returned.</para>
         /// </param>
         /// <returns>Returns inverted array.</returns>
-        public static T[] Reverse<T> (T[] sources, int start = 0, int? length = null) {
-            if (sources == null || sources.Length <= 0) {
-                return Array.Empty<T> ();
+        public static T[] Reverse<T>(T[] sources, int start = 0, int? length = null)
+        {
+            if (sources == null || sources.Length <= 0)
+            {
+                return Array.Empty<T>();
             }
 
-            if (sources.Length == 1) {
+            if (sources.Length == 1)
+            {
                 return sources;
             }
 
-            InternalHelper.NormalizationPosition (sources.Length, ref start, ref length);
+            InternalHelper.NormalizationPosition(sources.Length, ref start, ref length);
             var temporarySource = new T[sources.Length];
-            Array.Copy (sources, temporarySource, sources.Length);
-            Array.Reverse (temporarySource, start, length.Value);
+            Array.Copy(sources, temporarySource, sources.Length);
+            Array.Reverse(temporarySource, start, length.Value);
 
             var resquested = new T[length.Value];
-            Array.Copy (temporarySource, start, resquested, 0, length.Value);
+            Array.Copy(temporarySource, start, resquested, 0, length.Value);
             return resquested;
         }
 
@@ -516,22 +582,28 @@ namespace UFramework.Util {
         /// <param name="source">The specified array.</param>
         /// <param name="match">The value to match, if there are more than one, only all matches will match.</param>
         /// <returns>Returning -1 means that the specified value was not retrieved.</returns>
-        public static int IndexOf<T> (T[] source, params T[] match) {
+        public static int IndexOf<T>(T[] source, params T[] match)
+        {
             if (match == null || match.Length <= 0 ||
-                source == null || source.Length <= 0) {
+                source == null || source.Length <= 0)
+            {
                 return -1;
             }
 
-            for (var sourceIndex = 0; sourceIndex < source.Length; sourceIndex++) {
-                if (!source[sourceIndex].Equals (match[0])) {
+            for (var sourceIndex = 0; sourceIndex < source.Length; sourceIndex++)
+            {
+                if (!source[sourceIndex].Equals(match[0]))
+                {
                     continue;
                 }
 
                 var isFinded = true;
 
-                for (var matchIndex = 0; matchIndex < match.Length; matchIndex++) {
+                for (var matchIndex = 0; matchIndex < match.Length; matchIndex++)
+                {
                     if ((sourceIndex + matchIndex) < source.Length &&
-                        source[sourceIndex + matchIndex].Equals (match[matchIndex])) {
+                        source[sourceIndex + matchIndex].Equals(match[matchIndex]))
+                    {
                         continue;
                     }
 
@@ -539,7 +611,8 @@ namespace UFramework.Util {
                     break;
                 }
 
-                if (isFinded) {
+                if (isFinded)
+                {
                     return sourceIndex;
                 }
             }
@@ -555,15 +628,20 @@ namespace UFramework.Util {
         /// <param name="source">The specified array.</param>
         /// <param name="match">The value to match.Match as long as there is an element match.</param>
         /// <returns>Returning -1 means that the specified value was not retrieved.</returns>
-        public static int IndexOfAny<T> (T[] source, params T[] match) {
+        public static int IndexOfAny<T>(T[] source, params T[] match)
+        {
             if (match == null || match.Length <= 0 ||
-                source == null || source.Length <= 0) {
+                source == null || source.Length <= 0)
+            {
                 return -1;
             }
 
-            for (var sourceIndex = 0; sourceIndex < source.Length; sourceIndex++) {
-                for (var matchIndex = 0; matchIndex < match.Length; matchIndex++) {
-                    if (source[sourceIndex].Equals (match[matchIndex])) {
+            for (var sourceIndex = 0; sourceIndex < source.Length; sourceIndex++)
+            {
+                for (var matchIndex = 0; matchIndex < match.Length; matchIndex++)
+                {
+                    if (source[sourceIndex].Equals(match[matchIndex]))
+                    {
                         return sourceIndex;
                     }
                 }
@@ -579,14 +657,19 @@ namespace UFramework.Util {
         /// <param name="sources">The source array.</param>
         /// <param name="matches">An array of exclude value.</param>
         /// <returns>Returns an array of processed.</returns>
-        public static T[] Difference<T> (T[] sources, params T[] matches) {
-            if (sources == null || sources.Length <= 0 || matches == null || matches.Length <= 0) {
+        public static T[] Difference<T>(T[] sources, params T[] matches)
+        {
+            if (sources == null || sources.Length <= 0 || matches == null || matches.Length <= 0)
+            {
                 return sources;
             }
 
-            return Filter (sources, (source) => {
-                foreach (var match in matches) {
-                    if (source.Equals (match)) {
+            return Filter(sources, (source) =>
+            {
+                foreach (var match in matches)
+                {
+                    if (source.Equals(match))
+                    {
                         return false;
                     }
                 }
@@ -604,12 +687,14 @@ namespace UFramework.Util {
         /// <param name="index">The index of array.</param>
         /// <param name="defaultValue">Default value if index not found.</param>
         /// <returns>Returns removed element.</returns>
-        public static T RemoveAt<T> (ref T[] sources, int index, T defaultValue = default) {
-            if (sources == null || sources.Length <= 0 || index >= sources.Length) {
+        public static T RemoveAt<T>(ref T[] sources, int index, T defaultValue = default)
+        {
+            if (sources == null || sources.Length <= 0 || index >= sources.Length)
+            {
                 return defaultValue;
             }
 
-            var candidates = Splice (ref sources, index, 1);
+            var candidates = Splice(ref sources, index, 1);
             return candidates.Length > 0 ? candidates[0] : defaultValue;
         }
 
@@ -621,8 +706,9 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="predicate">The callback.</param>
         /// <returns>True if pass the test.</returns>
-        public static bool Test<T> (IEnumerable<T> sources, Predicate<T> predicate) {
-            return Test (sources, predicate, out _);
+        public static bool Test<T>(IEnumerable<T> sources, Predicate<T> predicate)
+        {
+            return Test(sources, predicate, out _);
         }
 
         /// <summary>
@@ -634,16 +720,20 @@ namespace UFramework.Util {
         /// <param name="predicate">The callback.</param>
         /// <param name="match">Test passed element.</param>
         /// <returns>True if pass the test.</returns>
-        public static bool Test<T> (IEnumerable<T> sources, Predicate<T> predicate, out T match) {
-            Guard.Requires<ArgumentNullException> (predicate != null, $"Must set a {predicate}.");
+        public static bool Test<T>(IEnumerable<T> sources, Predicate<T> predicate, out T match)
+        {
+            Guard.Requires<ArgumentNullException>(predicate != null, $"Must set a {predicate}.");
 
             match = default;
-            if (sources == null) {
+            if (sources == null)
+            {
                 return false;
             }
 
-            foreach (var source in sources) {
-                if (predicate (source)) {
+            foreach (var source in sources)
+            {
+                if (predicate(source))
+                {
                     match = source;
                     return true;
                 }
@@ -660,13 +750,16 @@ namespace UFramework.Util {
         /// <param name="sources">The specified array.</param>
         /// <param name="predicate">The callback to find element.</param>
         /// <param name="value">The replacement value.</param>
-        public static void Set<T> (ref T[] sources, Predicate<T> predicate, T value) {
-            Guard.Requires<ArgumentNullException> (predicate != null, $"Must set a {predicate}.");
+        public static void Set<T>(ref T[] sources, Predicate<T> predicate, T value)
+        {
+            Guard.Requires<ArgumentNullException>(predicate != null, $"Must set a {predicate}.");
 
-            sources = sources ?? Array.Empty<T> ();
+            sources = sources ?? Array.Empty<T>();
 
-            for (var index = 0; index < sources.Length; index++) {
-                if (!predicate (sources[index])) {
+            for (var index = 0; index < sources.Length; index++)
+            {
+                if (!predicate(sources[index]))
+                {
                     continue;
                 }
 
@@ -674,7 +767,7 @@ namespace UFramework.Util {
                 return;
             }
 
-            Push (ref sources, value);
+            Push(ref sources, value);
         }
     }
 }

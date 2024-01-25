@@ -1,4 +1,4 @@
-namespace UFramework.Tween {
+namespace UFramework {
     public interface ITweenManager {
 
         void LocalUpdate (float dt);

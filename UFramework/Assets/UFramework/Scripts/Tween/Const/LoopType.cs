@@ -1,4 +1,4 @@
-﻿namespace UFramework.Tween
+﻿namespace UFramework
 {
     public enum LoopType
     {

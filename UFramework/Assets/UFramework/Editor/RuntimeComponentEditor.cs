@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditorInternal;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
-    using UnityEditor;
-    using UnityEngine;
-
     [CustomEditor(typeof(RuntimeComponent))]
-    public class RuntimeComponentEditor : Editor
+    public class RuntimeComponentEditor : UnityEditor.Editor
     {
         private SerializedProperty bindData;
         private ReorderableList bindDataList;
@@ -345,7 +345,7 @@ namespace UFramework.GameCommon
 
 
     [Serializable]
-    public class BindData
+    public class BindUIData
     {
         public string variableName;
 

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UFramework.Core;
 using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public class UIManager : IUIManager
     {

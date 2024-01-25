@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     public interface ICriticalAwaiter : IAwaiter, ICriticalNotifyCompletion
     {

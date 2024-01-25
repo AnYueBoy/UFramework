@@ -1,6 +1,6 @@
 ﻿/*
- * @Author: l hy 
- * @Date: 2020-10-10 06:56:04 
+ * @Author: l hy
+ * @Date: 2020-10-10 06:56:04
  * @Description: 资源访问的统一对外接口
  * @Last Modified by: l hy
  * @Last Modified time: 2022-01-13 19:35:56
@@ -9,13 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using UFramework.FrameUtil;
-using UFramework.Promise;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using SException = System.Exception;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public class AssetsManager : IAssetsManager
     {
@@ -334,20 +332,20 @@ namespace UFramework.GameCommon
         /// <summary>
         /// 异步检查依赖项
         /// </summary>
-        private Promise.Promise CheckDependenciesAsync(string bundleName)
+        private Promise CheckDependenciesAsync(string bundleName)
         {
-            List<Promise.Promise> allPromise = new List<Promise.Promise>();
+            List<Promise> allPromise = new List<Promise>();
             AddAllDependenciesBundle(allPromise, bundleName);
-            return Promise.Promise.All(allPromise.ToArray());
+            return Promise.All(allPromise.ToArray());
         }
 
-        private void AddAllDependenciesBundle(List<Promise.Promise> promiseList, string bundleName)
+        private void AddAllDependenciesBundle(List<Promise> promiseList, string bundleName)
         {
             LoadManifestFile();
             string[] allDependencies = assetBundleManifest.GetAllDependencies(bundleName);
             if (allDependencies.Length <= 0)
             {
-                promiseList.Add(new Promise.Promise((Action resolve, Action<SException> reject) =>
+                promiseList.Add(new Promise((Action resolve, Action<SException> reject) =>
                 {
                     string bundleUrl = CommonUtil.GetBundleUrl() + bundleName;
                     LoadTargetBundleAsync(bundleUrl).Then(

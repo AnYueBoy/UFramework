@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class TweenerValue<T> : Tweener<T>
     {
@@ -33,7 +33,7 @@ namespace UFramework.Tween
             Vector3 endValue = tweenerCore.changeValue * ratioValue + tweenerCore.beginValue;
             tweenerCore.setter(endValue);
         }
-        
+
         public void ValueTween(float dt, TweenerCore<Vector2> tweenerCore)
         {
             timer += dt;

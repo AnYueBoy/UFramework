@@ -1,7 +1,9 @@
-    using SException = System.Exception;
-    namespace UFramework.Promise {
+using SException = System.Exception;
 
-        public interface IRejectable {
-            void Reject (SException exception);
-        }
+namespace UFramework
+{
+    public interface IRejectable
+    {
+        void Reject(SException exception);
     }
+}

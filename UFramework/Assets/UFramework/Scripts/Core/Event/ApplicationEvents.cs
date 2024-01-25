@@ -1,8 +1,10 @@
-﻿namespace UFramework.Core {
+﻿namespace UFramework
+{
     /// <summary>
     /// Contains all events dispatched by an Application.
     /// </summary>
-    public static class ApplicationEvents {
+    public static class ApplicationEvents
+    {
         private const string BaseEventArgs = "EventArgs.ApplicationEventArgs";
 
         public static readonly string OnBeforeBoot = $"{BaseEventArgs}.OnBeforeBoot";
@@ -24,6 +26,5 @@
         public static readonly string OnBeforeTerminate = $"{BaseEventArgs}.BeforeTerminateEventArgs";
 
         public static readonly string OnAfterTerminate = $"{BaseEventArgs}.AfterTerminateEventArgs";
-
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections;
-using UFramework.Core;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     public class Coroutine : YieldInstruction, ICoroutine
     {

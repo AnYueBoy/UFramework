@@ -1,14 +1,16 @@
 ﻿/*
- * @Author: l hy 
- * @Date: 2020-12-21 16:35:54 
+ * @Author: l hy
+ * @Date: 2020-12-21 16:35:54
  * @Description: 节点信息
  */
-namespace UFramework.Editor.EditorData {
+
+namespace UFramework
+{
     using UnityEngine;
 
     [SerializeField]
-    public class NodeInfo {
-
+    public class NodeInfo
+    {
         public string nodeName = null;
 
         public double x = 0;

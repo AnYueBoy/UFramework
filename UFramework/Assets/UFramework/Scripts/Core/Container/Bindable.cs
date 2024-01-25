@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using UFramework.Exception;
-using UFramework.Util;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public abstract class Bindable : IBindable
     {

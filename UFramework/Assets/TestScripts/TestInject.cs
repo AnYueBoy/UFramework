@@ -1,6 +1,4 @@
-﻿using UFramework.Core;
-using UFramework.Core.Container;
-using UFramework.EventDispatcher;
+﻿using UFramework;
 
 public class TestInject
 {

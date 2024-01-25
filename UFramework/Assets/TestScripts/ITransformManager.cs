@@ -1,4 +1,9 @@
 using UnityEngine;
-public interface ITransformManager {
-    Transform GoTransform { get; }
+
+namespace UFramework
+{
+    public interface ITransformManager
+    {
+        Transform GoTransform { get; }
+    }
 }

@@ -1,32 +1,37 @@
 /*
- * @Author: l hy 
- * @Date: 2020-05-12 08:38:46 
- * @Description: 编辑器工具类 
+ * @Author: l hy
+ * @Date: 2020-05-12 08:38:46
+ * @Description: 编辑器工具类
  */
-namespace UFramework.Editor.Util {
-    using System;
-    using UnityEditor;
-    using UnityEngine;
 
-    public class EditorUtil {
+using UnityEditor;
+using System;
+using SApplication = UnityEngine.Application;
 
+namespace UFramework
+{
+    public class EditorUtil
+    {
         /// <summary>
         /// 清空控制台信息
         /// </summary>
-        public static void clearConsole () {
-            Type log = typeof (EditorWindow).Assembly.GetType ("UnityEditor.LogEntries");
+        public static void clearConsole()
+        {
+            Type log = typeof(EditorWindow).Assembly.GetType("UnityEditor.LogEntries");
 
-            var clearMethod = log.GetMethod ("Clear");
-            clearMethod.Invoke (null, null);
+            var clearMethod = log.GetMethod("Clear");
+            clearMethod.Invoke(null, null);
         }
 
         /// <summary>
         /// 获取当前平台名称
         /// </summary>
         /// <returns></returns>
-        public static string getCurPlatformName () {
+        public static string getCurPlatformName()
+        {
             BuildTarget buildTarget = EditorUserBuildSettings.activeBuildTarget;
-            switch (buildTarget) {
+            switch (buildTarget)
+            {
                 case BuildTarget.StandaloneWindows:
                 case BuildTarget.StandaloneWindows64:
                     return "Windows";
@@ -44,12 +49,12 @@ namespace UFramework.Editor.Util {
                     // FIXME: other platform not support
                     return null;
             }
-
         }
 
-        public static string getBuildBundleUrl () {
-            string platformName = getCurPlatformName ();
-            return Application.dataPath + "/AssetsBundles/" + platformName + "/";
+        public static string getBuildBundleUrl()
+        {
+            string platformName = getCurPlatformName();
+            return SApplication.dataPath + "/AssetsBundles/" + platformName + "/";
         }
     }
 }

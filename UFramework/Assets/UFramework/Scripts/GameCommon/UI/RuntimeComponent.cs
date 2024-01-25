@@ -3,12 +3,12 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     [ExecuteAlways]
     public class RuntimeComponent : MonoBehaviour
     {
-        public BindData[] bindDataArray;
+        public BindUIData[] bindDataArray;
 
 
         [InitializeOnLoadMethod]
@@ -30,7 +30,7 @@ namespace UFramework.GameCommon
             showBindDataList = bindDataArray;
         }
 
-        private static BindData[] showBindDataList;
+        private static BindUIData[] showBindDataList;
 
         private static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
         {
@@ -56,9 +56,8 @@ namespace UFramework.GameCommon
                     GUI.DrawTexture(r, linkTexture);
                 }
             }
-            
-            GUI.color = originColor;
 
+            GUI.color = originColor;
         }
     }
 }

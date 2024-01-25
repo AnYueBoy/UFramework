@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UFramework.Core;
-using UFramework.Tween;
+using UFramework;
 using UnityEngine;
 
 public class TweenerTest : MonoBehaviour

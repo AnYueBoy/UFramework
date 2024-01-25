@@ -1,6 +1,6 @@
 /*
- * @Author: l hy 
- * @Date: 2021-01-18 22:00:38 
+ * @Author: l hy
+ * @Date: 2021-01-18 22:00:38
  * @Description: 封装资源
  * @Last Modified by: l hy
  * @Last Modified time: 2021-01-21 22:26:24
@@ -8,7 +8,7 @@
 
 using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public class PackAsset
     {

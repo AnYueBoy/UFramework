@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public class ParamsCollection : IParams, IEnumerable<KeyValuePair<string, object>>
     {

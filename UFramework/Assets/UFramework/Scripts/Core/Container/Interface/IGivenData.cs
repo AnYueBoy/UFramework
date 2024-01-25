@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public interface IGivenData<TReturn> where TReturn : IBindable
     {

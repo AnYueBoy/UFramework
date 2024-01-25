@@ -1,6 +1,6 @@
 /*
- * @Author: l hy 
- * @Date: 2022-01-04 10:03:17 
+ * @Author: l hy
+ * @Date: 2022-01-04 10:03:17
  * @Description: 节点
  */
 
@@ -8,7 +8,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace UFramework.NodeEditor
+namespace UFramework
 {
     public class Node
     {

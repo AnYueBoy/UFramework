@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public interface INodeManager
     {
-        RectTransform LowerRoot { get;  }
+        RectTransform LowerRoot { get; }
         RectTransform TopRoot { get; }
-        RectTransform TipRoot { get;  }
+        RectTransform TipRoot { get; }
     }
 }

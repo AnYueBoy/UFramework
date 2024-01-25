@@ -1,4 +1,4 @@
-namespace UFramework.Core
+namespace UFramework
 {
     /// <summary>
     /// 框架的调试等级

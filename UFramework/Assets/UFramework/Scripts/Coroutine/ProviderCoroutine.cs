@@ -1,6 +1,4 @@
-﻿using UFramework.Core;
-
-namespace UFramework.Coroutine
+﻿namespace UFramework
 {
     public class ProviderCoroutine : IServiceProvider
     {

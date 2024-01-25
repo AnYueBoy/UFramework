@@ -1,6 +1,6 @@
 /*
- * @Author: l hy 
- * @Date: 2021-12-10 18:19:54 
+ * @Author: l hy
+ * @Date: 2021-12-10 18:19:54
  * @Description: 缓动函数管理
  */
 
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class EaseManager
     {

@@ -1,14 +1,16 @@
-﻿using UFramework.EventDispatcher;
-
-namespace UFramework.Core {
+﻿
+namespace UFramework
+{
     /// <summary>
     /// Represents an application event.
     /// </summary>
-    public class ApplicationEventArgs : EventParam {
+    public class ApplicationEventArgs : EventParam
+    {
         /// <summary>
         /// Initializes a new instance of the ApplicationEventArgs class.
         /// </summary>
-        public ApplicationEventArgs (IApplication application) {
+        public ApplicationEventArgs(IApplication application)
+        {
             Application = application;
         }
 

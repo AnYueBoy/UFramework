@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     public struct CoroutineAwaiter : IAwaiter, ICriticalAwaiter
     {

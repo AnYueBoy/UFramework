@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class InjectAttribute : Attribute

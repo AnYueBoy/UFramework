@@ -1,23 +1,24 @@
 ﻿/*
- * @Author: l hy 
- * @Date: 2019-12-16 23:05:55 
+ * @Author: l hy
+ * @Date: 2019-12-16 23:05:55
  * @Description: 工具类
  * @Last Modified by: l hy
  * @Last Modified time: 2020-12-21 16:44:12
  */
 
 using System;
+using System.Collections.Generic;
+using SApplication = UnityEngine.Application;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
-namespace UFramework.FrameUtil
+namespace UFramework
 {
-    using System.Collections.Generic;
-    using UnityEngine;
-
     public static class CommonUtil
     {
         public static float getAspect()
         {
-            float aspect = (float) Screen.width / Screen.height;
+            float aspect = (float)Screen.width / Screen.height;
             return aspect;
         }
 
@@ -361,7 +362,7 @@ namespace UFramework.FrameUtil
 
         public static string GetCurPlatformName()
         {
-            RuntimePlatform runtimePlatform = Application.platform;
+            RuntimePlatform runtimePlatform = SApplication.platform;
             switch (runtimePlatform)
             {
                 case RuntimePlatform.WindowsPlayer:
@@ -389,13 +390,13 @@ namespace UFramework.FrameUtil
         public static string GetBundleUrl()
         {
             string platformName = GetCurPlatformName();
-            string bundleUrl = Application.dataPath + "/AssetsBundles/" + platformName + "/";
+            string bundleUrl = SApplication.dataPath + "/AssetsBundles/" + platformName + "/";
             return bundleUrl;
         }
 
         public static long TimeNow()
         {
-            return (long) (DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
         public static bool FuzzyEquals(float a, float b, float fuzzyValue)

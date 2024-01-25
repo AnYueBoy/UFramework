@@ -6,15 +6,14 @@
  * @Last Modified time: 2020-12-21 16:46:56
  */
 
-namespace UFramework.Editor.GenerateName
-{
-    using System.IO;
-    using System;
-#if UNITY_EDITOR
-    using UnityEditor;
-#endif
-    using UnityEngine;
+using System;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+using SApplication = UnityEngine.Application;
 
+namespace UFramework
+{
     public class GenerateFileName
     {
         [MenuItem("UFramework/ExportPackage %e")]
@@ -22,7 +21,7 @@ namespace UFramework.Editor.GenerateName
         {
             // 时间戳
             string timeStamp = DateTime.Now.ToString("yyyyMMdd");
-            string projectPath = Directory.GetParent(Application.dataPath).FullName;
+            string projectPath = Directory.GetParent(SApplication.dataPath).FullName;
             string packagePath = Directory.GetParent(projectPath).FullName;
 
             string filePathName = packagePath + @"\UFramework" + ".unitypackage";
@@ -40,7 +39,7 @@ namespace UFramework.Editor.GenerateName
             File.Copy(dllFilePath, packagePath + "/UFramework.dll");
 
             // open package floder
-            Application.OpenURL("file:///" + packagePath);
+            SApplication.OpenURL("file:///" + packagePath);
         }
     }
 }

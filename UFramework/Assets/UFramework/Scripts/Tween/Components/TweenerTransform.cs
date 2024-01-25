@@ -1,13 +1,13 @@
 /*
- * @Author: l hy 
- * @Date: 2021-12-10 08:51:06 
- * @Description: 
+ * @Author: l hy
+ * @Date: 2021-12-10 08:51:06
+ * @Description:
  */
 
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class TweenerTransform<T> : Tweener<T>
     {

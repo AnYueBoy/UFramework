@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     /// <summary>
     /// 绑定数据 表示与指定服务相关的关系数据。

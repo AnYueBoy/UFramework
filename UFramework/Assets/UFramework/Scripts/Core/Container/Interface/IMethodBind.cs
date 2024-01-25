@@ -1,4 +1,4 @@
-﻿namespace UFramework.Core.Container
+﻿namespace UFramework
 {
     /// <summary>
     /// 方法绑定接口

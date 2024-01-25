@@ -7,7 +7,7 @@
 using System;
 using UnityEngine;
 
-namespace UFramework.NodeEditor
+namespace UFramework
 {
     public class ConnectionPoint
     {

@@ -6,11 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using UFramework.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public static class TweenerExtension
     {

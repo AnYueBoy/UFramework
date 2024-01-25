@@ -1,6 +1,4 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UFramework.GameCommon;
+using UFramework;
 public partial class GameBoardUI : BindUI
 {
 

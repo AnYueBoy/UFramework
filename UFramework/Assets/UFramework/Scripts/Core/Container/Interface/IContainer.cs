@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public interface IContainer
     {

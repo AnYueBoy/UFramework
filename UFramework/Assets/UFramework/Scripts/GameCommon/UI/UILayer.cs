@@ -1,4 +1,4 @@
-﻿namespace UFramework.GameCommon
+﻿namespace UFramework
 {
     /// <summary>
     /// UI层

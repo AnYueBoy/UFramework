@@ -1,4 +1,4 @@
-﻿namespace UFramework.Core.Container
+﻿namespace UFramework
 {
     public interface IParams
     {

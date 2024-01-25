@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class TweenerCanvasGroup<T> : Tweener<T>
     {
@@ -17,6 +17,6 @@ namespace UFramework.Tween
             float ratioValue = EaseManager.GetEaseFuncValue(tweenerCore.easeType, time, tweenerCore.duration);
             float endValue = tweenerCore.changeValue * ratioValue + tweenerCore.beginValue;
             tweenerCore.setter(endValue);
-        } 
+        }
     }
 }

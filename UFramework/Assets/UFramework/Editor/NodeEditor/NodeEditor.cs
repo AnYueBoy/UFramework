@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using UFramework.AI.BehaviourTree;
 using UnityEditor;
 using UnityEngine;
 
-namespace UFramework.NodeEditor
+namespace UFramework
 {
     public class NodeEditor : EditorWindow
     {

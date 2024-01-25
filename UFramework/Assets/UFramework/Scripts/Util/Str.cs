@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace UFramework.Util
+namespace UFramework
 {
     public static class Str
     {

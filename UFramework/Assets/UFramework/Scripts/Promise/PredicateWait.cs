@@ -1,11 +1,13 @@
-    using System;
-    namespace UFramework.Promise {
-        internal class PredicateWait {
+using System;
 
-            public IPendingPromise pendingPromise;
-            public Func<float, bool> predicate;
-            public float createTime;
+namespace UFramework
+{
+    internal class PredicateWait
+    {
+        public IPendingPromise pendingPromise;
+        public Func<float, bool> predicate;
+        public float createTime;
 
-            public float alreadyWaitTime;
-        }
+        public float alreadyWaitTime;
     }
+}

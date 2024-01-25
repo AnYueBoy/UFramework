@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     /// <summary>
     /// 用于给 await 确定异步返回的时机

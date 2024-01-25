@@ -1,13 +1,12 @@
 /*
- * @Author: l hy 
- * @Date: 2021-12-08 18:24:38 
+ * @Author: l hy
+ * @Date: 2021-12-08 18:24:38
  * @Description: Tweener
  */
 
 using System;
-using UFramework.Core;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class Tweener<T> : ITweener, ITweener<T>
     {

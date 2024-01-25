@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
-using UFramework.Core;
-using UFramework.Coroutine;
+﻿using System.Collections;
 using UnityEngine;
+using UFramework;
 
 public class CoroutineTest : MonoBehaviour
 {
@@ -20,7 +18,7 @@ public class CoroutineTest : MonoBehaviour
         Debug.Log("协程开始");
         yield return new WaitForFrames(1);
         Debug.Log("等待一帧");
-        yield return new UFramework.Coroutine.WaitForSeconds(3);
+        yield return new UFramework.WaitForSeconds(3);
         Debug.Log("等待3秒");
     }
 

@@ -1,4 +1,4 @@
-﻿namespace UFramework.Core.Container
+﻿namespace UFramework
 {
     /// <summary>
     /// 所有可绑定数据类实现的接口。

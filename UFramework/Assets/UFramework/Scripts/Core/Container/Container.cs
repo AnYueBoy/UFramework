@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
-using UFramework.Exception;
-using UFramework.Util;
 using SException = System.Exception;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     public class Container : IContainer
     {

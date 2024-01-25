@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     internal sealed class MethodBind : Bindable<IMethodBind>, IMethodBind
     {

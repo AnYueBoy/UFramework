@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class TweenerSequence : ITweenerSequence
     {

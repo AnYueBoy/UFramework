@@ -1,7 +1,6 @@
-﻿using UFramework.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public class ProviderNodeManager : MonoBehaviour, IServiceProvider
     {

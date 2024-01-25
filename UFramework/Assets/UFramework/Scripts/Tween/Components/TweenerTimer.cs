@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class TweenerTimer<T> : Tweener<T>
     {

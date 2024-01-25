@@ -1,6 +1,5 @@
-using UFramework.Core;
 
-namespace UFramework.Tween
+namespace UFramework
 {
     public class ProviderTweener : IServiceProvider
     {

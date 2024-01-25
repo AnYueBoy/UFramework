@@ -3,19 +3,20 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using SApplication = UnityEngine.Application;
 
-namespace UFramework.Editor.TextureUtil
+namespace UFramework
 {
     public class TextureHandle : AssetPostprocessor
     {
         [MenuItem("UFramework/ConvertTexture")]
         public static void ModifyTexture()
         {
-            string[] paths = Directory.GetFiles(Application.dataPath, "*.*", SearchOption.AllDirectories)
+            string[] paths = Directory.GetFiles(SApplication.dataPath, "*.*", SearchOption.AllDirectories)
                 .Where(s => s.EndsWith(".png") || s.EndsWith(".jpg")).ToArray();
             foreach (string path in paths)
             {
-                string progressPath = path.Replace(Application.dataPath, "Assets");
+                string progressPath = path.Replace(SApplication.dataPath, "Assets");
                 TextureImporter importer = AssetImporter.GetAtPath(progressPath) as TextureImporter;
                 if (importer == null)
                 {

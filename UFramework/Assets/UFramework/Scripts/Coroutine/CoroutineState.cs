@@ -1,4 +1,4 @@
-﻿namespace UFramework.Coroutine
+﻿namespace UFramework
 {
     public enum CoroutineState
     {

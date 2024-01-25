@@ -4,7 +4,7 @@
  * @Description: 连接点类型
  */
 
-namespace UFramework.NodeEditor
+namespace UFramework
 {
     public enum ConnectionPointType
     {

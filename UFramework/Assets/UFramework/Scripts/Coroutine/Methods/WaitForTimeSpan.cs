@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     public class WaitForTimeSpan : YieldInstruction
     {

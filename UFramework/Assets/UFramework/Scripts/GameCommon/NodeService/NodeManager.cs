@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UFramework.GameCommon
+namespace UFramework
 {
     public class NodeManager : MonoBehaviour, INodeManager
     {
@@ -11,5 +11,6 @@ namespace UFramework.GameCommon
         public RectTransform LowerRoot => _lowerRoot;
         public RectTransform TopRoot => _topRoot;
         public RectTransform TipRoot => _tipRoot;
+        
     }
 }

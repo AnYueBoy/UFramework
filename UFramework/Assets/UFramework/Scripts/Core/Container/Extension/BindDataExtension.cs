@@ -1,7 +1,6 @@
 ﻿using System;
-using UFramework.Util;
 
-namespace UFramework.Core.Container
+namespace UFramework
 {
     /// <summary>
     /// BindData扩展类

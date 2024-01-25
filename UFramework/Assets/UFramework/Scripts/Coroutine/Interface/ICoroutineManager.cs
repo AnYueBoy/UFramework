@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace UFramework.Coroutine
+namespace UFramework
 {
     public interface ICoroutineManager
     {

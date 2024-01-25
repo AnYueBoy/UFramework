@@ -1,6 +1,7 @@
-namespace UFramework.Promise {
-
-    public interface IPromiseInfo {
+namespace UFramework
+{
+    public interface IPromiseInfo
+    {
         int Id { get; }
 
         string Name { get; }

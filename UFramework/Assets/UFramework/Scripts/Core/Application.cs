@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using UFramework.Core.Container;
-using UFramework.EventDispatcher;
-using UFramework.Exception;
-using UFramework.Util;
 
-namespace UFramework.Core
+namespace UFramework
 {
-    public class Application : Container.Container, IApplication
+    public class Application : Container, IApplication
     {
         private const string version = "1.0.0";
         private readonly IList<IServiceProvider> loadedProviders;
@@ -280,7 +276,7 @@ namespace UFramework.Core
         private void RegisterBaseBindings()
         {
             this.Singleton<IApplication>(() => this);
-            SetDispatcher(new EventDispatcher.EventDispatcher());
+            SetDispatcher(new EventDispatcher());
         }
 
         private T Raise<T>(T args) where T : EventParam

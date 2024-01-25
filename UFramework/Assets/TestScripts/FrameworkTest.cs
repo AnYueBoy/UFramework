@@ -1,20 +1,15 @@
-using System;
-using UFramework.Bootstarp;
-using UFramework.Core;
-using UFramework.Coroutine;
-using UFramework.EventDispatcher;
-using UFramework.GameCommon;
-using UFramework.Tween;
+using UFramework;
 using UnityEngine;
+using UApplication = UFramework.Application;
 
 public class FrameworkTest : MonoBehaviour
 {
-    public UFramework.Core.Application application;
+    public UApplication application;
 
     private void Awake()
     {
         App.OnNewApplication += (IApplication application) => { Debug.Log("框架创建"); };
-        application = UFramework.Core.Application.New();
+        application = UApplication.New();
         application.Bootstrap(new SystemProviderBootstrap(this));
 
         Debug.Log($"runtimeId: {App.GetRuntimeId()}");

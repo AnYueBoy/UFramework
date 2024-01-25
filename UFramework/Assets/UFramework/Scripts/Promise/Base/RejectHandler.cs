@@ -1,9 +1,11 @@
-    using System;
-    using SException = System.Exception;
-    namespace UFramework.Promise {
+using System;
+using SException = System.Exception;
 
-        public class RejectHandler {
-            public Action<SException> callback;
-            public IRejectable rejectable;
-        }
+namespace UFramework
+{
+    public class RejectHandler
+    {
+        public Action<SException> callback;
+        public IRejectable rejectable;
     }
+}

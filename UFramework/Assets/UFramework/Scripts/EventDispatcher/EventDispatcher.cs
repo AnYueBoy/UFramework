@@ -6,12 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UFramework.Exception;
-using UFramework.Util;
 using UnityEngine;
 
-namespace UFramework.EventDispatcher
+namespace UFramework
 {
     public class EventDispatcher : IEventDispatcher
     {

@@ -1,4 +1,4 @@
-﻿using UFramework.GameCommon;
+﻿using UFramework;
 
 public class GameBoard : IView
 {
