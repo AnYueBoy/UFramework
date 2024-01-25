@@ -6,6 +6,6 @@ public class ProviderTransform : MonoBehaviour, IServiceProvider {
     }
 
     public void Register () {
-        // App.Instance<ITransformManager> (GetComponent<TransformManager> ());
+        App.Instance<ITransformManager> (GetComponent<TransformManager> ());
     }
 }
