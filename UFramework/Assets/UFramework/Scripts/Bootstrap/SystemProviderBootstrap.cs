@@ -5,24 +5,22 @@ namespace UFramework
     public class SystemProviderBootstrap : IBootstrap
     {
         private IServiceProvider[] unityProviderArray;
+        private IServiceProvider[] customProviderArray;
 
         public SystemProviderBootstrap(Component component)
         {
             unityProviderArray = component.GetComponentsInChildren<IServiceProvider>();
         }
 
+        public void AddCustomProviders(params IServiceProvider[] customProviders)
+        {
+            customProviderArray = customProviders;
+        }
+
         public void Bootstrap()
         {
-            IServiceProvider[] systemProviderArray = new IServiceProvider[]
-            {
-                new ProviderPromise(),
-                new ProviderTweener(),
-                new ProviderGameCommon(),
-                new ProviderLogManager(),
-                new ProviderCoroutine(),
-            };
-
-            IServiceProvider[] providerArray = Arr.Merge<IServiceProvider>(unityProviderArray, systemProviderArray);
+            IServiceProvider[] providerArray =
+                Arr.Merge<IServiceProvider>(unityProviderArray, customProviderArray);
 
             foreach (IServiceProvider provider in providerArray)
             {

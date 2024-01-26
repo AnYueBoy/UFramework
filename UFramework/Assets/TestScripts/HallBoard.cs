@@ -16,7 +16,6 @@ public class HallBoard : MonoBehaviour
 
     public void loadNextScene()
     {
-        SceneLoadManager.GetInstance().LoadNextScene(false, (AsyncOperation asy) => { Debug.Log("加载完成"); });
     }
 
     public void playBGM()
