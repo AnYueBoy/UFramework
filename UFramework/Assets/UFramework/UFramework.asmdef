@@ -1,4 +1,17 @@
-﻿{
-	"name": "UFramework",
-	"references":[ "GUID:f042caf90ead1c4438a62bf586501d42" ]
+{
+    "name": "UFramework",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f042caf90ead1c4438a62bf586501d42",
+        "GUID:b156b0da064a2284e9df8fac1c0fbd17"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
