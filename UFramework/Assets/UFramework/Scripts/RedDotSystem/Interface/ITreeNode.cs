@@ -36,5 +36,7 @@ namespace UFramework
         ITreeNode GetChild(RangeString key);
 
         ITreeNode GetOrAddChild(RangeString key);
+
+        Func<int> CheckTriggerCondition { get; set; }
     }
 }

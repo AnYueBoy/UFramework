@@ -54,6 +54,10 @@ namespace UFramework
             CacheStringBuilder = new StringBuilder();
         }
 
+        public void Init()
+        {
+        }
+
         /// <summary>
         /// 添加节点值监听
         /// </summary>
@@ -150,7 +154,7 @@ namespace UFramework
                     }
 
                     ITreeNode child = cur.GetOrAddChild(new RangeString(path, startIndex, endIndex));
-                    startIndex++;
+                    startIndex = i + 1;
                     cur = child;
                 }
             }
@@ -184,6 +188,24 @@ namespace UFramework
 
         public void LocalUpdate()
         {
+            // 刷新检测条件
+            foreach (var keyValuePair in allNodes)
+            {
+                var node = keyValuePair.Value;
+                if (node.ChildrenCount > 0)
+                {
+                    continue;
+                }
+
+                if (node.CheckTriggerCondition == null)
+                {
+                    continue;
+                }
+
+                node.ChangedValue(node.CheckTriggerCondition.Invoke());
+            }
+
+
             if (dirtyNodes.Count == 0)
             {
                 return;
@@ -214,6 +236,16 @@ namespace UFramework
             }
 
             dirtyNodes.Add(node);
+        }
+
+        public void RegisterTrigger(params IRedDotTrigger[] triggerConditions)
+        {
+            for (int i = 0; i < triggerConditions.Length; i++)
+            {
+                var trigger = triggerConditions[i];
+                var node = GetTreeNode(trigger.FullPath);
+                node.CheckTriggerCondition = trigger.TriggerCondition;
+            }
         }
     }
 }

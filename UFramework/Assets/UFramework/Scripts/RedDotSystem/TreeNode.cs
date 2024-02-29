@@ -259,6 +259,8 @@ namespace UFramework
             return child;
         }
 
+        public Func<int> CheckTriggerCondition { get; set; }
+
         public override string ToString()
         {
             return FullPath;

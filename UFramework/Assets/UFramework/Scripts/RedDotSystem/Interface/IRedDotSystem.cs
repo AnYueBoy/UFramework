@@ -5,6 +5,8 @@ namespace UFramework
 {
     public interface IRedDotSystem
     {
+        void Init();
+
         ITreeNode Root { get; }
 
         char SplitChar { get; }
@@ -34,5 +36,7 @@ namespace UFramework
         void LocalUpdate();
 
         void MakeDirtyNode(ITreeNode node);
+
+        void RegisterTrigger(params IRedDotTrigger[] triggerConditions);
     }
 }
