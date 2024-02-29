@@ -127,8 +127,6 @@ namespace UFramework
         /// <summary>
         /// 改变节点值 (使用传入的新值,只能在叶子节点上调用)
         /// </summary>
-        /// <param name="newValue"></param>
-        /// <exception cref="Exception"></exception>
         public void ChangedValue(int newValue)
         {
             if (children != null && children.Count != 0)
