@@ -7,10 +7,18 @@ public class CoroutineTest : MonoBehaviour
     void Start()
     {
         App.Make<ICoroutineManager>().StartCoroutine(WaitTaskCoroutine());
+        stopReference = App.Make<ICoroutineManager>().StartCoroutine(StopCoroutineTest());
     }
+
+    private ICoroutine stopReference;
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            Debug.LogError("执行停止");
+            App.Make<ICoroutineManager>().StopCoroutine(stopReference);
+        }
     }
 
     IEnumerator WaitCoroutine()
@@ -28,5 +36,12 @@ public class CoroutineTest : MonoBehaviour
         Debug.Log("等待测试");
         yield return new WaitForFrames(2);
         Debug.Log("等待结束");
+    }
+
+    IEnumerator StopCoroutineTest()
+    {
+        yield return new UFramework.WaitForSeconds(25f);
+
+        Debug.LogError($"停止协程执行完毕");
     }
 }

@@ -10,7 +10,10 @@ public class FrameworkTest : MonoBehaviour
     {
         App.OnNewApplication += (IApplication application) => { Debug.Log("框架创建"); };
         application = UApplication.New();
-        application.Bootstrap(new SystemProviderBootstrap(this));
+        var systemBootstrap = new SystemProviderBootstrap(this);
+        systemBootstrap.AddCustomProviders(new ProviderCoroutine(), new ProviderGameCommon(), new ProviderTweener());
+        application.Bootstrap(
+            systemBootstrap);
 
         Debug.Log($"runtimeId: {App.GetRuntimeId()}");
 

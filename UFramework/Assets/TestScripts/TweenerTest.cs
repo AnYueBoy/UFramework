@@ -10,7 +10,7 @@ public class TweenerTest : MonoBehaviour
     void Start()
     {
         // TweenValueTest();
-        TweeneSequenceTest();
+        // TweeneSequenceTest();
     }
 
     private void TweenValueTest()
