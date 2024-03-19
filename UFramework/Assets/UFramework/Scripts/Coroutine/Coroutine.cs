@@ -31,6 +31,7 @@ namespace UFramework
             _innerAction = null;
             _routine = null;
             _state = CoroutineState.Reset;
+            App.Make<ICoroutineManager>().SetRecycle(this);
         }
 
         public CoroutineAwaiter GetAwaiter()

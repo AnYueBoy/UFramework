@@ -10,6 +10,8 @@ namespace UFramework
 
         void Terminate();
 
+        void SetRecycle(ICoroutine routine);
+
         /// <summary>
         /// 创建协程(不运行)
         /// </summary>

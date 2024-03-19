@@ -41,6 +41,11 @@ namespace UFramework
             }
         }
 
+        public void SetRecycle(ICoroutine routine)
+        {
+            _recycle.Enqueue(routine);
+        }
+
         public void Terminate()
         {
             _coroutines.Clear();
