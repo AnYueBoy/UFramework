@@ -4,7 +4,7 @@
     {
         public void Register()
         {
-            App.Singleton<ICoroutineManager, CoroutineManager>();
+            App.Singleton<ICoroutineManager>(() => new CoroutineManager());
         }
 
         public void Init()
