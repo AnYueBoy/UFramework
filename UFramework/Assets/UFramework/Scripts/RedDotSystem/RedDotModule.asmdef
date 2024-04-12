@@ -1,0 +1,16 @@
+{
+    "name": "RedDotModule",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f042caf90ead1c4438a62bf586501d42"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
