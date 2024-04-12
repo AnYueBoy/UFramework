@@ -27,12 +27,14 @@
 
             struct appdata
             {
+                float4 color : COLOR;
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
             struct v2f
             {
+                fixed4 color : COLOR;
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
                 float3 worldPos:TEXCOORD1;
@@ -51,38 +53,46 @@
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                o.color = v.color;
                 return o;
             }
 
             fixed4 frag(v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
+                fixed4 col = tex2D(_MainTex, i.uv) * i.color;
+
                 // 圆形遮罩
-                if (_MaskType == 0)
-                {
-                    col.a *= distance(i.worldPos.xy, _MaskInfo.xy) > _MaskInfo.z;
-                }
-                else if (_MaskType == 1)
-                {
-                    // 矩形遮罩
-                    float2 dis = i.worldPos.xy - _MaskInfo.xy;
-                    col.a *= abs(dis.x) > _MaskInfo.z || abs(dis.y) > _MaskInfo.w;
-                }
-                else
-                {
-                    float halfWidth = 1 / _MaskTex_TexelSize.x / 2;
-                    float halfHeight = 1 / _MaskTex_TexelSize.y / 2;
+                float distToCenter = distance(i.worldPos.xy, _MaskInfo.xy);
+                float circleMask = step(_MaskInfo.z, distToCenter);
 
-                    float remapU = 0.5 / halfWidth * i.worldPos.x + 0.5 - 0.5 * _MaskInfo.x / halfWidth;
-                    float remapV = 0.5 / halfHeight * i.worldPos.y + 0.5 - 0.5 * _MaskInfo.y / halfHeight;
+                // 矩形遮罩
+                float2 rectCenter = _MaskInfo.xy;
+                float2 halfSize = _MaskInfo.zw;
+                float2 dis = abs(i.worldPos.xy - rectCenter);
+                float rectMask = step(halfSize.x, dis.x) || step(halfSize.y, dis.y);
 
-                    if (remapU >= 0 && remapU <= 1 && remapV >= 0 && remapV <= 1)
+                // 根据_MaskType选择哪个遮罩
+                float maskAlpha = 1.0;
+                if (_MaskType == 0) // 圆形遮罩
+                {
+                    maskAlpha = circleMask;
+                }
+                else if (_MaskType == 1) // 矩形遮罩
+                {
+                    maskAlpha = rectMask;
+                }
+                else // 图形遮罩
+                {
+                    float2 remapUV = (i.worldPos.xy - _MaskInfo.xy) * _MaskTex_TexelSize.xy + 0.5;
+                    if (all(remapUV >= 0) && all(remapUV <= 1))
                     {
-                        // 图形遮罩
-                        float4 maskCol = tex2D(_MaskTex, float2(remapU, remapV));
-                        col.a *= (1 - step(0.01, maskCol.a));
+                        maskAlpha = 1 - tex2D(_MaskTex, remapUV).a;
                     }
                 }
+
+                // 应用遮罩
+                col.a *= maskAlpha;
+
                 return col;
             }
             ENDCG
