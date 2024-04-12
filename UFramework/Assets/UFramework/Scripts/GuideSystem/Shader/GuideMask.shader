@@ -1,4 +1,4 @@
-﻿Shader "Unlit/GuideMask"
+﻿Shader "Guide/GuideMask"
 {
     Properties
     {
