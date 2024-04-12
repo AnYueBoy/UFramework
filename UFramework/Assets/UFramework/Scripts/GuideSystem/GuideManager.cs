@@ -4,9 +4,9 @@ namespace UFramework
 {
     public class GuideManager : IGuideManager
     {
-        private IGuide curGuide;
+        private BaseGuide curBaseGuide;
 
-        private Dictionary<GuideID, IGuide> allGuideDic = new Dictionary<GuideID, IGuide>()
+        private Dictionary<GuideID, BaseGuide> allGuideDic = new Dictionary<GuideID, BaseGuide>()
         {
             { GuideID.Guide1, new Guide1(GuideID.Guide1) },
         };
@@ -20,9 +20,9 @@ namespace UFramework
 
         public void LocalUpdate(float dt)
         {
-            if (curGuide != null)
+            if (curBaseGuide != null)
             {
-                curGuide.LocalUpdate(dt);
+                curBaseGuide.LocalUpdate(dt);
                 CheckGuideFinish();
             }
 
@@ -31,7 +31,7 @@ namespace UFramework
 
         public bool IsInGuiding()
         {
-            return curGuide != null;
+            return curBaseGuide != null;
         }
 
         public bool IsInGuide(GuideID guideID)
@@ -41,21 +41,21 @@ namespace UFramework
 
         private void CheckGuideFinish()
         {
-            if (curGuide == null)
+            if (curBaseGuide == null)
             {
                 return;
             }
 
-            if (curGuide.CurGuideState == GuideState.Completed)
+            if (curBaseGuide.CurGuideState == GuideState.Completed)
             {
-                allGuideDic.Remove(curGuide.CurGuideID);
-                curGuide = null;
+                allGuideDic.Remove(curBaseGuide.CurGuideID);
+                curBaseGuide = null;
             }
         }
 
         private void CheckGuideTriggerCondition(float dt)
         {
-            if (curGuide != null)
+            if (curBaseGuide != null)
             {
                 return;
             }
@@ -66,9 +66,9 @@ namespace UFramework
                 var value = enumerator.Current.Value;
                 if (value.CheckTriggerCondition(dt))
                 {
-                    curGuide = value;
-                    curGuide.InitDataForGuide();
-                    curGuide.StartGuide();
+                    curBaseGuide = value;
+                    curBaseGuide.InitDataForGuide();
+                    curBaseGuide.StartGuide();
                     break;
                 }
             }
