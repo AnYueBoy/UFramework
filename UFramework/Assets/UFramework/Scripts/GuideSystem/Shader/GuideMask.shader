@@ -83,7 +83,7 @@
                 }
                 else // 图形遮罩
                 {
-                    float2 remapUV = (i.worldPos.xy - _MaskInfo.xy) * _MaskTex_TexelSize.xy + 0.5;
+                    float2 remapUV = (i.worldPos.xy - _MaskInfo.xy) * _MaskTex_TexelSize.xy / _MaskInfo.z + 0.5;
                     if (all(remapUV >= 0) && all(remapUV <= 1))
                     {
                         maskAlpha = 1 - tex2D(_MaskTex, remapUV).a;
