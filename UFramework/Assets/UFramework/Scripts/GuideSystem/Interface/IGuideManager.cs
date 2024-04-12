@@ -7,6 +7,7 @@
         void LocalUpdate(float dt);
 
         bool IsInGuiding();
-        
+
+        bool IsInGuide(GuideID guideID);
     }
 }

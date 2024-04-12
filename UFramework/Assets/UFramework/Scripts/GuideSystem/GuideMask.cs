@@ -11,12 +11,25 @@ namespace UFramework
         private readonly int maskInfo = Shader.PropertyToID("_MaskInfo");
         private readonly int maskTex = Shader.PropertyToID("_MaskTex");
 
+#if UNITY_EDITOR
+        [ExecuteAlways]
+#endif
+
         private void Awake()
         {
             var guideMaskShader = Shader.Find("Guide/GuideMask");
             guideMaskMaterial = new Material(guideMaskShader);
             var imageComp = GetComponent<Image>();
             imageComp.material = guideMaskMaterial;
+        }
+
+        public void ShowFullMask()
+        {
+            // 设置遮罩类型
+            guideMaskMaterial.SetInt(maskType, (int)GuideMaskType.Rect);
+
+            // 设置遮罩信息
+            guideMaskMaterial.SetVector(maskInfo, new Vector4(0, 0, 0, 0));
         }
 
         public void ShowCirceMask(Vector2 worldPos, float radius)

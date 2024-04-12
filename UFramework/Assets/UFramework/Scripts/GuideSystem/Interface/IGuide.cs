@@ -11,5 +11,9 @@
         void LocalUpdate(float dt);
 
         void FinishGuide();
+
+        GuideState CurGuideState { get; }
+
+        GuideID CurGuideID { get; }
     }
 }
