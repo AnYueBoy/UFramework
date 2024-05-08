@@ -13,11 +13,29 @@ namespace UFramework
         /// </summary>
         private string source;
 
+        /// <summary>
+        /// 开始索引
+        /// </summary>
         private int startIndex;
+
+        /// <summary>
+        /// 结束索引
+        /// </summary>
         private int endIndex;
 
+        /// <summary>
+        /// 长度
+        /// </summary>
         private int length;
+
+        /// <summary>
+        /// 源字符串是否为空
+        /// </summary>
         private bool isSourceNullOrEmpty;
+
+        /// <summary>
+        /// 哈希码
+        /// </summary>
         private int hashCode;
 
         public RangeString(string source, int startIndex, int endIndex)
@@ -32,6 +50,7 @@ namespace UFramework
 
         public bool Equals(RangeString other)
         {
+            // 比较两个字符串是否相同
             bool isOtherNullOrEmpty = string.IsNullOrEmpty(other.source);
 
             if (isSourceNullOrEmpty && isOtherNullOrEmpty)
