@@ -6,7 +6,6 @@
 
 using System.IO;
 using LitJson;
-using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 using SApplication = UnityEngine.Application;
