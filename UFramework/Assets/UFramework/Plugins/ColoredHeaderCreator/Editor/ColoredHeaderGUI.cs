@@ -82,7 +82,7 @@ public class ColoredHeaderGUI : EditorWindow
         headerObject.name = Strings.HEADER_OBJECT_NAME;
         GameObjectUtility.SetParentAndAlign(headerObject, menuCommand.context as GameObject);
         headerObject.AddComponent<ColoredHeader>();
-        Undo.RegisterChildrenOrderUndo(headerObject, "Create Header");
+        Undo.RegisterCreatedObjectUndo(headerObject, "Create Header");
         EditorApplication.RepaintHierarchyWindow();
     }
 
