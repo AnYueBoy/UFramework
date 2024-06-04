@@ -18,7 +18,7 @@ public class ColoredHeader : MonoBehaviour
             return;
         }
 
-        EditorApplication.RepaintAnimationWindow();
+        EditorApplication.RepaintHierarchyWindow();
     }
 #endif
 }
