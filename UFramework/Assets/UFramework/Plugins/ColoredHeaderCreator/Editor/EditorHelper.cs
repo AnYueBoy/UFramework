@@ -21,7 +21,7 @@ public static class EditorHelper
 
     public static ColoredHeaderSettings LoadSettings(string path)
     {
-        var settingsObject = AssetDatabase.LoadAssetAtPath<ColoredHeaderSettings>(path);
+        var settingsObject = (ColoredHeaderSettings)EditorGUIUtility.Load(path);
         if (settingsObject != null)
         {
             return settingsObject;
@@ -36,7 +36,7 @@ public static class EditorHelper
         return null;
     }
 
-    public static void CreateSettingsAssets(string path)
+    public static void CreateSettingsAsset(string path)
     {
         var settingsObject = ScriptableObject.CreateInstance<ColoredHeaderSettings>();
         AssetDatabase.CreateAsset(settingsObject, path);

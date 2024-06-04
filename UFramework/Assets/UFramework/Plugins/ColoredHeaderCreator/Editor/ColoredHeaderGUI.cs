@@ -97,7 +97,7 @@ public class ColoredHeaderGUI : EditorWindow
     {
         if (EditorHelper.LoadSettings(GetSettingsFilePath()) == null)
         {
-            EditorHelper.CreateSettingsAssets(GetSettingsFilePath());
+            EditorHelper.CreateSettingsAsset(GetSettingsFilePath());
         }
 
         settings = EditorHelper.LoadSettings(GetSettingsFilePath());
@@ -304,7 +304,7 @@ public class ColoredHeaderGUI : EditorWindow
         AssetDatabase.CreateAsset(asset, path);
         AssetDatabase.SaveAssets();
 
-        var presetAsset = AssetDatabase.LoadAssetAtPath<ColoredHeaderPreset>(path);
+        var presetAsset = (ColoredHeaderPreset)EditorGUIUtility.Load(path);
         presetAsset.coloredHeaderPreset.Clear();
 
         var headerComponents = FindObjectsOfType<ColoredHeader>();
