@@ -59,16 +59,10 @@ Shader "Unlit/Rain"
                 float3 emissive = frac(_Time.y * _Speed);
                 //偏移一点时间，让涟漪扩散时间错开
                 float3 emissive2 = frac(_Time.y * _Speed + 0.5);
-                // 基于0.05的边界 (1- M) => 将整个颜色反相
-                float maskCol1 = saturate(1 - distance(emissive.r - (1 - col.r), 0.05) / 0.05);
-                float maskCol2 = saturate(1 - distance(emissive2.r - (1 - col2.r), 0.05) / 0.05);
+                float maskCol1 = saturate(1 - distance(emissive.r - 1 + col.r, 0.05) / 0.05);
+                float maskCol2 = saturate(1 - distance(emissive2.r - 1 + col2.r, 0.05) / 0.05);
                 //两张图交替淡入
-                float maskSwitch = saturate(abs(sin(_Time.y * 0.5)));
-                float finalColor = lerp(maskCol1, maskCol2, maskSwitch);
-
-                float2 verticalUv = float2(i.posWorld.x, i.posWorld.y);
-                float2 verticalUv2 = float2(i.posWorld.z, i.posWorld.y);
-
+                float finalColor = lerp(maskCol1, maskCol2, abs(0.5 - emissive) * 2.0);
                 return float4(finalColor.rrr, 1.0);
             }
             ENDCG
