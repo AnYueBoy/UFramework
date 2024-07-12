@@ -8,13 +8,10 @@ namespace UFramework
         private List<ICoroutine> _coroutines;
         private Queue<ICoroutine> _recycle;
 
-        private List<ICoroutine> _coroutinePool;
-
         public void Init()
         {
             _coroutines = new List<ICoroutine>();
             _recycle = new Queue<ICoroutine>();
-            _coroutinePool = new List<ICoroutine>();
         }
 
         public void LocalUpdate(float dt)
@@ -24,20 +21,23 @@ namespace UFramework
             {
                 var _coroutine = _recycle.Dequeue();
                 _coroutines.Remove(_coroutine);
-                _coroutinePool.Add(_coroutine);
             }
 
             count = _coroutines.Count;
             for (int i = 0; i < count; i++)
             {
                 var _coroutine = _coroutines[i];
-                if (_coroutine.State == CoroutineState.Working)
+                if (_coroutine.State != CoroutineState.Working)
                 {
-                    if ((_coroutine as Coroutine).IsDone)
-                    {
-                        _coroutine.Complete();
-                    }
+                    continue;
                 }
+
+                if (!(_coroutine as Coroutine).IsDone)
+                {
+                    continue;
+                }
+
+                _coroutine.Complete();
             }
         }
 
@@ -50,22 +50,11 @@ namespace UFramework
         {
             _coroutines.Clear();
             _recycle.Clear();
-            _coroutinePool.Clear();
         }
 
         public ICoroutine CreateCoroutine(IEnumerator routine)
         {
-            Coroutine coroutine;
-            if (_coroutinePool.Count > 0)
-            {
-                coroutine = _coroutinePool[0] as Coroutine;
-                _coroutinePool.RemoveAt(0);
-            }
-            else
-            {
-                coroutine = new Coroutine();
-            }
-
+            Coroutine coroutine = new Coroutine();
             coroutine._routine = routine;
             PauseCoroutine(coroutine);
             return coroutine;
