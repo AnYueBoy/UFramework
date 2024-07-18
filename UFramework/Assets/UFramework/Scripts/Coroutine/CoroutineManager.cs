@@ -14,7 +14,7 @@ namespace UFramework
             _recycle = new Queue<ICoroutine>();
         }
 
-        public void LocalUpdate(float dt)
+        public void LocalUpdate()
         {
             var count = _recycle.Count;
             for (int i = 0; i < count; i++)

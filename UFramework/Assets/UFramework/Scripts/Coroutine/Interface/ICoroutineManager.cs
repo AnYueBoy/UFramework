@@ -6,7 +6,7 @@ namespace UFramework
     {
         void Init(); 
         
-        void LocalUpdate(float dt);
+        void LocalUpdate();
 
         void Terminate();
 
