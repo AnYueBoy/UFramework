@@ -57,13 +57,6 @@ namespace UFramework
         IBindData Bind(string service, Func<IContainer, object[], object> concrete, bool isStatic);
 
         /// <summary>
-        /// 如果对应的服务不存在则注册绑定到容器中
-        /// </summary>
-        bool BindIf(string service, Func<IContainer, object[], object> concrete, bool isStatic, out IBindData bindData);
-
-        bool BindIf(string service, Type concrete, bool isStatic, out IBindData bindData);
-
-        /// <summary>
         /// 注册方法到容器中
         /// </summary>
         /// <param name="method">方法名</param>

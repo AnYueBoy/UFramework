@@ -215,47 +215,6 @@ namespace UFramework
             return That.Bind(service, concrete);
         }
 
-        public static bool BindIf(string service, Func<IContainer, object[], object> concrete, bool isStatic,
-            out IBindData bindData)
-        {
-            return That.BindIf(service, concrete, isStatic, out bindData);
-        }
-
-        public static bool BindIf(string service, Type concrete, bool isStatic, out IBindData bindData)
-        {
-            return That.BindIf(service, concrete, isStatic, out bindData);
-        }
-
-        public static bool BindIf<TService, TConcrete>(out IBindData bindData)
-        {
-            return That.BindIf<TService, TConcrete>(out bindData);
-        }
-
-        public static bool BindIf<TService>(out IBindData bindData)
-        {
-            return That.BindIf<TService>(out bindData);
-        }
-
-        public static bool BindIf<TService>(Func<IContainer, object[], object> concrete, out IBindData bindData)
-        {
-            return That.BindIf<TService>(concrete, out bindData);
-        }
-
-        public static bool BindIf<TService>(Func<object[], object> concrete, out IBindData bindData)
-        {
-            return That.BindIf<TService>(concrete, out bindData);
-        }
-
-        public static bool BindIf<TService>(Func<object> concrete, out IBindData bindData)
-        {
-            return That.BindIf<TService>(concrete, out bindData);
-        }
-
-        public static bool BindIf(string service, Func<IContainer, object[], object> concrete, out IBindData bindData)
-        {
-            return That.BindIf(service, concrete, out bindData);
-        }
-
         public static IBindData Singleton<TService, TConcrete>()
         {
             return That.Singleton<TService, TConcrete>();
@@ -284,37 +243,6 @@ namespace UFramework
         public static IBindData Singleton(string service, Func<IContainer, object[], object> concrete)
         {
             return That.Singleton(service, concrete);
-        }
-
-        public static bool SingletonIf<TService, TConcrete>(out IBindData bindData)
-        {
-            return That.SingletonIf<TService, TConcrete>(out bindData);
-        }
-
-        public static bool SingletonIf<TService>(out IBindData bindData)
-        {
-            return That.SingletonIf<TService>(out bindData);
-        }
-
-        public static bool SingletonIf<TService>(Func<IContainer, object[], object> concrete, out IBindData bindData)
-        {
-            return That.SingletonIf<TService>(concrete, out bindData);
-        }
-
-        public static bool SingletonIf<TService>(Func<object[], object> concrete, out IBindData bindData)
-        {
-            return That.SingletonIf<TService>(concrete, out bindData);
-        }
-
-        public static bool SingletonIf<TService>(Func<object> concrete, out IBindData bindData)
-        {
-            return That.SingletonIf<TService>(concrete, out bindData);
-        }
-
-        public static bool SingletonIf(string service, Func<IContainer, object[], object> concrete,
-            out IBindData bindData)
-        {
-            return That.SingletonIf(service, concrete, out bindData);
         }
 
         public static IMethodBind BindMethod(string method, object target, MethodInfo call)
@@ -465,11 +393,6 @@ namespace UFramework
 #else
             return That.Make<TService>(userParams);
 #endif
-        }
-
-        public static object Make(Type type, params object[] userParams)
-        {
-            return That.Make(type, userParams);
         }
 
         public static Func<object> Factory(string service, params object[] userParams)

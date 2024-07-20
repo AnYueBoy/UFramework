@@ -69,44 +69,6 @@ namespace UFramework
             return container.Bind(service, concrete, false);
         }
 
-        public static bool BindIf<TService, TConcrete>(this IContainer container, out IBindData bindData)
-        {
-            return container.BindIf(container.Type2Service(typeof(TService)), typeof(TConcrete), false, out bindData);
-        }
-
-        public static bool BindIf<TService>(this IContainer container, out IBindData bindData)
-        {
-            return container.BindIf(container.Type2Service(typeof(TService)), typeof(TService), false, out bindData);
-        }
-
-        public static bool BindIf<TService>(this IContainer container, Func<IContainer, object[], object> concrete,
-            out IBindData bindData)
-        {
-            Guard.Requires<ArgumentNullException>(concrete != null);
-            return container.BindIf(container.Type2Service(typeof(TService)), concrete, false, out bindData);
-        }
-
-        public static bool BindIf<TService>(this IContainer container, Func<object[], object> concrete,
-            out IBindData bindData)
-        {
-            Guard.Requires<ArgumentNullException>(concrete != null);
-            return container.BindIf(container.Type2Service(typeof(TService)), (c, @params) => concrete(@params), false,
-                out bindData);
-        }
-
-        public static bool BindIf<TService>(this IContainer container, Func<object> concrete, out IBindData bindData)
-        {
-            Guard.Requires<ArgumentNullException>(concrete != null);
-            return container.BindIf(container.Type2Service(typeof(TService)), (c, p) => concrete.Invoke(), false,
-                out bindData);
-        }
-
-        public static bool BindIf(this IContainer container, string service,
-            Func<IContainer, object[], object> concrete, out IBindData bindData)
-        {
-            return container.BindIf(service, concrete, false, out bindData);
-        }
-
         public static IBindData Singleton(this IContainer container, string service,
             Func<IContainer, object[], object> concrete)
         {
@@ -143,44 +105,6 @@ namespace UFramework
         {
             Guard.Requires<ArgumentNullException>(concrete != null);
             return container.Bind(container.Type2Service(typeof(TService)), (c, p) => concrete.Invoke(), true);
-        }
-
-        public static bool SingletonIf<TService, TConcrete>(this IContainer container, out IBindData bindData)
-        {
-            return container.BindIf(container.Type2Service(typeof(TService)), typeof(TConcrete), true, out bindData);
-        }
-
-        public static bool SingletonIf<TService>(this IContainer container, out IBindData bindData)
-        {
-            return container.BindIf(container.Type2Service(typeof(TService)), typeof(TService), true, out bindData);
-        }
-
-        public static bool SingletonIf<TService>(this IContainer container, Func<IContainer, object[], object> concrete,
-            out IBindData bindData)
-        {
-            return container.BindIf(container.Type2Service(typeof(TService)), concrete, true, out bindData);
-        }
-
-        public static bool SingletonIf<TService>(this IContainer container, Func<object> concrete,
-            out IBindData bindData)
-        {
-            Guard.Requires<ArgumentNullException>(concrete != null);
-            return container.BindIf(container.Type2Service(typeof(TService)), (c, p) => concrete.Invoke(), true,
-                out bindData);
-        }
-
-        public static bool SingletonIf<TService>(this IContainer container, Func<object[], object> concrete,
-            out IBindData bindData)
-        {
-            Guard.Requires<ArgumentNullException>(concrete != null);
-            return container.BindIf(container.Type2Service(typeof(TService)), (c, @params) => concrete(@params), true,
-                out bindData);
-        }
-
-        public static bool SingletonIf(this IContainer container, string service,
-            Func<IContainer, object[], object> concrete, out IBindData bindData)
-        {
-            return container.BindIf(service, concrete, true, out bindData);
         }
 
         public static IMethodBind BindMethod(this IContainer container, string method, object target,
@@ -377,13 +301,6 @@ namespace UFramework
         public static TService Make<TService>(this IContainer container, params object[] userParams)
         {
             return (TService)container.Make(container.Type2Service(typeof(TService)), userParams);
-        }
-
-        public static object Make(this IContainer container, Type type, params object[] userParams)
-        {
-            var service = container.Type2Service(type);
-            container.BindIf(service, type, false, out _);
-            return container.Make(service, userParams);
         }
 
         public static void Extend(this IContainer container, string service, Func<object, object> closure)
