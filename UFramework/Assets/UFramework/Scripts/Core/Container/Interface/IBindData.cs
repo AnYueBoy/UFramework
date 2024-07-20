@@ -18,11 +18,6 @@ namespace UFramework
         bool IsStatic { get; }
 
         /// <summary>
-        /// 服务别名
-        /// </summary>
-        IBindData Alias(string alias);
-
-        /// <summary>
         /// 服务Tag(用于批量释放一组Tag的服务)
         /// </summary>
         IBindData Tag(string tag);

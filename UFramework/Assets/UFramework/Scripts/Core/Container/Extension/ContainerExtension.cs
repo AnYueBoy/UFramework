@@ -34,16 +34,6 @@ namespace UFramework
             return container.IsStatic(container.Type2Service(typeof(TService)));
         }
 
-        public static bool IsAlias<TService>(this IContainer container)
-        {
-            return container.IsAlias(container.Type2Service(typeof(TService)));
-        }
-
-        public static IContainer Alias<TAlias, TService>(this IContainer container)
-        {
-            return container.Alias(container.Type2Service(typeof(TAlias)), container.Type2Service(typeof(TService)));
-        }
-
         public static IBindData Bind<TService>(this IContainer container)
         {
             return container.Bind(container.Type2Service(typeof(TService)), typeof(TService), false);

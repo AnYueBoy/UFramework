@@ -41,11 +41,6 @@ namespace UFramework
         bool IsStatic(string service);
 
         /// <summary>
-        /// 给定的名称是否是别名
-        /// </summary>
-        bool IsAlias(string name);
-
-        /// <summary>
         /// 注册绑定到容器中
         /// </summary>
         /// <param name="service">服务名称</param>
@@ -135,11 +130,6 @@ namespace UFramework
         /// </summary>
         /// <returns>服务实例。 如果服务无法解析则抛出异常</returns>
         object Make(string service, params object[] userParams);
-
-        /// <summary>
-        /// 对服务起别名
-        /// </summary>
-        IContainer Alias(string alias, string service);
 
         /// <summary>
         /// 扩展容器中的抽象类型,允许在服务解析期间配置或替换服务.

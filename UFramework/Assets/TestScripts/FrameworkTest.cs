@@ -26,19 +26,20 @@ public class FrameworkTest : MonoBehaviour
     {
     }
 
-    private void OnEnable()
+    private async void OnEnable()
     {
-        App.Make<ICoroutineManager>().StartCoroutine(WaitTime());
+        var result = App.Make<ICoroutineManager>().StartCoroutine(WaitTime());
+        // await result;
     }
 
     private void Update()
     {
-        App.Make<ICoroutineManager>().LocalUpdate(Time.deltaTime);
+        App.Make<ICoroutineManager>().LocalUpdate();
     }
 
     private IEnumerator WaitTime()
     {
-        yield return new UFramework.WaitForSeconds(10.0f);
+        yield return new UFramework.WaitForSeconds(0.5f);
         Debug.LogError("协程时间到了");
     }
 
@@ -46,6 +47,6 @@ public class FrameworkTest : MonoBehaviour
     {
         yield return new UFramework.WaitForSecondsRealtime(10.0f);
         Debug.LogError("真实时间 协程结束");
-        App.Make<ICoroutineManager>().StartCoroutine(WaitTime()); 
+        App.Make<ICoroutineManager>().StartCoroutine(WaitTime());
     }
 }

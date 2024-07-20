@@ -31,14 +31,6 @@ namespace UFramework
         public Func<IContainer, object[], object> Concrete { get; }
         public bool IsStatic { get; }
 
-        public IBindData Alias(string alias)
-        {
-            AssertDestroyed();
-            Guard.ParameterNotNull(alias, nameof(alias));
-            Container.Alias(alias, Service);
-            return this;
-        }
-
         public IBindData Tag(string tag)
         {
             AssertDestroyed();

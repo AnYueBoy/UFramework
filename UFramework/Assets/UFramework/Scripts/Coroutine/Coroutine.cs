@@ -7,7 +7,12 @@ namespace UFramework
     {
         private Coroutine _innerAction;
         private CoroutineState _state;
+
+        /// <summary>
+        /// 实际传入的迭代器
+        /// </summary>
         internal IEnumerator _routine;
+
         internal event Action onCompleted;
 
         public CoroutineState State => _state;
@@ -84,7 +89,7 @@ namespace UFramework
 
         public void Pause()
         {
-            _state = CoroutineState.Yied;
+            _state = CoroutineState.Yield;
         }
 
         public void Resume()

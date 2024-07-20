@@ -30,17 +30,7 @@ namespace UFramework
         private readonly Dictionary<object, string> instancesReverse;
 
         /// <summary>
-        /// 容器内所有的服务别名映射 alias-service
-        /// </summary>
-        private readonly Dictionary<string, string> aliases;
-
-        /// <summary>
-        /// 容器内所有服务别名的反映射 service-list<aliases>
-        /// </summary>
-        private readonly Dictionary<string, List<string>> aliasesReverse;
-
-        /// <summary>
-        /// 容器内所有注册的tag映射 tag- list<service>
+        /// 容器内所有注册的tag映射 tag- list
         /// </summary>
         private readonly Dictionary<string, List<string>> tags;
 
@@ -123,8 +113,6 @@ namespace UFramework
         {
             prime = Math.Max(8, prime);
             tags = new Dictionary<string, List<string>>((int)(prime * 0.25));
-            aliases = new Dictionary<string, string>(prime * 4);
-            aliasesReverse = new Dictionary<string, List<string>>(prime * 4);
             instances = new Dictionary<string, object>(prime * 4);
             instancesReverse = new Dictionary<object, string>(prime * 4);
             bindings = new Dictionary<string, BindData>(prime * 4);
@@ -164,7 +152,6 @@ namespace UFramework
                 return null;
             }
 
-            service = AliasToService(service);
             return bindings.TryGetValue(service, out BindData bindData) ? bindData : null;
         }
 
@@ -176,7 +163,6 @@ namespace UFramework
         public bool HasInstance(string service)
         {
             Guard.ParameterNotNull(service, nameof(service));
-            service = AliasToService(service);
             return instances.ContainsKey(service);
         }
 
@@ -189,7 +175,6 @@ namespace UFramework
         public bool CanMake(string service)
         {
             Guard.ParameterNotNull(service, nameof(service));
-            service = AliasToService(service);
             if (HasBind(service) || HasInstance(service))
             {
                 return true;
@@ -205,55 +190,8 @@ namespace UFramework
             return bind != null && bind.IsStatic;
         }
 
-        public bool IsAlias(string name)
-        {
-            name = name.Trim();
-            return aliases.ContainsKey(name);
-        }
-
         #endregion
 
-
-        public IContainer Alias(string alias, string service)
-        {
-            Guard.ParameterNotNull(alias, nameof(alias));
-            Guard.ParameterNotNull(service, nameof(service));
-
-            if (alias == service)
-            {
-                throw new LogicException($"别名与服务名不能一致，{alias}");
-            }
-
-            GuardFlushing();
-
-            alias = alias.Trim();
-            service = AliasToService(alias);
-
-            if (aliases.ContainsKey(alias))
-            {
-                throw new LogicException($"别名{alias} 已存在");
-            }
-
-            if (bindings.ContainsKey(alias))
-            {
-                throw new LogicException($"别名{alias}已被用作服务名");
-            }
-
-            if (!bindings.ContainsKey(service) && !instances.ContainsKey(service))
-            {
-                throw new LogicException($"在你使用服务别名前，必须Bind或者Instance一个服务.(简而言之，对服务使用别名之前，这个服务必须存在)");
-            }
-
-            aliases.Add(alias, service);
-            if (!aliasesReverse.TryGetValue(service, out List<string> collection))
-            {
-                aliasesReverse[service] = collection = new List<string>();
-            }
-
-            collection.Add(alias);
-
-            return this;
-        }
 
         public IBindData Bind(string service, Func<IContainer, object[], object> concrete, bool isStatic)
         {
@@ -271,11 +209,6 @@ namespace UFramework
             if (instances.ContainsKey(service))
             {
                 throw new LogicException($"单例服务 {service} 已经存在");
-            }
-
-            if (aliases.ContainsKey(service))
-            {
-                throw new LogicException($"绑定的服务名称已被别名使用");
             }
 
             var bindData = new BindData(this, service, concrete, isStatic);
@@ -315,7 +248,7 @@ namespace UFramework
             out IBindData bindData)
         {
             var bind = GetBind(service);
-            if (bind == null && (HasInstance(service) || IsAlias(service)))
+            if (bind == null && HasInstance(service))
             {
                 bindData = null;
                 return false;
@@ -409,7 +342,6 @@ namespace UFramework
 
         public void Unbind(string service)
         {
-            service = AliasToService(service);
             var bind = GetBind(service);
             bind?.Unbind();
         }
@@ -418,16 +350,6 @@ namespace UFramework
         {
             GuardFlushing();
             Release(bindable.Service);
-            if (aliasesReverse.TryGetValue(bindable.Service, out List<string> serviceList))
-            {
-                foreach (var alias in serviceList)
-                {
-                    aliases.Remove(alias);
-                }
-
-                aliasesReverse.Remove(bindable.Service);
-            }
-
             bindings.Remove(bindable.Service);
         }
 
@@ -444,8 +366,6 @@ namespace UFramework
                 Guard.Requires<AssertException>(instances.Count <= 0);
 
                 tags.Clear();
-                aliases.Clear();
-                aliasesReverse.Clear();
                 instances.Clear();
                 bindings.Clear();
                 resolving.Clear();
@@ -481,8 +401,6 @@ namespace UFramework
             Guard.ParameterNotNull(service, nameof(service));
             GuardFlushing();
             GuardServiceName(service);
-
-            service = AliasToService(service);
 
             var bindData = GetBind(service);
             if (bindData != null)
@@ -616,7 +534,7 @@ namespace UFramework
             object instance = null;
             if (mixed is string)
             {
-                service = AliasToService(mixed.ToString());
+                service = mixed.ToString();
                 if (!instances.TryGetValue(service, out instance))
                 {
                     service = GetServiceWithInstanceObject(mixed);
@@ -718,8 +636,6 @@ namespace UFramework
             Guard.Requires<ArgumentNullException>(closure != null);
             GuardFlushing();
 
-            service = string.IsNullOrEmpty(service) ? string.Empty : AliasToService(service);
-
             if (!string.IsNullOrEmpty(service) && instances.TryGetValue(service, out object instance))
             {
                 //如果实例已经存在，则应用扩展。
@@ -755,7 +671,6 @@ namespace UFramework
         public void ClearExtenders(string service)
         {
             GuardFlushing();
-            service = AliasToService(service);
             extenders.Remove(service);
             if (!IsResolved(service))
             {
@@ -797,7 +712,6 @@ namespace UFramework
             Guard.Requires<ArgumentNullException>(callback != null);
             GuardFlushing();
 
-            service = AliasToService(service);
             if (!IsResolved(service) && !CanMake(service))
             {
                 throw new LogicException("在你想使用重绑定（关注）之前，你需要绑定(Bind) 或 实例化(Instance)服务");
@@ -810,15 +724,6 @@ namespace UFramework
 
             list.Add(callback);
             return this;
-        }
-
-        /// <summary>
-        /// 将别名转为服务名称
-        /// </summary>
-        private string AliasToService(string name)
-        {
-            name = name.Trim();
-            return aliases.TryGetValue(name, out string service) ? service : name;
         }
 
         /// <summary>
@@ -887,7 +792,6 @@ namespace UFramework
         protected object Resolve(string service, params object[] userParams)
         {
             Guard.ParameterNotNull(service, nameof(service));
-            service = AliasToService(service);
             if (instances.TryGetValue(service, out object instance))
             {
                 return instance;

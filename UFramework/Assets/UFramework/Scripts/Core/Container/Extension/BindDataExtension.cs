@@ -7,11 +7,6 @@ namespace UFramework
     /// </summary>
     public static class BindDataExtension
     {
-        public static IBindData Alias<TAlias>(this IBindData bindData)
-        {
-            return bindData.Alias(bindData.Container.Type2Service(typeof(TAlias)));
-        }
-
         public static IBindData OnResolving(this IBindData bindData, Action closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);

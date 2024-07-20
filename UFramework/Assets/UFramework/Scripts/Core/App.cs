@@ -145,26 +145,6 @@ namespace UFramework
             return That.IsStatic<TService>();
         }
 
-        public static bool IsAlias(string name)
-        {
-            return That.IsAlias(name);
-        }
-
-        public static bool IsAlias<TService>()
-        {
-            return That.IsAlias<TService>();
-        }
-
-        public static IContainer Alias(string alias, string service)
-        {
-            return That.Alias(alias, service);
-        }
-
-        public static IContainer Alias<TAlias, TService>()
-        {
-            return That.Alias<TAlias, TService>();
-        }
-
         public static void Extend(string service, Func<object, IContainer, object> closure)
         {
             That.Extend(service, closure);

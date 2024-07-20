@@ -3,7 +3,7 @@
     public enum CoroutineState
     {
         Working,
-        Yied,
+        Yield,
         Reset,
     }
 }
