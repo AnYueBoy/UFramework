@@ -36,7 +36,7 @@ namespace UFramework
             // 根据加载路径加载对应的UI实例
             GameObject viewPrefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(view.ViewPath);
             // 实例化对应UI实例
-            GameObject viewNode = App.Make<IObjectPool>().RequestInstance(viewPrefab);
+            GameObject viewNode = Pool.Spawn(viewPrefab);
             var iviewUI = viewNode.GetComponent<BindUI>();
             // 设置ui实例
             view.UIInstance = iviewUI;

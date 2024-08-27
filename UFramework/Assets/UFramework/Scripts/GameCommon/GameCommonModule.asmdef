@@ -1,4 +1,18 @@
 {
-	"name": "GameCommonModule",
-	"references":[ "GUID:33d09090ebca9c444b52c15e48169adc", "GUID:f042caf90ead1c4438a62bf586501d42" ]
+    "name": "GameCommonModule",
+    "rootNamespace": "",
+    "references": [
+        "GUID:33d09090ebca9c444b52c15e48169adc",
+        "GUID:f042caf90ead1c4438a62bf586501d42",
+        "GUID:cf6c0cb623585084fb300daa1a55c8b8"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
