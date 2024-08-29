@@ -117,7 +117,6 @@ namespace UFramework
                 pool.Prefab = prefab;
             }
 
-            Debug.LogError("查找到");
             var clone = default(GameObject);
             if (pool.TrySpawn(ref clone, localPosition, localRotation, localScale, parent, worldPositionStays))
             {
