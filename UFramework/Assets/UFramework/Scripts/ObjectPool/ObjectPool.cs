@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 using UnityEngine;
 
 namespace UFramework
 {
     [ExecuteInEditMode]
     [AddComponentMenu("Pool/Object Pool")]
-    public class ObjectPool : MonoBehaviour, ISerializationCallbackReceiver
+    public class ObjectPool : MonoBehaviour
     {
-        [System.Serializable]
+        [Serializable]
         public class Delay
         {
             public GameObject Clone;
@@ -23,13 +28,13 @@ namespace UFramework
 
         #region 字段
 
-        public static LinkedList<ObjectPool> Instances = new LinkedList<ObjectPool>();
-        private LinkedListNode<ObjectPool> instanceNode;
+        public static List<ObjectPool> Instances = new List<ObjectPool>();
 
+        /// <summary>
+        /// 预制与对象池的关系
+        /// </summary>
         private static Dictionary<GameObject, ObjectPool> prefabMap =
             new Dictionary<GameObject, ObjectPool>();
-
-        private static List<IPoolable> tempPoolables = new List<IPoolable>();
 
         [SerializeField] private GameObject prefab;
 
@@ -50,7 +55,6 @@ namespace UFramework
         [field: SerializeField] public StrategyType Strategy { get; set; }
         [field: SerializeField] public int Preload { get; set; }
         [field: SerializeField] public int Capacity { get; set; }
-        [field: SerializeField] public bool Recycle { get; set; }
 
         // 是否不随切换场景销毁
         [field: SerializeField] public bool Persist { get; set; }
@@ -60,12 +64,12 @@ namespace UFramework
 
         [field: SerializeField] public bool Warnings { get; set; } = true;
 
-        [SerializeField] private List<GameObject> spawnedClonesList = new List<GameObject>();
-        private HashSet<GameObject> spawnedClonesHashSet = new HashSet<GameObject>();
-        [SerializeField] private List<GameObject> deSpawnedClones = new List<GameObject>();
 
-        // 所有贪吃销毁的对象
-        [SerializeField] private List<Delay> delays = new List<Delay>();
+        private List<GameObject> spawnedClonesList = new List<GameObject>();
+        private List<GameObject> deSpawnedClones = new List<GameObject>();
+
+        // 所有延迟销毁的对象
+        private List<Delay> delays = new List<Delay>();
         [SerializeField] private Transform deactivatedChild;
 
         public Transform DeactivatedChild
@@ -84,7 +88,7 @@ namespace UFramework
             }
         }
 
-        public int Spawned => spawnedClonesList.Count + spawnedClonesHashSet.Count;
+        public int Spawned => spawnedClonesList.Count;
 
         public int DeSpawned => deSpawnedClones.Count;
 
@@ -152,13 +156,6 @@ namespace UFramework
         {
             foreach (var instance in Instances)
             {
-                // 查找哈希表
-                if (instance.spawnedClonesHashSet.Contains(clone))
-                {
-                    pool = instance;
-                    return true;
-                }
-
                 // 查找列表
                 for (int i = instance.spawnedClonesList.Count - 1; i >= 0; i--)
                 {
@@ -231,7 +228,7 @@ namespace UFramework
             }
 
             var trans = prefab.transform;
-            return TrySpawn(ref clone, transform.localPosition, transform.localRotation, transform.localScale, null,
+            return TrySpawn(ref clone, trans.localPosition, trans.localRotation, trans.localScale, null,
                 false);
         }
 
@@ -267,14 +264,8 @@ namespace UFramework
             if (Capacity <= 0 || Total < Capacity)
             {
                 clone = CreateClone(localPosition, localRotation, localScale, parent, worldPositionStays);
-                if (Recycle)
-                {
-                    spawnedClonesList.Add(clone);
-                }
-                else
-                {
-                    spawnedClonesHashSet.Add(clone);
-                }
+
+                spawnedClonesList.Add(clone);
 
                 if (Strategy == StrategyType.ActivateAndDeactivate)
                 {
@@ -301,8 +292,6 @@ namespace UFramework
 
         private bool TryDeSpawnOldest(ref GameObject clone, bool registerDeSpawned)
         {
-            MergeSpawnedClonesToList();
-
             while (spawnedClonesList.Count > 0)
             {
                 clone = spawnedClonesList[0];
@@ -332,7 +321,6 @@ namespace UFramework
 
         public void DeSpawnAll(bool cleanLinks)
         {
-            MergeSpawnedClonesToList();
             for (int i = spawnedClonesList.Count - 1; i >= 0; i--)
             {
                 var clone = spawnedClonesList[i];
@@ -404,7 +392,7 @@ namespace UFramework
                 return;
             }
 
-            if (spawnedClonesHashSet.Remove(clone) && deSpawnedClones.Remove(clone))
+            if (spawnedClonesList.Remove(clone) || deSpawnedClones.Remove(clone))
             {
                 if (cleanLinks)
                 {
@@ -507,7 +495,6 @@ namespace UFramework
             if (addSpawnedClones)
             {
                 gameObjects.AddRange(spawnedClonesList);
-                gameObjects.AddRange(spawnedClonesHashSet);
             }
 
             if (addDeSpawnedClones)
@@ -518,7 +505,7 @@ namespace UFramework
 
         protected virtual void Awake()
         {
-            if (UnityEngine.Application.isPlaying)
+            if (Application.isPlaying)
             {
                 PreloadAll();
                 if (Persist)
@@ -530,15 +517,15 @@ namespace UFramework
 
         protected virtual void OnEnable()
         {
-            instanceNode = Instances.AddLast(this);
+            Instances.Add(this);
             RegisterPrefab();
         }
 
         protected virtual void OnDisable()
         {
             UnregisterPrefab();
-            Instances.Remove(instanceNode);
-            instanceNode = null;
+            // 将池子从列表中移除
+            Instances.Remove(this);
         }
 
         protected virtual void OnDestroy()
@@ -548,15 +535,7 @@ namespace UFramework
             {
                 if (clone != null)
                 {
-                    // LeanPool.Detach(clone, false);
-                }
-            }
-
-            foreach (var clone in spawnedClonesHashSet)
-            {
-                if (clone != null)
-                {
-                    // LeanPool.Detach(clone, false);
+                    Pool.Detach(clone, false);
                 }
             }
         }
@@ -617,7 +596,7 @@ namespace UFramework
 
         private void TryDeSpawn(GameObject clone)
         {
-            if (spawnedClonesHashSet.Remove(clone))
+            if (spawnedClonesList.Remove(clone))
             {
                 DespawnNow(clone);
             }
@@ -634,6 +613,7 @@ namespace UFramework
 
         private void DespawnNow(GameObject clone, bool register = true)
         {
+            // 是否加入到已回收对象的空闲列表中
             if (register)
             {
                 deSpawnedClones.Add(clone);
@@ -658,14 +638,7 @@ namespace UFramework
         private void SpawnClone(GameObject clone, Vector3 localPos, Quaternion localRotation, Vector3 localScale,
             Transform parent, bool worldPositionStay)
         {
-            if (Recycle)
-            {
-                spawnedClonesList.Add(clone);
-            }
-            else
-            {
-                spawnedClonesHashSet.Add(clone);
-            }
+            spawnedClonesList.Add(clone);
 
             var cloneTrans = clone.transform;
             cloneTrans.SetParent(null, false);
@@ -711,9 +684,9 @@ namespace UFramework
 #if UNITY_EDITOR
             // 指定的对象是否是一个常规预制件（regular prefab）的一部分.
             // “常规预制件”指的是普通的，在Assets文件夹中可以直接找到的预制件（不是场景中特定实例化的预制件变体或链接到其他外部预制件）。
-            if (!UnityEngine.Application.isPlaying && UnityEditor.PrefabUtility.IsPartOfRegularPrefab(prefab))
+            if (!Application.isPlaying && PrefabUtility.IsPartOfRegularPrefab(prefabInstance))
             {
-                clone = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, parent);
+                clone = (GameObject)PrefabUtility.InstantiatePrefab(prefabInstance, parent);
                 if (worldPositionStays)
                 {
                     return clone;
@@ -728,10 +701,10 @@ namespace UFramework
 
             if (worldPositionStays)
             {
-                return Instantiate(prefab, parent, true);
+                return Instantiate(prefabInstance, parent, true);
             }
 
-            clone = Instantiate(prefab, localPosition, localRotation, parent);
+            clone = Instantiate(prefabInstance, localPosition, localRotation, parent);
             clone.transform.localPosition = localPosition;
             clone.transform.localRotation = localRotation;
             clone.transform.localScale = localScale;
@@ -739,35 +712,12 @@ namespace UFramework
             return clone;
         }
 
-        private void MergeSpawnedClonesToList()
+#if UNITY_EDITOR
+        [MenuItem("GameObject/Pool/ObjectPool")]
+        public static void AddPool()
         {
-            if (spawnedClonesHashSet.Count > 0)
-            {
-                spawnedClonesList.AddRange(spawnedClonesHashSet);
-                spawnedClonesHashSet.Clear();
-            }
+            new GameObject().AddComponent<ObjectPool>();
         }
-
-        public void OnBeforeSerialize()
-        {
-            MergeSpawnedClonesToList();
-        }
-
-        public void OnAfterDeserialize()
-        {
-            if (Recycle)
-            {
-                return;
-            }
-
-            for (var i = spawnedClonesList.Count - 1; i >= 0; i--)
-            {
-                var clone = spawnedClonesList[i];
-
-                spawnedClonesHashSet.Add(clone);
-            }
-
-            spawnedClonesList.Clear();
-        }
+#endif
     }
 }

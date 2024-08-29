@@ -7,6 +7,7 @@ namespace UFramework
     {
         /// <summary>
         /// 从此生成预制件时，预制件与池子的关系将存储在此，以便可以快速回收
+        /// 动态创建的池子
         /// </summary>
         public static Dictionary<GameObject, ObjectPool> Links = new Dictionary<GameObject, ObjectPool>();
 
@@ -119,17 +120,6 @@ namespace UFramework
             var clone = default(GameObject);
             if (pool.TrySpawn(ref clone, localPosition, localRotation, localScale, parent, worldPositionStays))
             {
-                // 克隆对象已注册到链表中
-                if (Links.Remove(clone))
-                {
-                    if (!pool.Recycle)
-                    {
-                        Debug.LogWarning(
-                            "生成的克隆对象还没回收",
-                            clone);
-                    }
-                }
-
                 Links.Add(clone, pool);
                 return clone;
             }
@@ -166,42 +156,38 @@ namespace UFramework
                 return;
             }
 
-            var pool = default(ObjectPool);
-
-            if (Links.TryGetValue(clone, out pool))
+            if (Links.TryGetValue(clone, out var pool))
             {
                 Links.Remove(clone);
                 pool.Despawn(clone, delay);
+                return;
+            }
+
+            if (ObjectPool.TryFindPoolByClone(clone, ref pool))
+            {
+                pool.Despawn(clone, delay);
+                return;
+            }
+
+            Debug.LogWarning(
+                "要回收的对象不是该池子产生的。或者池子已经销毁",
+                clone);
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                Object.DestroyImmediate(clone);
+                return;
+            }
+#endif
+
+            if (delay > 0)
+            {
+                Object.Destroy(clone, delay);
             }
             else
             {
-                if (ObjectPool.TryFindPoolByClone(clone, ref pool))
-                {
-                    pool.Despawn(clone, delay);
-                }
-                else
-                {
-                    Debug.LogWarning(
-                        "要回收的对象不是该池子产生的。或者池子已经销毁",
-                        clone);
-
-#if UNITY_EDITOR
-                    if (!UnityEngine.Application.isPlaying)
-                    {
-                        Object.DestroyImmediate(clone);
-                        return;
-                    }
-#endif
-
-                    if (delay > 0)
-                    {
-                        Object.Destroy(clone);
-                    }
-                    else
-                    {
-                        Object.Destroy(clone, delay);
-                    }
-                }
+                Object.Destroy(clone);
             }
         }
 
@@ -210,7 +196,10 @@ namespace UFramework
         /// </summary>
         public static void Detach(Component clone, bool detachFromPool = true)
         {
-            if (clone != null) Detach(clone.gameObject, detachFromPool);
+            if (clone != null)
+            {
+                Detach(clone.gameObject, detachFromPool);
+            }
         }
 
         public static void Detach(GameObject clone, bool detachFromPool)
@@ -221,14 +210,14 @@ namespace UFramework
                 return;
             }
 
+            // 分离对象从动态关系字典中移除
             if (!detachFromPool)
             {
                 Links.Remove(clone);
                 return;
             }
 
-            var pool = default(ObjectPool);
-            if (Links.TryGetValue(clone, out pool))
+            if (Links.TryGetValue(clone, out var pool))
             {
                 Links.Remove(clone);
                 pool.Detach(clone, false);
