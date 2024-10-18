@@ -59,7 +59,7 @@ namespace UFramework
 
             var trans = prefab.transform;
 
-            if (parent == null && worldPositionStay)
+            if (parent != null && worldPositionStay)
             {
                 return Spawn(prefab, prefab.transform.position, Quaternion.identity, Vector3.one, parent,
                     worldPositionStay);
