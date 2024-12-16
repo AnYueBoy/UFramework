@@ -66,7 +66,7 @@ namespace UFramework
         {
             if (newBinder != null && binder != newBinder && newBinder.IsStatic)
             {
-                newBinder.OnRelease(OnRelease);
+                newBinder.RegisterReleaseHandler(OnRelease);
             }
 
             binder = newBinder;

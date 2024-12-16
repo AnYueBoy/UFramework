@@ -2,7 +2,7 @@
 
 namespace UFramework
 {
-    internal sealed class MethodBind : Bindable<IMethodBind>, IMethodBind
+    internal sealed class MethodBind : Bindable, IMethodBind
     {
         private readonly MethodContainer methodContainer;
 
