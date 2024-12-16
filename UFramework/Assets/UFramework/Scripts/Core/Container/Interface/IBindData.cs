@@ -5,7 +5,7 @@ namespace UFramework
     /// <summary>
     /// 绑定数据 表示与指定服务相关的关系数据。
     /// </summary>
-    public interface IBindData : IBindable<IBindData>
+    public interface IBindData : IBindable
     {
         /// <summary>
         /// 获取返回具体服务的委托
@@ -25,16 +25,16 @@ namespace UFramework
         /// <summary>
         /// 注册Resolving回调
         /// </summary>
-        IBindData OnResolving(Action<IBindData, object> closure);
+        IBindData RegisterResolvingHandler(Action<IBindData, object> closure);
 
         /// <summary>
         /// 注册Resolving之后的回调
         /// </summary>
-        IBindData OnAfterResolving(Action<IBindData, object> closure);
+        IBindData RegisterAfterResolvingHandler(Action<IBindData, object> closure);
 
         /// <summary>
         /// 注册Release回调
         /// </summary>
-        IBindData OnRelease(Action<IBindData, object> closure);
+        IBindData RegisterReleaseHandler(Action<IBindData, object> closure);
     }
 }

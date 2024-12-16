@@ -10,19 +10,19 @@ namespace UFramework
         public static IBindData OnResolving(this IBindData bindData, Action closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnResolving((_, instance) => { closure(); });
+            return bindData.RegisterResolvingHandler((_, instance) => { closure(); });
         }
 
         public static IBindData OnResolving(this IBindData bindData, Action<object> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnResolving((_, instance) => { closure(instance); });
+            return bindData.RegisterResolvingHandler((_, instance) => { closure(instance); });
         }
 
         public static IBindData OnResolving<T>(this IBindData bindData, Action<T> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnResolving((_, instance) =>
+            return bindData.RegisterResolvingHandler((_, instance) =>
             {
                 if (instance is T)
                 {
@@ -34,7 +34,7 @@ namespace UFramework
         public static IBindData OnResolving<T>(this IBindData bindData, Action<IBindData, T> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnResolving((bind, instance) =>
+            return bindData.RegisterResolvingHandler((bind, instance) =>
             {
                 if (instance is T)
                 {
@@ -46,19 +46,19 @@ namespace UFramework
         public static IBindData OnAfterResolving(this IBindData bindData, Action closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnAfterResolving((_, instance) => { closure(); });
+            return bindData.RegisterAfterResolvingHandler((_, instance) => { closure(); });
         }
 
         public static IBindData OnAfterResolving(this IBindData bindData, Action<object> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnAfterResolving((_, instance) => { closure(instance); });
+            return bindData.RegisterAfterResolvingHandler((_, instance) => { closure(instance); });
         }
 
         public static IBindData OnAfterResolving<T>(this IBindData bindData, Action<T> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnAfterResolving((_, instance) =>
+            return bindData.RegisterAfterResolvingHandler((_, instance) =>
             {
                 if (instance is T)
                 {
@@ -70,7 +70,7 @@ namespace UFramework
         public static IBindData OnAfterResolving<T>(this IBindData bindData, Action<IBindData, T> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnAfterResolving((bind, instance) =>
+            return bindData.RegisterAfterResolvingHandler((bind, instance) =>
             {
                 if (instance is T)
                 {
@@ -82,19 +82,19 @@ namespace UFramework
         public static IBindData OnRelease(this IBindData bindData, Action closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnRelease((_, __) => { closure(); });
+            return bindData.RegisterReleaseHandler((_, __) => { closure(); });
         }
 
         public static IBindData OnRelease(this IBindData bindData, Action<object> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnRelease((_, instance) => { closure(instance); });
+            return bindData.RegisterReleaseHandler((_, instance) => { closure(instance); });
         }
 
         public static IBindData OnRelease<T>(this IBindData bindData, Action<T> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnRelease((_, instance) =>
+            return bindData.RegisterReleaseHandler((_, instance) =>
             {
                 if (instance is T)
                 {
@@ -106,7 +106,7 @@ namespace UFramework
         public static IBindData OnRelease<T>(this IBindData bindData, Action<IBindData, T> closure)
         {
             Guard.Requires<ArgumentNullException>(closure != null);
-            return bindData.OnRelease((bind, instance) =>
+            return bindData.RegisterReleaseHandler((bind, instance) =>
             {
                 if (instance is T)
                 {

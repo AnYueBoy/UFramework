@@ -4,7 +4,7 @@ using UContainer = UFramework.Container;
 
 namespace UFramework
 {
-    public sealed class BindData : Bindable<IBindData>, IBindData
+    public sealed class BindData : Bindable, IBindData
     {
         /// <summary>
         /// resolving 回调列表
@@ -39,19 +39,19 @@ namespace UFramework
             return this;
         }
 
-        public IBindData OnResolving(Action<IBindData, object> closure)
+        public IBindData RegisterResolvingHandler(Action<IBindData, object> closure)
         {
             AddClosure(closure, ref resolving);
             return this;
         }
 
-        public IBindData OnAfterResolving(Action<IBindData, object> closure)
+        public IBindData RegisterAfterResolvingHandler(Action<IBindData, object> closure)
         {
             AddClosure(closure, ref afterResolving);
             return this;
         }
 
-        public IBindData OnRelease(Action<IBindData, object> closure)
+        public IBindData RegisterReleaseHandler(Action<IBindData, object> closure)
         {
             if (!IsStatic)
             {
