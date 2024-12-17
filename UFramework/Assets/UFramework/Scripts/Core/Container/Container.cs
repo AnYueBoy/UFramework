@@ -35,16 +35,6 @@ namespace UFramework
         private readonly Dictionary<string, List<string>> tags;
 
         /// <summary>
-        /// 类型查找器将字符串转换为服务类型。
-        /// </summary>
-        private readonly SortSet<Func<string, Type>, int> findType;
-
-        /// <summary>
-        /// 已找到类型的缓存。
-        /// </summary>
-        private readonly Dictionary<string, Type> findTypeCache;
-
-        /// <summary>
         /// 方法的ioc容器
         /// </summary>
         private readonly MethodContainer methodContainer;
@@ -71,8 +61,6 @@ namespace UFramework
             instances = new Dictionary<string, object>(prime * 4);
             instancesReverse = new Dictionary<object, string>(prime * 4);
             bindings = new Dictionary<string, BindData>(prime * 4);
-            findType = new SortSet<Func<string, Type>, int>();
-            findTypeCache = new Dictionary<string, Type>(prime * 4);
             BuildStack = new Stack<string>(32);
             skipped = new object();
             methodContainer = new MethodContainer(this);
@@ -231,8 +219,6 @@ namespace UFramework
                 tags.Clear();
                 instances.Clear();
                 bindings.Clear();
-                findType.Clear();
-                findTypeCache.Clear();
                 BuildStack.Clear();
                 methodContainer.Flush();
             }
@@ -371,28 +357,6 @@ namespace UFramework
         }
 
         /// <summary>
-        /// 根据指定服务名称来推测服务类型。
-        /// </summary>
-        protected virtual Type SpeculatedServiceType(string service)
-        {
-            if (findTypeCache.TryGetValue(service, out Type result))
-            {
-                return result;
-            }
-
-            foreach (var finder in findType)
-            {
-                var type = finder.Invoke(service);
-                if (type != null)
-                {
-                    return findTypeCache[service] = type;
-                }
-            }
-
-            return findTypeCache[service] = null;
-        }
-
-        /// <summary>
         /// 根据类型创建一个实例生成的闭包
         /// </summary>
         protected virtual Func<IContainer, object[], object> WrapperTypeBuilder(string service, Type concrete)
@@ -444,7 +408,7 @@ namespace UFramework
             // 对于构建的服务，如果服务的构建闭包存在则直接使用闭包进行构建实例（性能最高） 否则使用反射构建服务实例
             var instance = makeServiceBindData.Concrete != null
                 ? makeServiceBindData.Concrete(this, userParams)
-                : CreateInstance(makeServiceBindData, SpeculatedServiceType(makeServiceBindData.Service), userParams);
+                : CreateInstance(makeServiceBindData, null, userParams);
 
             // 上述完成构造函数的依赖注入
 
@@ -1019,7 +983,7 @@ namespace UFramework
         {
             if (instance == null)
             {
-                throw MakeBuildFailedException(makeService, SpeculatedServiceType(makeService), null);
+                throw MakeBuildFailedException(makeService, null, null);
             }
         }
 
