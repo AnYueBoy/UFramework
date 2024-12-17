@@ -71,11 +71,6 @@ namespace UFramework
             return That.Invoke(method, userParams);
         }
 
-        public static IContainer OnFindType(Func<string, Type> func, int priority = int.MaxValue)
-        {
-            return That.OnFindType(func, priority);
-        }
-
         public static IBindData Bind<TService>()
         {
             return That.Bind<TService>();

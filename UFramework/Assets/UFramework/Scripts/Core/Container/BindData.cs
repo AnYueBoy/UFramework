@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using UContainer = UFramework.Container;
 
 namespace UFramework
 {
@@ -27,21 +25,6 @@ namespace UFramework
         protected override void ReleaseBind()
         {
             ((Container)Container).Unbind(this);
-        }
-
-        /// <summary>
-        /// 向指定的回调列表中添加回调
-        /// </summary>
-        private void AddClosure(Action<IBindData, object> closure, ref List<Action<IBindData, object>> collection)
-        {
-            Guard.Requires<ArgumentNullException>(closure != null);
-            AssertDestroyed();
-            if (collection == null)
-            {
-                collection = new List<Action<IBindData, object>>();
-            }
-
-            collection.Add(closure);
         }
     }
 }

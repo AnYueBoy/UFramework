@@ -45,11 +45,6 @@ namespace UFramework
         private readonly Dictionary<string, Type> findTypeCache;
 
         /// <summary>
-        /// 已解析的服务的哈希集。
-        /// </summary>
-        private readonly HashSet<string> resolved;
-
-        /// <summary>
         /// 方法的ioc容器
         /// </summary>
         private readonly MethodContainer methodContainer;
@@ -67,16 +62,15 @@ namespace UFramework
         /// <summary>
         /// 获取栈内当前正在构建的服务
         /// </summary>
-        protected Stack<string> BuildStack { get; }
+        private Stack<string> BuildStack { get; }
 
-        public Container(int prime = 64)
+        protected Container(int prime = 64)
         {
             prime = Math.Max(8, prime);
             tags = new Dictionary<string, List<string>>((int)(prime * 0.25));
             instances = new Dictionary<string, object>(prime * 4);
             instancesReverse = new Dictionary<object, string>(prime * 4);
             bindings = new Dictionary<string, BindData>(prime * 4);
-            resolved = new HashSet<string>();
             findType = new SortSet<Func<string, Type>, int>();
             findTypeCache = new Dictionary<string, Type>(prime * 4);
             BuildStack = new Stack<string>(32);
@@ -102,15 +96,13 @@ namespace UFramework
                 return null;
             }
 
-            return bindings.TryGetValue(service, out BindData bindData) ? bindData : null;
-        }
+            if (bindings.TryGetValue(service, out var bindData))
+            {
+                return bindData;
+            }
 
-        private bool IsResolved(string service)
-        {
-            Guard.ParameterNotNull(service, nameof(service));
-            return resolved.Contains(service) || instances.ContainsKey(service);
+            return null;
         }
-
 
         public IBindData Bind(string service, Func<IContainer, object[], object> concrete, bool isStatic)
         {
@@ -132,17 +124,6 @@ namespace UFramework
 
             var bindData = new BindData(this, service, concrete, isStatic);
             bindings.Add(service, bindData);
-            if (!IsResolved(service))
-            {
-                return bindData;
-            }
-
-            if (isStatic)
-            {
-                // 如果是“静态”，则直接构建此服务
-                Make(service);
-            }
-
             return bindData;
         }
 
@@ -250,7 +231,6 @@ namespace UFramework
                 tags.Clear();
                 instances.Clear();
                 bindings.Clear();
-                resolved.Clear();
                 findType.Clear();
                 findTypeCache.Clear();
                 BuildStack.Clear();
@@ -372,14 +352,6 @@ namespace UFramework
             return Resolve(service, userParams);
         }
 
-        public IContainer OnFindType(Func<string, Type> func, int priority = Int32.MaxValue)
-        {
-            Guard.Requires<ArgumentNullException>(func != null);
-            GuardFlushing();
-            findType.Add(func, priority);
-            return this;
-        }
-
         /// <summary>
         /// 确定指定的类型是否是容器的默认基本类型。
         /// </summary>
@@ -429,7 +401,6 @@ namespace UFramework
                 ((Container)container).CreateInstance(GetBindFillable(service), concrete, userParams);
         }
 
-
         /// <summary>
         /// 解析指定的服务
         /// </summary>
@@ -460,7 +431,6 @@ namespace UFramework
                     instance = Instance(bindData.Service, instance);
                 }
 
-                resolved.Add(bindData.Service);
                 return instance;
             }
             finally

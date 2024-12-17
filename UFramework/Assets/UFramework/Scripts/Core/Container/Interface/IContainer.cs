@@ -95,11 +95,6 @@ namespace UFramework
         object Make(string service, params object[] userParams);
 
         /// <summary>
-        /// 注册一个当类型查找失败时的处理函数
-        /// </summary>
-        IContainer OnFindType(Func<string, Type> func, int priority = int.MaxValue);
-
-        /// <summary>
         /// 将类型转为服务名
         /// </summary>
         string Type2Service(Type type);

@@ -38,11 +38,6 @@ namespace UFramework
                 { typeof(StartCompletedEventArgs), ApplicationEvents.OnStartCompleted },
             };
 
-            // 我们使用闭包来保存当前上下文状态。
-            // 不要更改为：OnFindType（Type.GetType）。
-            // 这会导致活动程序集不是预期的作用域
-            OnFindType(finder => { return Type.GetType(finder); });
-
             DebugLevel = DebugLevel.Production;
             Process = StartProcess.Construct;
         }
