@@ -11,36 +11,6 @@ namespace UFramework
         object this[string service] { get; set; }
 
         /// <summary>
-        /// 根据服务名称获取对应的服务绑定数据
-        /// </summary>
-        IBindData GetBind(string service);
-
-        /// <summary>
-        /// 对应服务是否已经绑定
-        /// </summary>
-        bool HasBind(string service);
-
-        /// <summary>
-        /// 容器中是否已存在对应的实例
-        /// </summary>
-        bool HasInstance(string service);
-
-        /// <summary>
-        /// 对应服务是否已被解析
-        /// </summary>
-        bool IsResolved(string service);
-
-        /// <summary>
-        /// 对应服务是否可以被make
-        /// </summary>
-        bool CanMake(string service);
-
-        /// <summary>
-        /// 对应服务是否是单例
-        /// </summary>
-        bool IsStatic(string service);
-
-        /// <summary>
         /// 注册绑定到容器中
         /// </summary>
         /// <param name="service">服务名称</param>
@@ -125,36 +95,9 @@ namespace UFramework
         object Make(string service, params object[] userParams);
 
         /// <summary>
-        /// 扩展容器中的抽象类型,允许在服务解析期间配置或替换服务.
-        /// </summary>
-        /// <param name="service">需要对服务或别名进行的扩展，如果传null则全局起效</param>
-        /// <param name="closure">需要替换的产生实例的闭包</param>
-        void Extend(string service, Func<object, IContainer, object> closure);
-
-        /// <summary>
-        /// 注册Resolving回调函数
-        /// </summary>
-        IContainer OnResolving(Action<IBindData, object> closure);
-
-        /// <summary>
-        /// 注册AfterResolving函数
-        /// </summary>
-        IContainer OnAfterResolving(Action<IBindData, object> closure);
-
-        /// <summary>
-        /// 注册Release函数
-        /// </summary>
-        IContainer OnRelease(Action<IBindData, object> closure);
-
-        /// <summary>
         /// 注册一个当类型查找失败时的处理函数
         /// </summary>
         IContainer OnFindType(Func<string, Type> func, int priority = int.MaxValue);
-
-        /// <summary>
-        /// 注册服务的重新绑定事件的回调。
-        /// </summary>
-        IContainer OnRebound(string service, Action<object> callback);
 
         /// <summary>
         /// 将类型转为服务名

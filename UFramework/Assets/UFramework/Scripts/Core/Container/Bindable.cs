@@ -6,7 +6,6 @@ namespace UFramework
     public abstract class Bindable : IBindable
     {
         private readonly Container container;
-        private Dictionary<string, string> contextual;
         private Dictionary<string, Func<object>> contextualClosure;
         private bool isDestroy;
 
@@ -27,56 +26,6 @@ namespace UFramework
         }
 
         protected abstract void ReleaseBind();
-
-        /// <summary>
-        /// 添加服务的上下文
-        /// </summary>
-        /// <param name="needs">服务所关联的上下文</param>
-        /// <param name="given">给定的服务或别名</param>
-        internal void AddContextual(string needs, string given)
-        {
-            AssertDestroyed();
-            if (contextual == null)
-            {
-                contextual = new Dictionary<string, string>();
-            }
-
-            if (contextual.ContainsKey(needs) || !(contextualClosure != null && contextualClosure.ContainsKey(needs)))
-            {
-                throw new LogicException($"{needs} 已经存在");
-            }
-
-            contextual.Add(needs, given);
-        }
-
-        internal void AddContextual(string needs, Func<object> given)
-        {
-            AssertDestroyed();
-            if (contextualClosure == null)
-            {
-                contextualClosure = new Dictionary<string, Func<object>>();
-            }
-
-            if (contextualClosure.ContainsKey(needs) || (contextual != null && contextual.ContainsKey(needs)))
-            {
-                throw new LogicException($"{needs} 已存在");
-            }
-
-            contextualClosure.Add(needs, given);
-        }
-
-        /// <summary>
-        /// 获取服务需要的上下文
-        /// </summary>
-        internal string GetContextual(string needs)
-        {
-            if (contextual == null)
-            {
-                return null;
-            }
-
-            return contextual.TryGetValue(needs, out string contextualNeeds) ? contextualNeeds : null;
-        }
 
         internal Func<object> GetContextualClosure(string needs)
         {

@@ -6,21 +6,6 @@ namespace UFramework
 {
     public sealed class BindData : Bindable, IBindData
     {
-        /// <summary>
-        /// resolving 回调列表
-        /// </summary>
-        private List<Action<IBindData, object>> resolving;
-
-        /// <summary>
-        /// resolving 后的回调列表
-        /// </summary>
-        private List<Action<IBindData, object>> afterResolving;
-
-        /// <summary>
-        /// 释放的回调列表
-        /// </summary>
-        private List<Action<IBindData, object>> release;
-
         public BindData(Container container, string service, Func<IContainer, object[], object> concrete, bool isStatic)
             : base(container, service)
         {
@@ -37,45 +22,6 @@ namespace UFramework
             Guard.ParameterNotNull(tag, nameof(tag));
             Container.Tag(tag, Service);
             return this;
-        }
-
-        public IBindData RegisterResolvingHandler(Action<IBindData, object> closure)
-        {
-            AddClosure(closure, ref resolving);
-            return this;
-        }
-
-        public IBindData RegisterAfterResolvingHandler(Action<IBindData, object> closure)
-        {
-            AddClosure(closure, ref afterResolving);
-            return this;
-        }
-
-        public IBindData RegisterReleaseHandler(Action<IBindData, object> closure)
-        {
-            if (!IsStatic)
-            {
-                throw new LogicException($"服务 [{Service}] 不是静态单例绑定，无法调用释放函数");
-            }
-
-            AddClosure(closure, ref release);
-            return this;
-        }
-
-        internal object TriggerResolving(object instance)
-        {
-            // 使用容器的触发方法
-            return UContainer.Trigger(this, instance, resolving);
-        }
-
-        internal object TriggerAfterResolving(object instance)
-        {
-            return UContainer.Trigger(this, instance, afterResolving);
-        }
-
-        internal object TriggerRelease(object instance)
-        {
-            return UContainer.Trigger(this, instance, release);
         }
 
         protected override void ReleaseBind()

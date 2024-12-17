@@ -12,7 +12,7 @@ namespace UFramework
         /// <summary>
         /// 服务名不允许使用的字符
         /// </summary>
-        private readonly char[] ServiceBanChars = { '@', ':', '$' };
+        private readonly char[] ServiceBanChars = { '@', ':' };
 
         /// <summary>
         /// 容器内的所有绑定数据
@@ -35,26 +35,6 @@ namespace UFramework
         private readonly Dictionary<string, List<string>> tags;
 
         /// <summary>
-        /// 所有的全局Resolving回调
-        /// </summary>
-        private readonly List<Action<IBindData, object>> resolving;
-
-        /// <summary>
-        /// 所有的全局afterResolving回调
-        /// </summary>
-        private readonly List<Action<IBindData, object>> afterResolving;
-
-        /// <summary>
-        /// 所有的全局Release回调
-        /// </summary>
-        private readonly List<Action<IBindData, object>> release;
-
-        /// <summary>
-        /// 服务的扩展闭包映射
-        /// </summary>
-        private readonly Dictionary<string, List<Func<object, IContainer, object>>> extenders;
-
-        /// <summary>
         /// 类型查找器将字符串转换为服务类型。
         /// </summary>
         private readonly SortSet<Func<string, Type>, int> findType;
@@ -68,16 +48,6 @@ namespace UFramework
         /// 已解析的服务的哈希集。
         /// </summary>
         private readonly HashSet<string> resolved;
-
-        /// <summary>
-        /// 单例构建时间集合
-        /// </summary>
-        private readonly SortSet<string, int> instanceTiming;
-
-        /// <summary>
-        /// 所有已注册的重绑定的回调
-        /// </summary>
-        private readonly Dictionary<string, List<Action<object>>> rebound;
 
         /// <summary>
         /// 方法的ioc容器
@@ -95,19 +65,9 @@ namespace UFramework
         private bool flushing;
 
         /// <summary>
-        /// 用于标记全局生成顺序的唯一id。
-        /// </summary>
-        private int instanceId;
-
-        /// <summary>
         /// 获取栈内当前正在构建的服务
         /// </summary>
         protected Stack<string> BuildStack { get; }
-
-        /// <summary>
-        /// 获取栈内当前正在构建的服务的用户参数
-        /// </summary>
-        protected Stack<object[]> UserParamsStack { get; }
 
         public Container(int prime = 64)
         {
@@ -116,24 +76,14 @@ namespace UFramework
             instances = new Dictionary<string, object>(prime * 4);
             instancesReverse = new Dictionary<object, string>(prime * 4);
             bindings = new Dictionary<string, BindData>(prime * 4);
-            resolving = new List<Action<IBindData, object>>((int)(prime * 0.25));
-            afterResolving = new List<Action<IBindData, object>>((int)(prime * 0.25));
-            release = new List<Action<IBindData, object>>((int)(prime * 0.25));
-            extenders = new Dictionary<string, List<Func<object, IContainer, object>>>((int)(prime * 0.25));
             resolved = new HashSet<string>();
             findType = new SortSet<Func<string, Type>, int>();
             findTypeCache = new Dictionary<string, Type>(prime * 4);
-            rebound = new Dictionary<string, List<Action<object>>>(prime);
-            instanceTiming = new SortSet<string, int>();
             BuildStack = new Stack<string>(32);
-            UserParamsStack = new Stack<object[]>(32);
             skipped = new object();
             methodContainer = new MethodContainer(this);
             flushing = false;
-            instanceId = 0;
         }
-
-        #region 服务实例Make的部分过程
 
         public object this[string service]
         {
@@ -145,7 +95,7 @@ namespace UFramework
             }
         }
 
-        public IBindData GetBind(string service)
+        private IBindData GetBind(string service)
         {
             if (string.IsNullOrEmpty(service))
             {
@@ -155,42 +105,11 @@ namespace UFramework
             return bindings.TryGetValue(service, out BindData bindData) ? bindData : null;
         }
 
-        public bool HasBind(string service)
-        {
-            return GetBind(service) != null;
-        }
-
-        public bool HasInstance(string service)
-        {
-            Guard.ParameterNotNull(service, nameof(service));
-            return instances.ContainsKey(service);
-        }
-
-        public bool IsResolved(string service)
+        private bool IsResolved(string service)
         {
             Guard.ParameterNotNull(service, nameof(service));
             return resolved.Contains(service) || instances.ContainsKey(service);
         }
-
-        public bool CanMake(string service)
-        {
-            Guard.ParameterNotNull(service, nameof(service));
-            if (HasBind(service) || HasInstance(service))
-            {
-                return true;
-            }
-
-            var type = SpeculatedServiceType(service);
-            return !IsBasicType(type) && !IsUnableType(type);
-        }
-
-        public bool IsStatic(string service)
-        {
-            var bind = GetBind(service);
-            return bind != null && bind.IsStatic;
-        }
-
-        #endregion
 
 
         public IBindData Bind(string service, Func<IContainer, object[], object> concrete, bool isStatic)
@@ -223,10 +142,6 @@ namespace UFramework
                 // 如果是“静态”，则直接构建此服务
                 Make(service);
             }
-            else
-            {
-                TriggerOnRebound(service);
-            }
 
             return bindData;
         }
@@ -243,34 +158,7 @@ namespace UFramework
             return Bind(service, WrapperTypeBuilder(service, concrete), isStatic);
         }
 
-
-        public bool BindIf(string service, Func<IContainer, object[], object> concrete, bool isStatic,
-            out IBindData bindData)
-        {
-            var bind = GetBind(service);
-            if (bind == null && HasInstance(service))
-            {
-                bindData = null;
-                return false;
-            }
-
-            bindData = bind ?? Bind(service, concrete, isStatic);
-            return bind == null;
-        }
-
-        public bool BindIf(string service, Type concrete, bool isStatic, out IBindData bindData)
-        {
-            if (!IsUnableType(concrete))
-            {
-                service = service.Trim();
-                return BindIf(service, WrapperTypeBuilder(service, concrete), isStatic, out bindData);
-            }
-
-            bindData = null;
-            return false;
-        }
-
-        #region Method
+        #region 方法绑定
 
         public IMethodBind BindMethod(string method, object target, MethodInfo called)
         {
@@ -358,35 +246,21 @@ namespace UFramework
             try
             {
                 flushing = true;
-                foreach (var service in instanceTiming.GetIterator(false))
-                {
-                    Release(service);
-                }
-
                 Guard.Requires<AssertException>(instances.Count <= 0);
-
                 tags.Clear();
                 instances.Clear();
                 bindings.Clear();
-                resolving.Clear();
-                release.Clear();
-                extenders.Clear();
                 resolved.Clear();
                 findType.Clear();
                 findTypeCache.Clear();
                 BuildStack.Clear();
-                UserParamsStack.Clear();
-                rebound.Clear();
                 methodContainer.Flush();
-                instanceTiming.Clear();
-                instanceId = 0;
             }
             finally
             {
                 flushing = false;
             }
         }
-
 
         public string Type2Service(Type type)
         {
@@ -403,19 +277,10 @@ namespace UFramework
             GuardServiceName(service);
 
             var bindData = GetBind(service);
-            if (bindData != null)
+            if (bindData != null && !bindData.IsStatic)
             {
-                if (!bindData.IsStatic)
-                {
-                    throw new LogicException($"服务{service} 不是静态单例");
-                }
+                throw new LogicException($"服务{service} 不是静态单例");
             }
-            else
-            {
-                bindData = MakeEmptyBindData(service);
-            }
-
-            instance = TriggerOnResolving((BindData)bindData, instance);
 
             if (instance != null && instancesReverse.TryGetValue(instance, out string realService) &&
                 realService != service)
@@ -430,97 +295,12 @@ namespace UFramework
                 instancesReverse.Add(instance, service);
             }
 
-            if (!instanceTiming.Contains(service))
-            {
-                instanceTiming.Add(service, instanceId++);
-            }
-
-            var isResolved = IsResolved(service);
-            if (isResolved)
-            {
-                TriggerOnRebound(service, instance);
-            }
-
             return instance;
         }
 
         protected virtual BindData MakeEmptyBindData(string service)
         {
             return new BindData(this, service, null, false);
-        }
-
-        private object TriggerOnResolving(BindData bindData, object instance)
-        {
-            // 触发bindData自身绑定的Resolving回调列表
-            instance = bindData.TriggerResolving(instance);
-            // 触发全局的resolving回调列表
-            instance = Trigger(bindData, instance, resolving);
-            return TriggerOnAfterResolving(bindData, instance);
-        }
-
-        private object TriggerOnAfterResolving(BindData bindData, object instance)
-        {
-            instance = bindData.TriggerAfterResolving(instance);
-            return Trigger(bindData, instance, afterResolving);
-        }
-
-        private void TriggerOnRelease(IBindData bindData, object instance)
-        {
-            Trigger(bindData, instance, release);
-        }
-
-        private void TriggerOnRebound(string service, object instance = null)
-        {
-            var callbacks = GetOnReboundCallbacks(service);
-            if (callbacks == null || callbacks.Count <= 0)
-            {
-                return;
-            }
-
-            var bind = GetBind(service);
-            instance = instance ?? Make(service);
-            for (int i = 0; i < callbacks.Count; i++)
-            {
-                callbacks[i](instance);
-
-                // 如果它不是单例（静态）绑定，那么每个回调都会得到一个单独的实例。
-                if (i + 1 < callbacks.Count && (bind == null || !bind.IsStatic))
-                {
-                    instance = Make(service);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 获取指定服务的重绑定回调列表
-        /// </summary>
-        private IList<Action<object>> GetOnReboundCallbacks(string service)
-        {
-            return !rebound.TryGetValue(service, out List<Action<object>> result) ? null : result;
-        }
-
-        private bool HasOnReboundCallbacks(string service)
-        {
-            var result = GetOnReboundCallbacks(service);
-            return result != null && result.Count > 0;
-        }
-
-        /// <summary>
-        /// 触发指定列表的所有回调函数
-        /// </summary>
-        internal static object Trigger(IBindData bindData, object instance, List<Action<IBindData, object>> list)
-        {
-            if (list == null)
-            {
-                return instance;
-            }
-
-            foreach (var closure in list)
-            {
-                closure(bindData, instance);
-            }
-
-            return instance;
         }
 
         public bool Release(object mixed)
@@ -550,12 +330,6 @@ namespace UFramework
                 return false;
             }
 
-            var bindData = GetBindFillable(service);
-            // 触发binData中的释放回调
-            bindData.TriggerRelease(instance);
-            // 触发全局释放回调
-            TriggerOnRelease(bindData, instance);
-
             if (instance != null)
             {
                 DisposeInstance(instance);
@@ -563,19 +337,13 @@ namespace UFramework
             }
 
             instances.Remove(service);
-
-            if (!HasOnReboundCallbacks(service))
-            {
-                instanceTiming.Remove(service);
-            }
-
             return true;
         }
 
         /// <summary>
         /// 获取服务绑定数据，如果数据为空，则填充数据。
         /// </summary>
-        protected BindData GetBindFillable(string service)
+        private BindData GetBindFillable(string service)
         {
             return service != null && bindings.TryGetValue(service, out BindData bindData)
                 ? bindData
@@ -585,7 +353,7 @@ namespace UFramework
         /// <summary>
         /// 获取实例对应的服务名称
         /// </summary>
-        protected string GetServiceWithInstanceObject(object instance)
+        private string GetServiceWithInstanceObject(object instance)
         {
             return instancesReverse.TryGetValue(instance, out string origin) ? origin : null;
         }
@@ -598,87 +366,10 @@ namespace UFramework
             }
         }
 
-
         public object Make(string service, params object[] userParams)
         {
             GuardConstruct(nameof(Make));
             return Resolve(service, userParams);
-        }
-
-        private object Extend(string service, object instance)
-        {
-            // 使用服务对应的Extender列表
-            if (extenders.TryGetValue(service, out List<Func<object, IContainer, object>> list))
-            {
-                foreach (var extender in list)
-                {
-                    instance = extender(instance, this);
-                }
-            }
-
-            // 没有全局扩展器时 返回实例，有全局扩展器时还需要 全局扩展器对实例进行修饰
-            if (!extenders.TryGetValue(string.Empty, out list))
-            {
-                return instance;
-            }
-
-            // 此时list已被替换为全局的extender
-            foreach (var extender in list)
-            {
-                instance = extender(instance, this);
-            }
-
-            return instance;
-        }
-
-        public void Extend(string service, Func<object, IContainer, object> closure)
-        {
-            Guard.Requires<ArgumentNullException>(closure != null);
-            GuardFlushing();
-
-            if (!string.IsNullOrEmpty(service) && instances.TryGetValue(service, out object instance))
-            {
-                //如果实例已经存在，则应用扩展。
-                //扩展将不再添加到永久扩展列表中。
-                var old = instance;
-                instances[service] = instance = closure(instance, this);
-                if (!old.Equals(instance))
-                {
-                    instancesReverse.Remove(old);
-                    instancesReverse.Add(instance, service);
-                }
-
-                TriggerOnRebound(service, instance);
-                return;
-            }
-
-            if (!extenders.TryGetValue(service, out List<Func<object, IContainer, object>> extender))
-            {
-                extenders[service] = extender = new List<Func<object, IContainer, object>>();
-            }
-
-            extender.Add(closure);
-
-            if (!string.IsNullOrEmpty(service) && IsResolved(service))
-            {
-                TriggerOnRebound(service);
-            }
-        }
-
-        /// <summary>
-        /// 删除指定服务的所有扩展。
-        /// </summary>
-        public void ClearExtenders(string service)
-        {
-            GuardFlushing();
-            extenders.Remove(service);
-            if (!IsResolved(service))
-            {
-                return;
-            }
-
-            Release(service);
-            TriggerOnRebound(service);
         }
 
         public IContainer OnFindType(Func<string, Type> func, int priority = Int32.MaxValue)
@@ -686,43 +377,6 @@ namespace UFramework
             Guard.Requires<ArgumentNullException>(func != null);
             GuardFlushing();
             findType.Add(func, priority);
-            return this;
-        }
-
-        public IContainer OnRelease(Action<IBindData, object> closure)
-        {
-            AddClosure(closure, release);
-            return this;
-        }
-
-        public IContainer OnResolving(Action<IBindData, object> closure)
-        {
-            AddClosure(closure, resolving);
-            return this;
-        }
-
-        public IContainer OnAfterResolving(Action<IBindData, object> closure)
-        {
-            AddClosure(closure, afterResolving);
-            return this;
-        }
-
-        public IContainer OnRebound(string service, Action<object> callback)
-        {
-            Guard.Requires<ArgumentNullException>(callback != null);
-            GuardFlushing();
-
-            if (!IsResolved(service) && !CanMake(service))
-            {
-                throw new LogicException("在你想使用重绑定（关注）之前，你需要绑定(Bind) 或 实例化(Instance)服务");
-            }
-
-            if (!rebound.TryGetValue(service, out List<Action<object>> list))
-            {
-                rebound[service] = list = new List<Action<object>>();
-            }
-
-            list.Add(callback);
             return this;
         }
 
@@ -777,16 +431,6 @@ namespace UFramework
 
 
         /// <summary>
-        /// 向指定的列表中添加回调函数
-        /// </summary>
-        private void AddClosure(Action<IBindData, object> closure, List<Action<IBindData, object>> list)
-        {
-            Guard.Requires<ArgumentNullException>(closure != null);
-            GuardFlushing();
-            list.Add(closure);
-        }
-
-        /// <summary>
         /// 解析指定的服务
         /// </summary>
         protected object Resolve(string service, params object[] userParams)
@@ -803,7 +447,6 @@ namespace UFramework
             }
 
             BuildStack.Push(service);
-            UserParamsStack.Push(userParams);
 
             try
             {
@@ -812,20 +455,16 @@ namespace UFramework
                 //对于已构建的服务，我们将尝试进行依赖项注入
                 instance = Build(bindData, userParams);
 
-                //如果我们为指定的服务定义一个扩展程序，那么我们需要
-                //依次执行扩展器，并允许扩展器修改或者覆盖原始服务
-                instance = Extend(service, instance);
-
-                instance = bindData.IsStatic
-                    ? Instance(bindData.Service, instance)
-                    : TriggerOnResolving(bindData, instance);
+                if (bindData.IsStatic)
+                {
+                    instance = Instance(bindData.Service, instance);
+                }
 
                 resolved.Add(bindData.Service);
                 return instance;
             }
             finally
             {
-                UserParamsStack.Pop();
                 BuildStack.Pop();
             }
         }
@@ -1228,7 +867,7 @@ namespace UFramework
         /// </summary>
         protected virtual object ResolveClass(Bindable makeServiceBindData, string service, ParameterInfo baseParam)
         {
-            if (ResolveFromContextual(makeServiceBindData, service, baseParam.Name, baseParam.ParameterType,
+            if (ResolveFromContextual(makeServiceBindData, service, baseParam.ParameterType,
                     out object instance))
             {
                 return instance;
@@ -1248,7 +887,7 @@ namespace UFramework
         /// </summary>
         protected virtual object ResolvePrimitive(Bindable makeServiceBindData, string service, ParameterInfo baseParam)
         {
-            if (ResolveFromContextual(makeServiceBindData, service, baseParam.Name, baseParam.ParameterType,
+            if (ResolveFromContextual(makeServiceBindData, service, baseParam.ParameterType,
                     out object instance))
             {
                 return instance;
@@ -1276,7 +915,7 @@ namespace UFramework
         /// </summary>
         protected virtual object ResolveAttrClass(Bindable makeServiceBindData, string service, PropertyInfo baseParam)
         {
-            if (ResolveFromContextual(makeServiceBindData, service, baseParam.Name, baseParam.PropertyType,
+            if (ResolveFromContextual(makeServiceBindData, service, baseParam.PropertyType,
                     out object instance))
             {
                 return instance;
@@ -1297,7 +936,7 @@ namespace UFramework
         protected virtual object ResolveAttrPrimitive(Bindable makeServiceBindData, string service,
             PropertyInfo baseParam)
         {
-            if (ResolveFromContextual(makeServiceBindData, service, baseParam.Name, baseParam.PropertyType,
+            if (ResolveFromContextual(makeServiceBindData, service, baseParam.PropertyType,
                     out object instance))
             {
                 return instance;
@@ -1321,17 +960,16 @@ namespace UFramework
         /// <summary>
         /// 根据上下文闭包解析实例
         /// </summary>
-        protected virtual bool ResolveFromContextual(Bindable makeServiceBindData, string service, string paramName,
-            Type paramType, out object output)
+        protected virtual bool ResolveFromContextual(Bindable makeServiceBindData, string service, Type paramType,
+            out object output)
         {
-            if (MakeFromContextualClosure(GetContextualClosure(makeServiceBindData, service, paramName), paramType,
+            if (MakeFromContextualClosure(GetContextualClosure(makeServiceBindData, service), paramType,
                     out output))
             {
                 return true;
             }
 
-            return MakeFromContextualService(GetContextualService(makeServiceBindData, service, paramName), paramType,
-                out output);
+            return false;
         }
 
         /// <summary>
@@ -1350,38 +988,12 @@ namespace UFramework
         }
 
         /// <summary>
-        /// 根据服务名称获取实例
+        /// 获取生成委托
         /// </summary>
-        protected virtual bool MakeFromContextualService(string service, Type needType, out object output)
+        protected virtual Func<object> GetContextualClosure(Bindable makeServiceBindData, string service)
         {
-            output = null;
-            if (!CanMake(service))
-            {
-                return false;
-            }
-
-            output = Make(service);
-            return ChangeType(ref output, needType);
-        }
-
-        /// <summary>
-        /// 获取基于上下文的生成闭包。(从Bindable中获取存储的闭包)
-        /// </summary>
-        protected virtual Func<object> GetContextualClosure(Bindable makeServiceBindData, string service,
-            string paramName)
-        {
-            // 获取该服务名称对应的闭包，如果不存在则 根据$+参数名获取对应闭包
-            return makeServiceBindData.GetContextualClosure(service) ??
-                   makeServiceBindData.GetContextualClosure($"${paramName}");
-        }
-
-        /// <summary>
-        /// 获取基于上下文的生成服务名称。
-        /// </summary>
-        protected virtual string GetContextualService(Bindable makeServiceBindData, string service, string paramName)
-        {
-            return makeServiceBindData.GetContextual(service) ??
-                   makeServiceBindData.GetContextual($"${paramName}") ?? service;
+            // 获取该服务名称对应的闭包
+            return makeServiceBindData.GetContextualClosure(service);
         }
 
         /// <summary>

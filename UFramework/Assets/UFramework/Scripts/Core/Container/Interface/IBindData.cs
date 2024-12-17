@@ -21,20 +21,5 @@ namespace UFramework
         /// 服务Tag(用于批量释放一组Tag的服务)
         /// </summary>
         IBindData Tag(string tag);
-
-        /// <summary>
-        /// 注册Resolving回调
-        /// </summary>
-        IBindData RegisterResolvingHandler(Action<IBindData, object> closure);
-
-        /// <summary>
-        /// 注册Resolving之后的回调
-        /// </summary>
-        IBindData RegisterAfterResolvingHandler(Action<IBindData, object> closure);
-
-        /// <summary>
-        /// 注册Release回调
-        /// </summary>
-        IBindData RegisterReleaseHandler(Action<IBindData, object> closure);
     }
 }
