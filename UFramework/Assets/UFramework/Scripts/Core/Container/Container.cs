@@ -10,11 +10,6 @@ namespace UFramework
     public class Container : IContainer
     {
         /// <summary>
-        /// 服务名不允许使用的字符
-        /// </summary>
-        private readonly char[] ServiceBanChars = { '@', ':' };
-
-        /// <summary>
         /// 容器内的所有绑定数据
         /// </summary>
         private readonly Dictionary<string, BindData> bindings;
@@ -96,7 +91,6 @@ namespace UFramework
         {
             Guard.ParameterNotNull(service, nameof(service));
             Guard.ParameterNotNull(concrete, nameof(concrete));
-            GuardServiceName(service);
             GuardFlushing();
 
             service = service.Trim();
@@ -123,7 +117,6 @@ namespace UFramework
                 throw new LogicException($"类型{concrete} 是不可构建的类型");
             }
 
-            service = service.Trim();
             return Bind(service, WrapperTypeBuilder(service, concrete), isStatic);
         }
 
@@ -240,7 +233,6 @@ namespace UFramework
         {
             Guard.ParameterNotNull(service, nameof(service));
             GuardFlushing();
-            GuardServiceName(service);
 
             var bindData = GetBind(service);
             if (bindData != null && !bindData.IsStatic)
@@ -405,11 +397,7 @@ namespace UFramework
 
         protected virtual object Build(BindData makeServiceBindData, object[] userParams)
         {
-            // 对于构建的服务，如果服务的构建闭包存在则直接使用闭包进行构建实例（性能最高） 否则使用反射构建服务实例
-            var instance = makeServiceBindData.Concrete != null
-                ? makeServiceBindData.Concrete(this, userParams)
-                : CreateInstance(makeServiceBindData, null, userParams);
-
+            var instance = makeServiceBindData.Concrete(this, userParams);
             // 上述完成构造函数的依赖注入
 
             // 完成实例的属性注入
@@ -516,6 +504,7 @@ namespace UFramework
         protected virtual object[] GetConstructorsInjectParams(Bindable makeServiceBindData, Type makeServiceType,
             object[] userParams)
         {
+            // 获取所有构造函数
             var constructors = makeServiceType.GetConstructors();
             if (constructors.Length <= 0)
             {
@@ -947,17 +936,6 @@ namespace UFramework
             if (flushing)
             {
                 throw new LogicException("容器正在重置");
-            }
-        }
-
-        protected virtual void GuardServiceName(string service)
-        {
-            foreach (var c in ServiceBanChars)
-            {
-                if (service.IndexOf(c) > 0)
-                {
-                    throw new LogicException($"服务名称{service} 包含禁用字符 {c},请用别名替代");
-                }
             }
         }
 
